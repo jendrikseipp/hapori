@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: i386/ubuntu:18.04
+From: ubuntu:18.04
 
 %files
     . /planner
@@ -7,7 +7,7 @@ From: i386/ubuntu:18.04
 %post
     ## Install all dependencies.
     apt-get update
-    apt-get -y install cmake gawk g++ make python
+    apt-get -y install cmake gawk g++ g++-multilib make python
 
     ## Build the planner.
     cd /planner
