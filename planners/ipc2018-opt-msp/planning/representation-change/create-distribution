@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cd
+# because I might want to override the paths
+# cp -p .sbclrc .clisprc .init.lisp planning/represent-metasearch/software/metasearch/ 
+cp -p -R mi-software/lisp/common.lisp mi-software/lisp/matrix.lisp mi-software/lisp/cl-pp* planning/represent-metasearch/software/metasearch/mi-software/lisp/
+cp -p mi-software/tilde2lisp/pddl2tilde.lisp planning/represent-metasearch/software/metasearch/mi-software/tilde2lisp/
+cp -p planning/ipss/defaults.lisp planning/ipss/rete.lisp planning/ipss/generic-*.lisp planning/ipss/execute-ff.lisp planning/represent-metasearch/software/metasearch/planning/ipss/
+cp -p planning/sayphi/loader.lisp planning/represent-metasearch/software/metasearch/planning/sayphi/
+cp -p planning/sayphi/system/planner/*.lisp planning/represent-metasearch/software/metasearch/planning/sayphi/system/planner/
+cp -p planning/sayphi/system/learning/*.lisp planning/represent-metasearch/software/metasearch/planning/sayphi/system/learning/
+cp -p planning/representation-change/*.lisp planning/representation-change/create-distribution planning/represent-metasearch/software/metasearch/planning/representation-change/
+
+cd planning/represent-metasearch
+
+# cd
+# tar cvfz ~/trabajo/meta-search.tgz .sbclrc .clisprc .init.lisp mi-software/lisp/common.lisp mi-software/lisp/matrix.lisp mi-software/tilde2lisp/pddl2tilde.lisp mi-software/lisp/cl-pp* planning/ipss/defaults.lisp planning/ipss/rete.lisp planning/ipss/generic-*.lisp planning/ipss/execute-ff.lisp planning/sayphi/loader.lisp planning/sayphi/system/planner planning/sayphi/system/learning/*.lisp planning/representation-change/*.lisp planning/representation-change/create-distribution
+

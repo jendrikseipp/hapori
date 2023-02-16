@@ -1,0 +1,135 @@
+Bootstrap: docker
+From: ubuntu:xenial
+
+%environment
+    LANG=en_US.UTF-8
+    PYTHONIOENCODING=UTF-8
+    export PYTHONIOENCODING
+    export LANG
+
+%files
+    cplex_studio12.7.1.linux-x86-64.bin /third-party/
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install cmake g++ gcc make python python3 sbcl unzip default-jre flex bison gawk time locales ca-certificates git
+    rm -rf /var/lib/apt/lists/*
+
+    git clone -b ipc-2018-seq-opt https://bitbucket.org/ipc2018-classical/team5.git /planner
+
+    locale-gen "en_US.UTF-8"
+    dpkg-reconfigure locales
+    echo 'LANG="en_US.UTF-8"' >> /etc/default/locale
+    export LC_ALL="en_US.UTF-8"
+    locale
+
+    ## Build CPLEX.
+    /third-party/cplex_studio12.7.1.linux-x86-64.bin -DLICENSE_ACCEPTED=TRUE  -i silent
+    export DOWNWARD_CPLEX_ROOT64=/opt/ibm/ILOG/CPLEX_Studio1271/cplex
+
+    ## Build OSI.
+    cd /third-party
+    tar xvzf /planner/third-party/Osi-0.107.9.tgz
+    cd Osi-0.107.9
+    export DOWNWARD_COIN_ROOT64=/opt/coin64
+    ./configure CC="gcc"  CFLAGS="-m64 -pthread -Wno-long-long" \
+                CXX="g++" CXXFLAGS="-m64 -pthread -Wno-long-long" \
+                LDFLAGS="-L$DOWNWARD_CPLEX_ROOT64/lib/x86-64_linux/static_pic" \
+                --without-lapack --enable-static=yes \
+                --prefix="$DOWNWARD_COIN_ROOT64" \
+                --disable-zlib --disable-bzlib \
+                --with-cplex-incdir=$DOWNWARD_CPLEX_ROOT64/include/ilcplex \
+                --with-cplex-lib="-lcplex -lm"
+    make
+    make install
+    cd ..
+
+
+    ## Build planner FD
+    cd /planner
+    ./planning/new-fd/downward/build.py release64 -j4
+
+
+    ## Build your planner SYMBA
+    cd ./planning/SYMBA/seq-opt-symba-2
+    ./build
+    cd ../../../
+
+
+    ## Build AV preprocessor in FD
+    cd ./planning/new-fd/downward/src/translate/h2-fd-preprocessor
+    mkdir -p builds/release64
+    cd builds/release64
+    cmake ../../
+    make all -j4
+    cd ../../../../../../../../
+
+
+    ## Build conditional effect code
+    cd ./planning/conditionalEffect
+    # pyparsing-2.2
+    python setup.py build
+    python setup.py install
+    # flex and bison
+    cd adl2strips
+    make
+    cd ../../../
+
+    ## Build your planner METASEARCH
+    sbcl --dynamic-space-size 950 --script "metasearch-exe-generator.lisp"
+
+    #./planning/new-fd/downward/fast-downward.py
+    #./planning/SYMBA/seq-opt-symba-2/plan
+
+    ## Clean up (not necessary but reduces image size from 1.5GB to 641 MB).
+    #mkdir -p /compiled-planner/builds/release64
+    #mv /planner/driver /planner/fast-downward.py /compiled-planner
+    #mv /planner/builds/release64/bin /compiled-planner/builds/release64
+    rm -rf /third-party
+    #rm -rf /planner
+    #mv /compiled-planner /planner
+    apt-get -y autoremove cmake g++ make unzip default-jre
+
+
+    rm -rf .git
+    rm -rf /planner/planning/SYMBA/seq-opt-symba-2/src/preprocess/.obj
+    rm -rf /planner/planning/SYMBA/seq-opt-symba-2/src/search/.obj
+    rm -rf /planner/planning/new-fd/downward/builds/release64/search/CMakeFiles
+    rm -rf /planner/planning/new-fd/downward/src/translate/h2-fd-preprocessor/builds/release64/src/CMakeFiles
+    rm -rf /opt/ibm
+
+
+
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+
+    ## Call your planner.
+
+    ##/planner/fast-downward.py \
+    ##    --build=release64 \
+    ##    --plan-file $PLANFILE \
+    ##    $DOMAINFILE \
+    ##    $PROBLEMFILE \
+    ##    --search "astar(lmcut())"
+
+    /planner/plan.sh $DOMAINFILE $PROBLEMFILE $PLANFILE
+
+
+
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        MSP
+Description metasearch planner
+Authors     Raquel Fuentetaja <rfuentet@inf.uc3m.es> and Michael Barley <m.barley@auckland.ac.nz> and Daniel Borrajo <dborrajo@ia.uc3m.es> and Jordan Douglas <jdou557@aucklanduni.ac.nz> and Santiago Franco <s.franco@hud.ac.uk> and Pat Riddle <pat@cs.auckland.ac.nz>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

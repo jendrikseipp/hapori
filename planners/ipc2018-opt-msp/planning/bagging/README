@@ -1,0 +1,32 @@
+To translate a domain
+ ./translate/baggy.py domain.pddl p01.pddl  --writeout_reformulation_logic --writeout_reformulated_pddl  --ground_operators --enable_pddl_repair --dont_bag sandwich,bread-portion,content-portion > ReformCommandLine1.txt
+
+The --dont_bag flag lets you manually not bag things, baggy will normally bag everything.
+
+You can also specify to only bag from the goal state or from the initial state, the default is to bag from both, —direction.
+
+—enable_pddl_repair repairs childsnack and pizza so children can be bagged
+
+
+
+If you want to translate a solution back into the original space….
+
+To transform a solution
+translate/baggy.py domain.ddl p01.pddl --solution sas_plan_p01.pddl --mapping mappings.txt --writeout_reformulation_logic --writeout_reformulated_pddl > ReformCommandLine3.txt
+
+
+I am sure there are more switches I should tell you about.  Let me know if you have trouble getting it running.
+
+
+ATT00001.txt
+
+
+
+The only 2 problems I know it has are:
+
+1) it will not translate conditional domains correctly
+
+2) it will not translate domains with no typing (it is easy to automatically create a typing - but the code does not currently do this)
+
+
+Pat

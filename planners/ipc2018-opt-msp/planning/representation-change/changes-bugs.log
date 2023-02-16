@@ -1,0 +1,9 @@
+* 12/11/2016
+
+TODO (RF) function: get-solution-from-file. Revise. Its definition (in ipss) is only for other planners (not rida). Also function solution-from-file only reads the first operator. It seems these function/s are not working properly?
+
+SOLVED (RF) After execution output file "results/results.." contains nothing
+
+* 15/11/2016
+
+SOLVED (RF) translate back the plan when it is found in rida sampling
