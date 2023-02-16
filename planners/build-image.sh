@@ -9,6 +9,7 @@ IMAGE=$(realpath ${2})
 BENCHMARKS_DIR=${DOWNWARD_BENCHMARKS}
 
 printf "\n\n**********************************************************************\n\n\n"
+echo "Recipe: ${RECIPE}"
 if [[ -e ${IMAGE} ]]; then
     echo "Image ${IMAGE} exists -> will test it now."
 else
