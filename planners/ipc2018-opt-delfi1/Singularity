@@ -1,15 +1,8 @@
 Bootstrap: docker
 From: ubuntu:18.04
 
-%setup
-     ## The "%setup"-part of this script is called to bootstrap an empty
-     ## container. It copies the source files from the branch of your
-     ## repository where this file is located into the container to the
-     ## directory "/planner". Do not change this part unless you know
-     ## what you are doing and you are certain that you have to do so.
-
-    REPO_ROOT=`dirname $SINGULARITY_BUILDDEF`
-    cp -r $REPO_ROOT/ $SINGULARITY_ROOTFS/planner
+%files
+    . /planner
 
 %post
 
@@ -22,7 +15,7 @@ From: ubuntu:18.04
     ## Install all necessary dependencies.
     apt-get update
     apt-get -y install cmake gawk g++ g++-multilib make python python-dev python-pip ca-certificates
-    pip install mock==2.0.0 h5py==2.7.1 keras==2.1.6 numpy==1.14.3 pillow==5.1.0 scipy==1.0.1 tensorflow==1.8.0 subprocess32==3.2.7
+    pip install mock==2.0.0 h5py==2.7.1 keras==2.1.6 numpy==1.14.3 pillow==5.1.0 protobuf==3.5.2 scipy==1.0.1 tensorflow==1.8.0 subprocess32==3.2.7
 
     ## Build your planner
     cd /planner

@@ -1,15 +1,8 @@
 Bootstrap: docker
 From: ubuntu
 
-%setup
-     ## The "%setup"-part of this script is called to bootstrap an empty
-     ## container. It copies the source files from the branch of your
-     ## repository where this file is located into the container to the
-     ## directory "/planner". Do not change this part unless you know
-     ## what you are doing and you are certain that you have to do so.
-
-    REPO_ROOT=`dirname $SINGULARITY_BUILDDEF`
-    cp -r $REPO_ROOT/ $SINGULARITY_ROOTFS/planner
+%files
+    . /planner
 
 %post
 
@@ -38,8 +31,8 @@ From: ubuntu
 	libboost-python-dev \
 	libboost-program-options-dev \
 	g++-multilib \
-	g++ 
-	
+	g++
+
     rm -rf /var/lib/apt/lists/*
 
     ## Set up environment variables
@@ -48,18 +41,18 @@ From: ubuntu
     ## export LAPKT_URL=https://github.com/LAPKT-dev/LAPKT-public/archive/master.tar.gz \
 
     export LAPKT_PATH=/planner/LAPKT-public
-	
+
     ## Download LAPKT-public
     ## curl -SL $LAPKT_URL | tar -xz
-    ## mv LAPKT-* $LAPKT_PATH 
+    ## mv LAPKT-* $LAPKT_PATH
     cd /planner
     tar xjf LAPKT-public.tar.bz2
     cd $LAPKT_PATH
-    cd external/libff 
+    cd external/libff
     make clean
     make depend
     make
-    
+
     ## Build DFS+ planner
     cd ../..
     cd planners/dfs_plus-ffparser
@@ -68,7 +61,7 @@ From: ubuntu
     ## Build planner for FD-parser
     cd ../planners/dfs_plus
     ./build.py
-    
+
 
 %runscript
     ## The runscript is called whenever the container is used to solve
@@ -78,7 +71,7 @@ From: ubuntu
     PROBLEMFILE=$2
     PLANFILE=$3
 
-    
+
     ## Call your planner using FD-parser.
     /planner/LAPKT-public/planners/dfs_plus/dfs_plus.py $DOMAINFILE $PROBLEMFILE $PLANFILE
 
@@ -87,7 +80,7 @@ From: ubuntu
 ## Please use the same field names and use only one line for each value.
 %labels
 Name        LAPKT-DFS+
-Description BLIND Depth-First-Width planner implemented with LAPKT 
+Description BLIND Depth-First-Width planner implemented with LAPKT
 Authors     Nir Lipovetzky <nir.lipovetzky@unimelb.edu.au> and Miquel Ramirez <miguel.ramirez@unimelb.edu.au> and Guillem Frances <guillem.frances@unibas.ch> and Hector Geffner <hector.geffner@upf.edu>
 SupportsDerivedPredicates no
 SupportsQuantifiedPreconditions yes

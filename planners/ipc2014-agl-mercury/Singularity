@@ -1,9 +1,8 @@
 Bootstrap: docker
 From: i386/ubuntu:18.04
 
-%setup
-    REPO_ROOT=`dirname $SINGULARITY_BUILDDEF`
-    cp -r $REPO_ROOT/ $SINGULARITY_ROOTFS/planner
+%files
+    . /planner
 
 %post
     ## Install all dependencies.

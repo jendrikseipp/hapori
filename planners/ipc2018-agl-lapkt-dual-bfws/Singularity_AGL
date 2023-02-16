@@ -1,15 +1,8 @@
 Bootstrap: docker
 From: ubuntu:artful
 
-%setup
-     ## The "%setup"-part of this script is called to bootstrap an empty
-     ## container. It copies the source files from the branch of your
-     ## repository where this file is located into the container to the
-     ## directory "/planner". Do not change this part unless you know
-     ## what you are doing and you are certain that you have to do so.
-
-    REPO_ROOT=`dirname $SINGULARITY_BUILDDEF`
-    cp -r $REPO_ROOT/ $SINGULARITY_ROOTFS/planner
+%files
+    . /planner
 
 %post
 
@@ -37,8 +30,8 @@ From: ubuntu:artful
 	libboost-python-dev \
 	libboost-program-options-dev \
 	g++-multilib \
-	g++ 
-	
+	g++
+
     rm -rf /var/lib/apt/lists/*
 
     ## Set up environment variables
@@ -47,30 +40,30 @@ From: ubuntu:artful
     ## export LAPKT_URL=https://github.com/LAPKT-dev/LAPKT-public/archive/master.tar.gz \
 
     export LAPKT_PATH=/planner/LAPKT-public
-	
+
     ## Download LAPKT-public
     ## curl -SL $LAPKT_URL | tar -xz
-    ## mv LAPKT-* $LAPKT_PATH 
+    ## mv LAPKT-* $LAPKT_PATH
     #cd /planner
     #tar xjf LAPKT-public.tar.bz2
     cd $LAPKT_PATH
-    cd external/libff 
+    cd external/libff
     make clean
     make depend
     make
-    
+
     ## Build your planner
     cd /planner/BFWS/ff-version
     scons -j4
     cd /planner/BFWS/fd-version
     ./build.py
-    
+
     ## Build FD
     #cd /planner
     #tar xjf Fast-Downward-2018-2.tar.bz2
     cd /planner/Fast-Downward-2018-2
     ./build.py release64 -j4
-    
+
     ## Build h2-preprocessor
     #cd /planner
     #tar xjf h2-fd-preprocessor.tar.bz2
