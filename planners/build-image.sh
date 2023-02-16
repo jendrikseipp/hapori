@@ -4,8 +4,8 @@ set -euo pipefail
 
 TMPDIR="/tmp/apptainer-rundir"
 
-RECIPE=${1}
-IMAGE=${2}
+RECIPE=$(realpath ${1})
+IMAGE=$(realpath ${2})
 BENCHMARKS_DIR=${DOWNWARD_BENCHMARKS}
 
 printf "\n\n**********************************************************************\n\n\n"
@@ -13,7 +13,9 @@ if [[ -e ${IMAGE} ]]; then
     echo "Image ${IMAGE} exists -> will test it now."
 else
     echo "Image ${IMAGE} does not exist -> will create and test it now."
-    sudo apptainer build ${IMAGE} ${RECIPE}
+    pushd $(dirname ${RECIPE})
+    apptainer build ${IMAGE} ${RECIPE}
+    popd
 fi
 
 echo "Testing image at ${IMAGE}:"
