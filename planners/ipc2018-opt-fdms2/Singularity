@@ -1,0 +1,65 @@
+Bootstrap: docker
+From: ubuntu:bionic
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt update
+    apt -y install --no-install-recommends cmake g++ g++-multilib make python ca-certificates git
+
+    ## Build your planner
+    cd /planner
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/release64/bin/preprocess
+
+    ## Remove packages unneeded for running the planner.
+    apt-get -y autoremove cmake g++ make
+    rm -rf /var/lib/apt/lists/*
+
+    ## Only keep essential binaries.
+    mkdir -p /compiled-planner/builds/release64
+    mv /planner/driver /planner/fast-downward.py /compiled-planner
+    mv /planner/builds/release64/bin /compiled-planner/builds/release64
+    rm -rf /planner
+    mv /compiled-planner /planner
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+
+    ## Call your planner.
+    TIME_LIMIT=`ulimit -t`
+    echo "ulimit: $TIME_LIMIT"
+    if [ "$TIME_LIMIT" = "unlimited" ]; then
+        TIME_LIMIT='1800'
+    fi
+    TIME_LIMIT=$((TIME_LIMIT/2))
+    echo "set time limit to: $TIME_LIMIT"
+    /planner/fast-downward.py \
+        --transform-task "/planner/builds/release64/bin/preprocess" \
+        --build 'release64' \
+        --search-memory-limit '7744M' \
+        --plan-file $PLANFILE \
+        $DOMAINFILE \
+        $PROBLEMFILE \
+        --symmetries 'sym=structural_symmetries(search_symmetries=dks)' \
+        --search "astar(merge_and_shrink(shrink_strategy=shrink_bisimulation(greedy=false),merge_strategy=merge_stateless(merge_selector=score_based_filtering(scoring_functions=[sf_miasm(shrink_strategy=shrink_bisimulation(greedy=false),max_states=50000,threshold_before_merge=1),total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)])),label_reduction=exact(before_shrinking=true,before_merging=false),max_states=50000,threshold_before_merge=1,max_time=$TIME_LIMIT,verbosity=normal),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        FDMS2
+Description A planner using the merge-and-shrink heuristic with bisimulation-based shrinking, sb-MIASM merging, exact label reduction, and a time limit of 900s for the construction of the heuristic. It additionally uses partial order reduction (simple stubborn sets) with a safety belt feature that disables pruning if deeming not enough and with support for conditional effects, symmetry-based pruning with the DKS algorithm, and the h2 preprocessor of Torralba and Alcazar. The difference to FDMS1 is that it uses a different merge strategy.
+Authors     Silvan Sievers <silvan.sievers@unibas.ch>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no
