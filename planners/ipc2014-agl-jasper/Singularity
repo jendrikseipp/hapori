@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: i386/ubuntu:18.04
+From: ubuntu:18.04
 
 %files
     . /planner
@@ -34,7 +34,7 @@ From: i386/ubuntu:18.04
     cp /planner/search/dispatch /compiled-planner/search/
     cp /planner/plan /compiled-planner/
     cp /planner/plan-ipc /compiled-planner/
-    cp -r /planner/one_run_aras /compiled-planner/
+    cp -r /planner/one_plan_aras_bfmrw_codes /compiled-planner/
 
     rm -rf /planner
     mv /compiled-planner /planner

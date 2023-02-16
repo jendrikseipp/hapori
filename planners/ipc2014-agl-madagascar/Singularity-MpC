@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: i386/ubuntu:18.04
+From: ubuntu:18.04
 
 %files
     . /planner
@@ -7,7 +7,7 @@ From: i386/ubuntu:18.04
 %post
     ## Install all dependencies.
     apt update
-    apt -y install bison flex make g++
+    apt -y install bison flex make g++-multilib
 
     ## Build the planner.
     cd /planner
