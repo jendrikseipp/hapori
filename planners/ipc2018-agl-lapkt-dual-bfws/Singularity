@@ -23,7 +23,7 @@ From: ubuntu:18.04
     gcc-multilib \
     flex \
     bison \
-    python2.7 \
+    python \
     python-dev \
     libboost-dev \
     libjudy-dev \
@@ -75,7 +75,8 @@ From: ubuntu:18.04
         /planner/h2-fd-preprocessor/builds/release32/bin/preprocess
 
     ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove cmake \
+    apt-get -y autoremove \
+        cmake \
         build-essential \
         ca-certificates \
         xutils-dev \
@@ -83,6 +84,9 @@ From: ubuntu:18.04
         gcc-multilib \
         flex \
         bison \
+        libboost-dev \
+        libjudy-dev \
+        libboost-program-options-dev \
         g++-multilib \
         g++
     rm -rf /var/lib/apt/lists/*
