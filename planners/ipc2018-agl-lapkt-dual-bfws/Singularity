@@ -44,8 +44,6 @@ From: ubuntu:18.04
     ## Download LAPKT-public
     ## curl -SL $LAPKT_URL | tar -xz
     ## mv LAPKT-* $LAPKT_PATH
-    #cd /planner
-    #tar xjf LAPKT-public.tar.bz2
     cd $LAPKT_PATH
     cd external/libff
     make clean
@@ -59,8 +57,6 @@ From: ubuntu:18.04
     ./build.py
 
     ## Build FD
-    #cd /planner
-    #tar xjf Fast-Downward-2018-2.tar.bz2
     cd /planner/Fast-Downward-2018-2
     ./build.py release64 -j4
 

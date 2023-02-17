@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: ubuntu:bionic
+From: ubuntu:18.04
 
 %files
     . /planner
@@ -11,7 +11,6 @@ From: ubuntu:bionic
     ## container". Most importantly, it is used to install dependencies
     ## and build the planner. Add all commands that have to be executed
     ## once before the planner runs in this part of the script.
-
 
     ## Install all necessary dependencies.
     apt-get update
@@ -45,14 +44,11 @@ From: ubuntu:bionic
     ## Download LAPKT-public
     ## curl -SL $LAPKT_URL | tar -xz
     ## mv LAPKT-* $LAPKT_PATH
-    cd /planner
-    ## tar xjf LAPKT-public.tar.bz2
     cd $LAPKT_PATH
     cd external/libff
     make clean
     make depend
     make
-
 
     ## Build your planner
     cd /planner/BFWS/ff-version
@@ -61,10 +57,8 @@ From: ubuntu:bionic
     ./build.py
 
     ## Build FD
-    cd /planner
-    ## tar xjf Fast-Downward-2018-2.tar.bz2
     cd /planner/Fast-Downward-2018-2
-    ./build.py release32 -j4
+    ./build.py release64 -j4
 
     ## Build h2-preprocessor
     #cd /planner
@@ -77,7 +71,7 @@ From: ubuntu:bionic
 
     ## Strip binaries.
     strip --strip-all /planner/BFWS/ff-version/bfws \
-        /planner/Fast-Downward-2018-2/builds/release32/bin/downward \
+        /planner/Fast-Downward-2018-2/builds/release64/bin/downward \
         /planner/h2-fd-preprocessor/builds/release32/bin/preprocess
 
     ## Remove packages unneeded for running the planner.
@@ -100,7 +94,7 @@ From: ubuntu:bionic
     mv /planner/BFWS/ff-version /compiled-planner/BFWS
     mv /planner/BFWS/fd-version /compiled-planner/BFWS
     mkdir -p /compiled-planner/Fast-Downward-2018-2/builds/release32
-    mv /planner/Fast-Downward-2018-2/builds/release32/bin /compiled-planner/Fast-Downward-2018-2/builds/release32
+    mv /planner/Fast-Downward-2018-2/builds/release64/bin /compiled-planner/Fast-Downward-2018-2/builds/release32
     mv /planner/Fast-Downward-2018-2/driver /planner/Fast-Downward-2018-2/fast-downward.py /compiled-planner/Fast-Downward-2018-2
     mkdir -p /compiled-planner/h2-fd-preprocessor/builds/release32
     mv /planner/h2-fd-preprocessor/builds/release32/bin /compiled-planner/h2-fd-preprocessor/builds/release32
@@ -115,9 +109,6 @@ From: ubuntu:bionic
     PROBLEMFILE=$2
     PLANFILE=$3
 
-
-    ## Call your planner using FF-parser.
-    # /planner/BFWS/ff-version/bfws --domain $DOMAINFILE --problem $PROBLEMFILE --output $PLANFILE --Poly-Seq-BFWS 1
 
     ## Call your planner using FD-parser.
     /planner/BFWS/fd-version/poly_bfws.py $DOMAINFILE $PROBLEMFILE $PLANFILE
