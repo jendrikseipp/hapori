@@ -1,32 +1,40 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
 From: ubuntu:xenial
+Stage: build
 
 %files
-    . /planner
+    .
 
 %post
     ## Install all necessary dependencies.
-    apt update
-    apt -y install --no-install-recommends cmake g++ g++-multilib make python ca-certificates git
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
 
     ## Build your planner
-    cd /planner
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/builds/release64/bin/downward \
-        /planner/builds/release64/bin/preprocess
+    strip --strip-all builds/release64/bin/downward \
+        builds/release64/bin/preprocess
 
-    ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove cmake g++ make
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:xenial
+Stage: run
+
+# Copy planner binary and required files from Stage 1.
+%files from build
+    fast-downward.py /planner/fast-downward.py
+    builds/release64/bin/ /planner/builds/release64/bin/
+    driver /planner/driver
+
+%post
+    ## Install only dependencies for running the planner.
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    ## Remove unnecessary files to keep the image small.
     rm -rf /var/lib/apt/lists/*
-
-    ## Only keep essential binaries.
-    mkdir -p /compiled-planner/builds/release64
-    mv /planner/driver /planner/fast-downward.py /compiled-planner
-    mv /planner/builds/release64/bin /compiled-planner/builds/release64
-    rm -rf /planner
-    mv /compiled-planner /planner
 
 %runscript
     ## The runscript is called whenever the container is used to solve
