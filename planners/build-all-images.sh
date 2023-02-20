@@ -20,6 +20,7 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-sccdfp ${OUTDIR}/ipc2018-opt-delfi-mas-sccdfp.img
 ./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-sccdfp-60s ${OUTDIR}/ipc2018-opt-delfi-mas-sccdfp-60s.img
 ./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-miasm ${OUTDIR}/ipc2018-opt-delfi-mas-miasm.img
+./build-image.sh ../planners/ipc2018-opt-planning-pdbs/Singularity ${OUTDIR}/ipc2018-opt-planning-pdbs.img
 
 # AGL
 ./build-image.sh ../planners/ipc2014-agl-madagascar/Singularity-MpC ${OUTDIR}/ipc2014-agl-mpc.img
