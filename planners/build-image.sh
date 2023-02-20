@@ -28,8 +28,9 @@ DOMAIN="${TMPDIR}/domain.pddl"
 PROBLEM="${TMPDIR}/problem.pddl"
 PLANFILE="${TMPDIR}/my_sas_plan"
 
-# Scorpion uses 200s of preprocessing time.
-if [[ ${IMAGE} != *"scorpion.img"* ]]; then
+if [[ ${IMAGE} == *"scorpion.img"* ]]; then
+    echo "Skipping tests for Scorpion since it uses 200s of preprocessing time."
+else
     ulimit -St 1800
     apptainer run -C -H ${TMPDIR} ${IMAGE} ${DOMAIN} ${PROBLEM} ${PLANFILE}
 
