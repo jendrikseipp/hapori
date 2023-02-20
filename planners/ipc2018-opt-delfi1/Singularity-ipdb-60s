@@ -1,47 +1,40 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
 
 %post
-
-    ## The "%post"-part of this script is called after the container has
-    ## been created with the "%setup"-part above and runs "inside the
-    ## container". Most importantly, it is used to install dependencies
-    ## and build the planner. Add all commands that have to be executed
-    ## once before the planner runs in this part of the script.
-
     ## Install all necessary dependencies.
-    apt update
-    apt -y install cmake g++ make python
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
 
-    ## Build your planner
+    ## Build planner.
     cd /planner
     ./build.py release64 -j4
 
     ## Strip binaries.
     strip --strip-all /planner/builds/release64/bin/downward \
-        /planner/builds/release64/bin/preprocess \
+        /planner/builds/release64/bin/preprocess
 
-    ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove cmake g++ make
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
     rm -rf /var/lib/apt/lists/*
 
-    ## Only keep essential binaries.
-    mkdir -p /compiled-planner/builds/release64
-    mv /planner/driver /compiled-planner
-    mv /planner/fast-downward.py /planner/plan-ipc.py /planner/create-image-from-graph.py /planner/timers.py /compiled-planner
-    mv /planner/dl_model /compiled-planner
-    rm -rf /compiled-planner/dl_model/model_creation /compiled-planner/dl_model/model.h5 /compiled-planner/dl_model/model.json
-    mv /planner/builds/release64/bin /compiled-planner/builds/release64
-    rm -rf /planner
-    mv /compiled-planner /planner
-
 %runscript
-    ## The runscript is called whenever the container is used to solve
-    ## an instance.
-
     DOMAINFILE=$1
     PROBLEMFILE=$2
     PLANFILE=$3
