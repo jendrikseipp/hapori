@@ -32,7 +32,7 @@ if [[ ${IMAGE} == *"scorpion.img"* ]]; then
     echo "Skipping tests for Scorpion since it uses 200s of preprocessing time."
 else
     ulimit -St 1800
-    apptainer run -C -H ${TMPDIR} ${IMAGE} ${DOMAIN} ${PROBLEM} ${PLANFILE}
+    ./../plan.py ${IMAGE} config00 ${DOMAIN} ${PROBLEM} ${PLANFILE}
 
     if [[ -e ${PLANFILE} ]]; then
         echo "Plan found."

@@ -38,6 +38,7 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.agl ${OUTDIR}/ipc2018-agl-merwin.img
 
 # SAT
-./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.sat ${OUTDIR}/ipc2018-sat-merwin.img
+#./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.sat ${OUTDIR}/ipc2018-sat-merwin.img # TODO: fails with "unknown IPC planner name: seq-sat-merwin"
+./build-image.sh ../planners/ipc2018-sat-fdss-2018/Singularity ${OUTDIR}/ipc2018-sat-fdss-2018.img
 
 echo "Finished building images"
