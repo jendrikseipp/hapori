@@ -1,13 +1,15 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
-From: ubuntu:bionic
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
 
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install cmake g++ make python ca-certificates git
-    rm -rf /var/lib/apt/lists/*
-
-    git clone -b ipc-2018-seq-sat https://bitbucket.org/ipc2018-classical/team45.git /planner
+    apt-get -y install --no-install-recommends cmake g++ make python
 
     ## Build planner.
     cd /planner
@@ -19,22 +21,28 @@ From: ubuntu:bionic
     cmake ../../h2-mutexes/
     make -j4
 
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/h2-mutexes/bin/preprocess
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+    /planner/builds/h2-mutexes/bin/preprocess /planner/preprocess
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
 %runscript
-    ## The runscript is called whenever the container is used to solve
-    ## an instance.
-
-    DOMAINFILE=$1
-    PROBLEMFILE=$2
-    PLANFILE=$3
-
-    ## Call your planner.
-    /planner/fast-downward.py \
-        --build=release64 \
-        --plan-file $PLANFILE \
-        --transform-task /planner/builds/h2-mutexes/bin/preprocess \
-        --alias seq-sat-fdss-2018 \
-        $DOMAINFILE \
-        $PROBLEMFILE
+    /planner/fast-downward.py "$@"
 
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
