@@ -40,5 +40,5 @@ Stage: run
     PLANFILE=$3
 
     ## Call your planner.
-    # h2-simpless-dks-celmcut
-    /planner/fast-downward.py --build release64 --transform-task preprocess --plan-file $PLANFILE $DOMAINFILE $PROBLEMFILE --symmetries 'sym=structural_symmetries(search_symmetries=dks)' --search 'astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)'
+    # h2-simpless-oss-celmcut
+    /planner/fast-downward.py --build release64 --transform-task preprocess --plan-file $PLANFILE $DOMAINFILE $PROBLEMFILE --symmetries 'sym=structural_symmetries(search_symmetries=oss)' --search 'astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)'

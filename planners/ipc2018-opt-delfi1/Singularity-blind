@@ -39,5 +39,5 @@ Stage: run
     PROBLEMFILE=$2
     PLANFILE=$3
 
-    # h2-simpless-dks-blind
-    /planner/fast-downward.py --build release64 --transform-task preprocess --plan-file $PLANFILE $DOMAINFILE $PROBLEMFILE --symmetries 'sym=structural_symmetries(search_symmetries=dks)' --search 'astar(blind,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)'
+    # h2-simpless-oss-blind
+    /planner/fast-downward.py --build release64 --transform-task preprocess --plan-file $PLANFILE $DOMAINFILE $PROBLEMFILE --symmetries 'sym=structural_symmetries(search_symmetries=oss)' --search 'astar(blind,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)'
