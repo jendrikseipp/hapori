@@ -75,6 +75,42 @@ if [[ "$1" == "ipc" ]]; then
             echo "Something is seriously messed up!"
             exit 2
         fi
+    elif [[ "$CONFIG" == "seq-sat-merwin" ]]; then
+        if [[ "$UNIT_COST" == "unit" ]]; then
+            "$PLANNER" \
+                --heuristic "hrb=RB(cost_type=1, extract_plan=true, next_red_action_test=true, applicable_paths_first=true, use_connected=true)" \
+                --heuristic "hlm=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=1,cost_type=1))" \
+                --heuristic "hn=novelty(cost_type=1, eval=hrb)" \
+                --search "iterated([
+                    lazy(open=alt([tiebreaking([hn, hrb]), single(hrb,pref_only=true), single(hlm), single(hlm,pref_only=true)], boost=1000),preferred=[hrb,hlm]),
+                    lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=5),
+                    lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=3),
+                    lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=2),
+                    lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=1)],
+                    repeat_last=true,continue_on_fail=true)" \
+                "$@" < $TEMPFILE
+        elif [[ "$UNIT_COST" == "nonunit" ]]; then
+            "$PLANNER" \
+                --heuristic "hrb=RB(cost_type=1, extract_plan=true, next_red_action_test=true, applicable_paths_first=true, use_connected=true)" \
+                --heuristic "hlm1=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=1,cost_type=1))" \
+                --heuristic "hlm2=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=2,cost_type=2))" \
+                --heuristic "hn1=novelty(cost_type=1, eval=hrb)" \
+                --heuristic "hn2=novelty(cost_type=1, eval=hrb)" \
+                --search "iterated([
+                    lazy(open=alt([tiebreaking([hn1, hrb]), single(hrb,pref_only=true), single(hlm1), single(hlm1,pref_only=true)], boost=1000), preferred=[hrb,hlm1],
+                                cost_type=1,reopen_closed=false),
+                    lazy(open=alt([tiebreaking([hn2, hrb]), single(hrb,pref_only=true), single(hlm2), single(hlm2,pref_only=true)], boost=1000), preferred=[hrb,hlm2],
+                                reopen_closed=false),
+                    lazy_wastar([hrb,hlm2],preferred=[hrb,hlm2],w=5),
+                    lazy_wastar([hrb,hlm2],preferred=[hrb,hlm2],w=3),
+                    lazy_wastar([hrb,hlm2],preferred=[hrb,hlm2],w=2),
+                    lazy_wastar([hrb,hlm2],preferred=[hrb,hlm2],w=1)],
+                    repeat_last=true,continue_on_fail=true)" \
+                "$@" < $TEMPFILE
+        else
+            echo "Something is seriously messed up!"
+            exit 2
+        fi
     elif [[ "$CONFIG" == "seq-sat-lama-2011" ]]; then
         echo "The seq-sat-lama-2011 planner should not use this code."
     elif [[ "$CONFIG" == "seq-opt-fd-autotune" ]]; then
