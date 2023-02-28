@@ -1,18 +1,25 @@
 #! /usr/bin/env python
 
+"""Run an Apptainer-based planner."""
+
 import argparse
 from pathlib import Path
 import subprocess
+import sys
 import traceback
 
 
 DIR = Path(__file__).resolve().parent
+CONFIGS = {
+    "ipc2018-opt-fdms": ["fdms1", "fdms2"],
+    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(1, 41)],
+}
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", help="path to Apptainer image file")
-    parser.add_argument("config", help="one of config00, ..., config40 for FDSS image, ignored for other images")
+    parser.add_argument("--config", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Possible values: {CONFIGS}")
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
@@ -53,9 +60,18 @@ def main():
     args = parse_args()
     image_path = args.image
     image_nick = Path(Path(args.image).name).stem
+    print(f"Image nick: {image_nick}")
     config = args.config
-    if image_nick == "ipc2018-sat-fdss-2018":
-        portfolio_path = DIR / "planners" / "ipc2018-sat-fdss-2018" / "driver" / "portfolios" / "seq_sat_fdss_2018.py"
+    if image_nick in CONFIGS:
+        if not config:
+            sys.exit(f"Image {image_nick} needs a --config.")
+        if config not in CONFIGS[image_nick]:
+            sys.exit(f"Image {image_nick} does not support config {config}.")
+    elif config:
+        sys.exit(f"The --config parameter is only allowed for the images {list(CONFIGS.keys())}")
+
+    if image_nick == "ipc2018-agl-fdss-2018":
+        portfolio_path = DIR / "planners" / "ipc2018-agl-fdss-2018" / "driver" / "portfolios" / "seq_sat_fdss_2018.py"
         configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
         print(f"Configs: {len(configs)}")
         assert config.startswith("config"), config
