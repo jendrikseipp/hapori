@@ -12,7 +12,7 @@ import traceback
 DIR = Path(__file__).resolve().parent
 CONFIGS = {
     "ipc2018-opt-fdms": ["fdms1", "fdms2"],
-    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(1, 41)],
+    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
 }
 
 def csv_list(s):
@@ -77,7 +77,7 @@ def main():
     elif configs and configs != ["all"]:
         sys.exit(f"The --configs parameter is only allowed for the images {list(CONFIGS.keys())}")
     else:
-        subprocess.run([image_path, args.domainfile, args.problemfile, args.planfile])
+        subprocess.run([image_path, args.domainfile, args.problemfile, args.planfile], check=True)
 
     for config in configs:
         if image_nick == "ipc2018-agl-fdss-2018":
@@ -93,7 +93,8 @@ def main():
                 image_path, "--build=release64",
                 "--plan-file", args.planfile,
                 "--transform-task", "/planner/preprocess",
-                args.domainfile, args.problemfile] + config)
+                args.domainfile, args.problemfile] + config,
+                check=True)
 
 
 if __name__ == "__main__":
