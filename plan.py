@@ -15,11 +15,14 @@ CONFIGS = {
     "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(1, 41)],
 }
 
+def csv_list(s):
+   return s.split(',')
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", help="path to Apptainer image file")
-    parser.add_argument("--config", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Possible values: {CONFIGS}")
+    parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Possible values: {CONFIGS}", type=csv_list, default=[])
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
@@ -60,32 +63,35 @@ def main():
     args = parse_args()
     image_path = args.image
     image_nick = Path(Path(args.image).name).stem
+    configs = args.configs
     print(f"Image nick: {image_nick}")
-    config = args.config
+    print(f"Configs: {configs}")
     if image_nick in CONFIGS:
-        if not config:
-            sys.exit(f"Image {image_nick} needs a --config.")
-        if config not in CONFIGS[image_nick]:
-            sys.exit(f"Image {image_nick} does not support config {config}.")
-    elif config:
-        sys.exit(f"The --config parameter is only allowed for the images {list(CONFIGS.keys())}")
-
-    if image_nick == "ipc2018-agl-fdss-2018":
-        portfolio_path = DIR / "planners" / "ipc2018-agl-fdss-2018" / "driver" / "portfolios" / "seq_sat_fdss_2018.py"
-        configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
-        print(f"Configs: {len(configs)}")
-        assert config.startswith("config"), config
-        config_index = int(config[len("config"):])
-        assert 0 <= config_index < len(configs)
-        _, config = configs[config_index]
-        config = prepare_config(config)
-        subprocess.run([
-            image_path, "--build=release64",
-            "--plan-file", args.planfile,
-            "--transform-task", "/planner/preprocess",
-            args.domainfile, args.problemfile] + config)
+        if not configs:
+            sys.exit(f"Image {image_nick} needs at least one config.")
+        for config in configs:
+            if config not in CONFIGS[image_nick]:
+                sys.exit(f"Image {image_nick} does not support config {config}.")
+    elif configs:
+        sys.exit(f"The --configs parameter is only allowed for the images {list(CONFIGS.keys())}")
     else:
         subprocess.run([image_path, args.domainfile, args.problemfile, args.planfile])
+
+    for config in configs:
+        if image_nick == "ipc2018-agl-fdss-2018":
+            portfolio_path = DIR / "planners" / "ipc2018-agl-fdss-2018" / "driver" / "portfolios" / "seq_sat_fdss_2018.py"
+            configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
+            print(f"Configs: {len(configs)}")
+            assert config.startswith("config"), config
+            config_index = int(config[len("config"):])
+            assert 0 <= config_index < len(configs)
+            _, config = configs[config_index]
+            config = prepare_config(config)
+            subprocess.run([
+                image_path, "--build=release64",
+                "--plan-file", args.planfile,
+                "--transform-task", "/planner/preprocess",
+                args.domainfile, args.problemfile] + config)
 
 
 if __name__ == "__main__":
