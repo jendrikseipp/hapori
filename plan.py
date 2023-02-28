@@ -22,7 +22,7 @@ def csv_list(s):
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", help="path to Apptainer image file")
-    parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Possible values: {CONFIGS}", type=csv_list, default=[])
+    parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=[])
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
@@ -70,9 +70,11 @@ def main():
         if not configs:
             sys.exit(f"Image {image_nick} needs at least one config.")
         for config in configs:
-            if config not in CONFIGS[image_nick]:
+            if config == "all":
+                configs = CONFIGS[image_nick]
+            elif config not in CONFIGS[image_nick]:
                 sys.exit(f"Image {image_nick} does not support config {config}.")
-    elif configs:
+    elif configs and configs != ["all"]:
         sys.exit(f"The --configs parameter is only allowed for the images {list(CONFIGS.keys())}")
     else:
         subprocess.run([image_path, args.domainfile, args.problemfile, args.planfile])

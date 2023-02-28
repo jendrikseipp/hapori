@@ -24,7 +24,7 @@ OUTDIR=../images/
 
 # AGL
 ./build-image.sh ../planners/ipc2014-agl-madagascar/Singularity-MpC ${OUTDIR}/ipc2014-agl-mpc.img
-./build-image.sh ../planners/ipc2014-agl-mercury/Singularity ${OUTDIR}/ipc2014-agl-mercury.img
+#./build-image.sh ../planners/ipc2014-agl-mercury/Singularity ${OUTDIR}/ipc2014-agl-mercury.img  # TODO: file not found
 ./build-image.sh ../planners/ipc2014-agl-jasper/Singularity ${OUTDIR}/ipc2014-agl-jasper.img
 ./build-image.sh ../planners/ipc2014-agl-probe/Singularity ${OUTDIR}/ipc2014-agl-probe.img
 ./build-image.sh ../planners/ipc2018-agl-decstar/Singularity ${OUTDIR}/ipc2018-agl-decstar.img
@@ -35,10 +35,10 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
 ./build-image.sh ../planners/ipc2018-agl-saarplan/Singularity ${OUTDIR}/ipc2018-agl-saarplan.img
 ./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img
-./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.agl ${OUTDIR}/ipc2018-agl-merwin.img
+# ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.agl ${OUTDIR}/ipc2018-agl-merwin.img  # TODO: no plan found
 
 # SAT
-./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.sat ${OUTDIR}/ipc2018-sat-merwin.img 
-./build-image.sh ../planners/ipc2018-sat-fdss-2018/Singularity ${OUTDIR}/ipc2018-sat-fdss-2018.img
+# ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.sat ${OUTDIR}/ipc2018-sat-merwin.img  # TODO: no plan found
+./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-agl-fdss-2018.img
 
 echo "Finished building images"
