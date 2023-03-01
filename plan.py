@@ -3,6 +3,7 @@
 """Run an Apptainer-based planner."""
 
 import argparse
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -60,6 +61,7 @@ def parse_args():
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
+    parser.add_argument("--not-check-subprocess", action="store_false")
     return parser.parse_args()
 
 
@@ -92,6 +94,17 @@ def prepare_config(config, replacements=None):
         config[index] = part
     return config
 
+def run_image(args, cmd):
+    subprocess.run(cmd, check=args.not_check_subprocess)
+    if os.path.exists(args.planfile):
+        print("Found plan file.")
+        subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile, args.planfile])
+    else:
+        print("No plan file.")
+        # TODO why do we support running multiple configuations in a single
+        #  call? If this line should be reworked if there is really is a use
+        # case for running multiple configs at once.
+        sys.exit(99)
 
 def main():
     args = parse_args()
@@ -111,7 +124,7 @@ def main():
     elif configs and configs != ["all"]:
         sys.exit(f"The --configs parameter is only allowed for the images {list(CONFIGS.keys())}")
     else:
-        subprocess.run([image_path, args.domainfile, args.problemfile, args.planfile], check=True)
+        run_image(args, [image_path, args.domainfile, args.problemfile, args.planfile])
 
     for config in configs:
         print(f"Run config {config}")
@@ -124,16 +137,14 @@ def main():
             assert 0 <= config_index < len(fdss_configs)
             _, fdss_config = fdss_configs[config_index]
             fdss_config = prepare_config(fdss_config)
-            subprocess.run([
+            run_image(args, [
                 image_path, "--build=release64",
                 "--plan-file", args.planfile,
                 "--transform-task", "/planner/preprocess",
-                args.domainfile, args.problemfile] + fdss_config,
-                check=True)
+                args.domainfile, args.problemfile] + fdss_config)
         if image_nick == "ipc2018-agl-lapkt-bfws":
-            subprocess.run([
-                image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile],
-                check=True)
+            run_image(args, [
+                image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile])
         if image_nick == "ipc2018-opt-decstar":
             portfolio_path = DIR / "planners" / "ipc2018-opt-decstar" / "src" / "driver" / "portfolios" / "seq_opt_ds.py"
             ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
@@ -143,20 +154,19 @@ def main():
             assert 0 <= config_index < len(ds_configs)
             _, ds_config = ds_configs[config_index]
             ds_config = prepare_config(ds_config)
-            subprocess.run([
+            run_image(args, [
                 image_path,
                 "--plan-file", args.planfile,
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2-time-limit", "120",
-                "--search-options"] + ds_config,
-                check=True)
+                "--search-options"] + ds_config)
         if image_nick == "ipc2018-opt-delfi":
             preprocess = ""
             if "masb50kmiasmdfp" not in config:
                 preprocess = "--transform-task preprocess"
-            subprocess.run([
-                image_path, args.domainfile, args.problemfile, args.planfile, preprocess, " ".join(DELFI_CMDS[config])],
-                check=True)
+            run_image(
+                args, [
+                image_path, args.domainfile, args.problemfile, args.planfile, preprocess, " ".join(DELFI_CMDS[config])])
         if image_nick == "ipc2018-opt-fdms":
             if config == "fdms1":
                 merge_strategy = "merge_strategy=merge_sccs(order_of_sccs=topological,merge_selector=score_based_filtering(scoring_functions=[goal_relevance,dfp,total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
@@ -164,9 +174,8 @@ def main():
                 merge_strategy = "merge_strategy=merge_stateless(merge_selector=score_based_filtering(scoring_functions=[sf_miasm(shrink_strategy=shrink_bisimulation(greedy=false),max_states=50000,threshold_before_merge=1),total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
             else:
                 sys.exit(f"unknown config {config}")
-            subprocess.run([
-                image_path, args.domainfile, args.problemfile, args.planfile, merge_strategy],
-                check=True)
+            run_image(args, [
+                image_path, args.domainfile, args.problemfile, args.planfile, merge_strategy])
         if image_nick == "ipc2018-opt-metis":
             if config == "metis1":
                 cmd = "--symmetries sym=structural_symmetries(search_symmetries=oss) --search astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
@@ -174,11 +183,10 @@ def main():
                 cmd = "--symmetries sym=structural_symmetries(search_symmetries=dks) --search astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
             else:
                 sys.exit(f"unknown config {config}")
-            subprocess.run([
-                image_path, args.domainfile, args.problemfile, args.planfile, cmd],
-                check=True)
+            run_image(args, [
+                image_path, args.domainfile, args.problemfile, args.planfile, cmd])
         if image_nick == "ipc2018-agl-cerberus" or image_nick == "ipc2018-agl-merwin":
-            subprocess.run([
+            run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config],
                 check=True)
 

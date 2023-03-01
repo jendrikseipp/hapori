@@ -48,6 +48,7 @@ def set_outcome(content, props):
 
     if not solved and not unsolvable:
         props["cpu_time"] = None
+        props["wall_time"] = None
 
     if solved ^ unsolvable ^ out_of_time ^ out_of_memory:
         if solved:

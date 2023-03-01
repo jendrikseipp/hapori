@@ -28,6 +28,8 @@ from downward.reports.absolute import AbsoluteReport
 from lab.environments import BaselSlurmEnvironment, LocalEnvironment
 from lab.experiment import Experiment
 
+sys.path.append(str(Path(__file__).parent.parent))
+import plan
 
 # Create custom report class with suitable info and error attributes.
 class BaseReport(AbsoluteReport):
@@ -89,22 +91,31 @@ exp.add_fetcher(name="fetch")
 exp.add_parser(DIR / "singularity-parser.py")
 
 
-def get_image(name):
+def get_configs(name):
     planner = name.replace("-", "_")
-    image = IMAGES_DIR / (name + ".img")
-    assert image.is_file(), image
-    return planner, image
+    configs = plan.CONFIGS.get(name)
+    if configs is None:
+        yield planner, [f"{{{planner}}}"]
+    else:
+        for config_name in configs:
+            yield f"{planner}_{config_name}", [f"{{{planner}}}", "--configs", config_name]
 
-RAW_IMAGES = ['ipc2014-opt-symba1'] if not RUNNING_ON_CLUSTER else ['ipc2014-opt-symba1', 'ipc2018-opt-complementary2', 'ipc2018-opt-decstar', 'ipc2018-opt-delfi-blind', 'ipc2018-opt-delfi-celmcut', 'ipc2018-opt-delfi-ipdb-60s', 'ipc2018-opt-delfi-ipdb', 'ipc2018-opt-delfi-mas-miasm', 'ipc2018-opt-delfi-mas-sccdfp-60s', 'ipc2018-opt-delfi-mas-sccdfp', 'ipc2018-opt-fdms1', 'ipc2018-opt-fdms2', 'ipc2018-opt-metis1', 'ipc2018-opt-metis2', 'ipc2018-opt-planning-pdbs', 'ipc2018-opt-scorpion', 'ipc2018-opt-scorpion-nodiv', 'ipc2018-opt-symple1', 'ipc2018-opt-symple2']
-IMAGES = [get_image(image) for image in RAW_IMAGES]
 
-for planner, image in IMAGES:
-    exp.add_resource(planner, image, symlink=True)
+RAW_IMAGES = ['ipc2018-opt-fdms'] if not RUNNING_ON_CLUSTER else ['ipc2014-opt-symba1', 'ipc2018-opt-complementary1', 'ipc2018-opt-complementary2', 'ipc2018-opt-decstar', 'ipc2018-opt-delfi', 'ipc2018-opt-fdms', 'ipc2018-opt-metis', 'ipc2018-opt-planning-pdbs', 'ipc2018-opt-scorpion', 'ipc2018-opt-scorpion-nodiv', 'ipc2018-opt-symple1', 'ipc2018-opt-symple2']
+for image in RAW_IMAGES:
+    file_image = IMAGES_DIR / f"{image}.img"
+    assert file_image.is_file(), file_image
+    exp.add_resource(image.replace("-", "_"), file_image, symlink=True)
 
-exp.add_resource("run_singularity", DIR / "run-singularity.sh")
+IMAGES = [(planner, config)
+          for image in RAW_IMAGES
+          for planner, config in get_configs(image)]
+
+exp.add_resource("run_plan", DIR.parent / "plan.py")
+# exp.add_resource("run_singularity", DIR / "run-singularity.sh")
 exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
 
-for planner, _ in IMAGES:
+for planner, config in IMAGES:
     for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
         run = exp.add_run()
         run.add_resource("domain", task.domain_file, "domain.pddl")
@@ -125,11 +136,12 @@ for planner, _ in IMAGES:
                 "watch.log",
                 "-v",
                 "values.log",
-                "{run_singularity}",
-                f"{{{planner}}}",
+                "{run_plan}"
+            ] + config + [
                 "{domain}",
                 "{problem}",
                 "sas_plan",
+                "--not-check-subprocess",
             ],
         )
         # Remove temporary files from old Fast Downward versions.
