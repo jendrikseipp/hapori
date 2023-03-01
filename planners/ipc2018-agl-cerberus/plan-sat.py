@@ -21,30 +21,7 @@ def get_plan_cost(name):
     cost = int(res[0])
     return cost
 
-
-def get_config_string_agl(col="from_coloring"):
-    cnf_unit = [
-        "--if-unit-cost",
-        "--heuristic",
-        "hrb=RB(dag=%s, extract_plan=true)" % col,
-        "--heuristic",
-        "hn=novelty(eval=hrb)",
-        "--heuristic",
-        "hlm=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=ONE))"]
-    cnf_nonunit = ["--if-non-unit-cost",
-                "--heuristic",
-                "hrb1=RB(dag=%s, extract_plan=true, transform=adapt_costs(one))" % col,
-                "--heuristic",
-                "hn=novelty(eval=hrb1)",
-                "--heuristic",
-                "hlm1=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=one),transform=adapt_costs(one))"]
-
-    unit_search = ["--search", "lazy(open=alt([tiebreaking([hn, hrb]), single(hrb,pref_only=true), single(hlm), single(hlm,pref_only=true)], boost=1000), preferred=[hrb,hlm])"]
-    nonunit_search = ["--search", "lazy(open=alt([tiebreaking([hn, hrb1]), single(hrb1,pref_only=true), single(hlm1), single(hlm1,pref_only=true)], boost=1000), preferred=[hrb1,hlm1], cost_type=one,reopen_closed=false)"]
-
-    return cnf_unit + unit_search + cnf_nonunit + nonunit_search + ["--always"]
-
-def get_config_string_sat(col="from_coloring", bound="infinity"):
+def config_string(col="from_coloring", bound="infinity"):
     cnf_unit = [
         "--if-unit-cost",
         "--heuristic",
@@ -85,16 +62,6 @@ def get_config_string_sat(col="from_coloring", bound="infinity"):
                
     return cnf_unit + unit_search + cnf_nonunit + nonunit_search + ["--always"]
 
-def get_config_string(config, bound="infinity"):
-    if config == "agl":
-        return get_config_string_agl(col="from_coloring")
-    elif config == "agl-gl":
-        return get_config_string_agl(col="greedy_level")
-    elif config == "sat":
-        return get_config_string_sat(col="from_coloring", bound=bound)
-    elif config == "sat-gl":
-        return get_config_string_sat(col="greedy_level", bound=bound)
-
 if __name__ == "__main__":
     pathname = os.path.abspath(sys.argv[0])
     dirname = os.path.dirname(pathname)
@@ -103,11 +70,8 @@ if __name__ == "__main__":
     domain = sys.argv[1]
     problem = sys.argv[2]
     plan_file = sys.argv[3]
-
-    config = sys.argv[4] # Options: agl, agl-gl, sat, sat-gl
-
     planner_def_opts = [planner, "--build", "release64", "--plan-file", plan_file]
-    planner_curr_opts = ["--transform-task", "preprocess", domain, problem] + get_config_string(config)  
+    planner_curr_opts = ["--transform-task", "preprocess", domain, problem] + config_string()  
     print(planner_def_opts + planner_curr_opts)
 
     plan_manager = PlanManager(plan_file)
@@ -118,25 +82,21 @@ if __name__ == "__main__":
         subprocess.check_call(planner_def_opts + planner_curr_opts, shell=False)
     except subprocess.CalledProcessError as e:
         print("Error running with transform-task option, trying without")
-        if config.startswith("agl"):
-            planner_curr_opts = [domain, problem] + get_config_string(config)  
-        else:
-            # Satisficing
-            ## Running translator, no task transform
-            translate_opts = [planner, "--build", "release64", "--translate", domain, problem]
-            subprocess.call(translate_opts, shell=False)
-            translated_file = "output.sas"
-            
-            ## Checking whether solutions were found
-            plan_manager.process_new_plans()
-            best_cost = plan_manager.get_best_plan_cost()
-            last_plan_number = plan_manager.get_plan_counter()
-            print("best cost: %s" % best_cost)
-            print("number of previous plans: %s" % last_plan_number)
-            planner_curr_opts = [translated_file] + get_config_string(config, bound=best_cost)
-            # using "--internal-previous-portfolio-plans"
-            if last_plan_number > 0:
-                planner_curr_opts = [translated_file, "--internal-previous-portfolio-plans", str(last_plan_number)] + get_config_string(config, bound=best_cost)
+        ## Running translator, no task transform
+        translate_opts = [planner, "--build", "release64", "--translate", domain, problem]
+        subprocess.call(translate_opts, shell=False)
+        translated_file = "output.sas"
+        
+        ## Checking whether solutions were found
+        plan_manager.process_new_plans()
+        best_cost = plan_manager.get_best_plan_cost()
+        last_plan_number = plan_manager.get_plan_counter()
+        print("best cost: %s" % best_cost)
+        print("number of previous plans: %s" % last_plan_number)
+        planner_curr_opts = [translated_file] + config_string(bound=best_cost)
+        # using "--internal-previous-portfolio-plans"
+        if last_plan_number > 0:
+            planner_curr_opts = [translated_file, "--internal-previous-portfolio-plans", str(last_plan_number)] + config_string(bound=best_cost)
         print(planner_def_opts + planner_curr_opts)
         sys.stdout.flush()
         try:

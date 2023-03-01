@@ -42,9 +42,10 @@ From: ubuntu:xenial
     DOMAINFILE=$1
     PROBLEMFILE=$2
     PLANFILE=$3
+    CONFIG=$4
 
     ## Call your planner.
-    /planner/plan.py $DOMAINFILE $PROBLEMFILE $PLANFILE
+    /planner/plan.py $DOMAINFILE $PROBLEMFILE $PLANFILE $CONFIG
 
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
