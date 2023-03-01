@@ -45,6 +45,8 @@ CONFIGS = {
     "ipc2018-opt-metis": ["metis1", "metis2"],
     "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
     "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
+    "ipc2018-agl-merwin": ["sat", "agl"],
+    "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
 }
 
 def csv_list(s):
@@ -175,7 +177,10 @@ def main():
             subprocess.run([
                 image_path, args.domainfile, args.problemfile, args.planfile, cmd],
                 check=True)
-
+        if image_nick == "ipc2018-agl-cerberus" or image_nick == "ipc2018-agl-merwin":
+            subprocess.run([
+                image_path, args.domainfile, args.problemfile, args.planfile, config],
+                check=True)
 
 
 
