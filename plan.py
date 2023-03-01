@@ -19,6 +19,7 @@ LAPKT_DRIVERS = {
 
 CONFIGS = {
     "ipc2018-opt-fdms": ["fdms1", "fdms2"],
+    "ipc2018-opt-metis": ["metis1", "metis2"],
     "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
     "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
 }
@@ -117,8 +118,24 @@ def main():
                 sys.exit(f"unknown config {config}")
             subprocess.run([
                 image_path, args.domainfile, args.problemfile,
-                 args.planfile, merge_strategy
+                args.planfile, merge_strategy
             ], check=True)
+        if image_nick == "ipc2018-opt-metis":
+            if config == "metis1":
+                cmd = "--symmetries sym=structural_symmetries(search_symmetries=oss) --search astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
+            elif config == "metis2":
+                cmd = "--symmetries sym=structural_symmetries(search_symmetries=dks) --search astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
+            else:
+                sys.exit(f"unknown config {config}")
+            subprocess.run([
+                image_path, args.domainfile, args.problemfile,
+                args.planfile, cmd
+            ], check=True)
+
+
+
+
+
 
 
 if __name__ == "__main__":
