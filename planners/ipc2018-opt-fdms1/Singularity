@@ -26,7 +26,6 @@ Stage: run
 # Copy planner binary and required files from Stage 1.
 %files from build
     fast-downward.py /planner/fast-downward.py
-    plan.py /planner/plan.py
     builds/release64/bin/ /planner/builds/release64/bin/
     driver /planner/driver
 
@@ -54,12 +53,15 @@ Stage: run
     fi
     TIME_LIMIT=$((TIME_LIMIT/2))
     echo "set time limit to: $TIME_LIMIT"
-    /planner/plan.py \
+    /planner/fast-downward.py \
+        --transform-task "/planner/builds/release64/bin/preprocess" \
+        --build 'release64' \
+        --search-memory-limit '7744M' \
+        --plan-file $PLANFILE \
         $DOMAINFILE \
         $PROBLEMFILE \
-        $PLANFILE \
-        $CONFIG \
-        $TIME_LIMIT
+        --symmetries 'sym=structural_symmetries(search_symmetries=dks)' \
+        --search "astar(merge_and_shrink(shrink_strategy=shrink_bisimulation(greedy=false),$CONFIG,label_reduction=exact(before_shrinking=true,before_merging=false),max_states=50000,threshold_before_merge=1,max_time=$TIME_LIMIT,verbosity=normal),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
 
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
