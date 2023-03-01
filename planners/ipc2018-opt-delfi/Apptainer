@@ -1,0 +1,54 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build planner.
+    cd /planner
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/release64/bin/preprocess
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+    PREPROCESS=$4
+    CONFIG=$5
+
+    /planner/fast-downward.py --build release64 $PREPROCESS --plan-file $PLANFILE $DOMAINFILE $PROBLEMFILE $CONFIG
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Delfi Configs
+Description This planner uses an offline learned algorithm selector to choose the "best" planner online based on a abstract structure graph of the PDDL description of the planning task. In particular, the learning algorithm uses such graphs of a planning task, turns them into an image and uses the planner runtime to train a neural net. The learned model thus predicts runtime of planners on a given task and chooses a planner accordingly.
+Authors     Michael Katz <michael.katz1@ibm.com>, Shirin Sohrabi <ssohrab@us.ibm.com>, Horst Samulowitz <samulowitz@us.ibm.com>, and Silvan Sievers <silvan.sievers@unibas.ch>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

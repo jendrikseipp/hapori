@@ -11,19 +11,14 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-opt-complementary1/Singularity ${OUTDIR}/ipc2018-opt-complementary1.img
 ./build-image.sh ../planners/ipc2018-opt-complementary2/Singularity ${OUTDIR}/ipc2018-opt-complementary2.img
 ./build-image.sh ../planners/ipc2018-opt-decstar/Singularity ${OUTDIR}/ipc2018-opt-decstar.img
-#./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity ${OUTDIR}/ipc2018-opt-delfi.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-blind ${OUTDIR}/ipc2018-opt-delfi-blind.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-celmcut ${OUTDIR}/ipc2018-opt-delfi-celmcut.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-ipdb ${OUTDIR}/ipc2018-opt-delfi-ipdb.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-ipdb-60s ${OUTDIR}/ipc2018-opt-delfi-ipdb-60s.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-miasm ${OUTDIR}/ipc2018-opt-delfi-mas-miasm.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-sccdfp ${OUTDIR}/ipc2018-opt-delfi-mas-sccdfp.img
-./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity-mas-sccdfp-60s ${OUTDIR}/ipc2018-opt-delfi-mas-sccdfp-60s.img
+./build-image.sh ../planners/ipc2018-opt-delfi/Apptainer ${OUTDIR}/ipc2018-opt-delfi.img
 ./build-image.sh ../planners/ipc2018-opt-fdms/Singularity ${OUTDIR}/ipc2018-opt-fdms.img
 ./build-image.sh ../planners/ipc2018-opt-metis/Singularity ${OUTDIR}/ipc2018-opt-metis.img
 ./build-image.sh ../planners/ipc2018-opt-planning-pdbs/Singularity ${OUTDIR}/ipc2018-opt-planning-pdbs.img
 ./build-image.sh ../planners/ipc2018-opt-scorpion-nodiv/Singularity ${OUTDIR}/ipc2018-opt-scorpion-nodiv.img
 ./build-image.sh ../planners/ipc2018-opt-scorpion/Singularity ${OUTDIR}/ipc2018-opt-scorpion.img
+./build-image.sh ../planners/ipc2018-opt-symple1/Singularity ${OUTDIR}/ipc2018-opt-symple1.img
+./build-image.sh ../planners/ipc2018-opt-symple2/Singularity ${OUTDIR}/ipc2018-opt-symple2.img
 
 
 # AGL
