@@ -1,17 +1,40 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
-From: ubuntu:xenial
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
 
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install cmake g++ make python autotools-dev automake gcc g++-multilib ca-certificates git
-    rm -rf /var/lib/apt/lists/*
+    apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
 
-    git clone -b ipc-2018-seq-opt https://bitbucket.org/ipc2018-classical/team9.git /planner
-
-    ## Build your planner
+    ## Build the planner
     cd /planner
-    ./build.py release64 -j6
+    ./build.py release64 -j8
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward
+
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+# Copy planner binary and required files from Stage 1.
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
 %runscript
     ## The runscript is called whenever the container is used to solve
