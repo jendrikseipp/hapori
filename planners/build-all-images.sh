@@ -8,6 +8,7 @@ OUTDIR=../images/
 
 # OPT
 ./build-image.sh ../planners/ipc2014-opt-symba/Singularity-01 ${OUTDIR}/ipc2014-opt-symba1.img
+./build-image.sh ../planners/ipc2018-opt-complementary1/Singularity ${OUTDIR}/ipc2018-opt-complementary1.img
 ./build-image.sh ../planners/ipc2018-opt-complementary2/Singularity ${OUTDIR}/ipc2018-opt-complementary2.img
 ./build-image.sh ../planners/ipc2018-opt-decstar/Singularity ${OUTDIR}/ipc2018-opt-decstar.img
 #./build-image.sh ../planners/ipc2018-opt-delfi1/Singularity ${OUTDIR}/ipc2018-opt-delfi.img
