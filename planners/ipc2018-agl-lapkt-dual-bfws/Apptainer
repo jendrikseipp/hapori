@@ -27,8 +27,6 @@ Stage: build
         g++-multilib \
         g++
 
-    rm -rf /var/lib/apt/lists/*
-
     export LAPKT_PATH=/planner/LAPKT-public
 
     cd $LAPKT_PATH
