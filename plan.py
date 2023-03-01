@@ -39,6 +39,7 @@ DELFI_CMDS = {
 }
 
 CONFIGS = {
+    "ipc2018-opt-decstar": [f"config{i:02d}" for i in range(0, 7)],
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     "ipc2018-opt-fdms": ["fdms1", "fdms2"],
     "ipc2018-opt-metis": ["metis1", "metis2"],
@@ -130,6 +131,22 @@ def main():
         if image_nick == "ipc2018-agl-lapkt-bfws":
             subprocess.run([
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile],
+                check=True)
+        if image_nick == "ipc2018-opt-decstar":
+            portfolio_path = DIR / "planners" / "ipc2018-opt-decstar" / "src" / "driver" / "portfolios" / "seq_opt_ds.py"
+            ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
+            print(f"Decstar configs: {len(ds_configs)}")
+            assert config.startswith("config"), config
+            config_index = int(config[len("config"):])
+            assert 0 <= config_index < len(ds_configs)
+            _, ds_config = ds_configs[config_index]
+            ds_config = prepare_config(ds_config)
+            subprocess.run([
+                image_path,
+                "--plan-file", args.planfile,
+                args.domainfile, args.problemfile,
+                "--preprocess-options", "--h2-time-limit", "120",
+                "--search-options"] + ds_config,
                 check=True)
         if image_nick == "ipc2018-opt-delfi":
             preprocess = ""
