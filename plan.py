@@ -108,6 +108,17 @@ def main():
             subprocess.run([
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile],
                 check=True)
+        if image_nick == "ipc2018-opt-fdms":
+            if config == "fdms1":
+                merge_strategy = "merge_strategy=merge_sccs(order_of_sccs=topological,merge_selector=score_based_filtering(scoring_functions=[goal_relevance,dfp,total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
+            elif config == "fdms2":
+                merge_strategy = "merge_strategy=merge_stateless(merge_selector=score_based_filtering(scoring_functions=[sf_miasm(shrink_strategy=shrink_bisimulation(greedy=false),max_states=50000,threshold_before_merge=1),total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
+            else:
+                sys.exit(f"unknown config {config}")
+            subprocess.run([
+                image_path, args.domainfile, args.problemfile,
+                 args.planfile, merge_strategy
+            ], check=True)
 
 
 if __name__ == "__main__":
