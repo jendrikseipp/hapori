@@ -36,9 +36,9 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-agl-saarplan/Singularity ${OUTDIR}/ipc2018-agl-saarplan.img
 ./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.agl ${OUTDIR}/ipc2018-agl-merwin.img
+./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-agl-fdss-2018.img
 
 # SAT
 # ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity.sat ${OUTDIR}/ipc2018-sat-merwin.img  # TODO: no plan found
-./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-agl-fdss-2018.img
 
 echo "Finished building images"
