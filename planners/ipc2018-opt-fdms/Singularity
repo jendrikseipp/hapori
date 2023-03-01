@@ -66,8 +66,8 @@ Stage: run
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
 %labels
-Name        FDMS1
-Description A planner using the merge-and-shrink heuristic with bisimulation-based shrinking, SCC-DFP merging, exact label reduction, and a time limit of 900s for the construction of the heuristic. It additionally uses partial order reduction (simple stubborn sets) with a safety belt feature that disables pruning if deeming not enough and with support for conditional effects, symmetry-based pruning with the DKS algorithm, and the h2 preprocessor of Torralba and Alcazar.
+Name        FDMS1 and FDMS2
+Description A planner using the merge-and-shrink heuristic with bisimulation-based shrinking, SCC-DFP merging, exact label reduction, and a time limit of 900s for the construction of the heuristic. It additionally uses partial order reduction (simple stubborn sets) with a safety belt feature that disables pruning if deeming not enough and with support for conditional effects, symmetry-based pruning with the DKS algorithm, and the h2 preprocessor of Torralba and Alcazar. FDMS2 uses sb-MIASM merging instead of SCC-DFP merging.
 Authors     Silvan Sievers <silvan.sievers@unibas.ch>
 SupportsDerivedPredicates no
 SupportsQuantifiedPreconditions no
