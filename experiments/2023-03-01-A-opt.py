@@ -28,6 +28,8 @@ from downward.reports.absolute import AbsoluteReport
 from lab.environments import BaselSlurmEnvironment, LocalEnvironment
 from lab.experiment import Experiment
 
+import project
+
 sys.path.append(str(Path(__file__).parent.parent))
 import plan
 
