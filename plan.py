@@ -47,6 +47,7 @@ CONFIGS = {
     "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
     "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-merwin": ["sat", "agl"],
+    "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
 }
 
@@ -185,10 +186,9 @@ def main():
                 sys.exit(f"unknown config {config}")
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, cmd])
-        if image_nick == "ipc2018-agl-cerberus" or image_nick == "ipc2018-agl-merwin":
+        if image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
             run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile, config],
-                check=True)
+                image_path, args.domainfile, args.problemfile, args.planfile, config])
 
 
 
