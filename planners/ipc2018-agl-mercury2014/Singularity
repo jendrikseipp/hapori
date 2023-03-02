@@ -43,5 +43,7 @@ From: ubuntu:18.04
     DOMAINFILE=$1
     PROBLEMFILE=$2
     PLANFILE=$3
+    CONFIG=$4
 
-    /planner/plan $DOMAINFILE $PROBLEMFILE $PLANFILE
+    # /planner/plan $DOMAINFILE $PROBLEMFILE $PLANFILE
+    /planner/src/plan-ipc seq-$CONFIG-mercury $DOMAINFILE $PROBLEMFILE $PLANFILE
