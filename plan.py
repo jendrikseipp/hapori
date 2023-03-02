@@ -43,7 +43,8 @@ CONFIGS = {
     "ipc2018-opt-decstar": [f"config{i:02d}" for i in range(0, 7)],
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     "ipc2018-opt-fdms": ["fdms1", "fdms2"],
-    "ipc2018-opt-metis": ["metis1", "metis2"],
+    # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
+    "ipc2018-opt-metis": ["metis2"],
     "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
     "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-merwin": ["sat", "agl"],
