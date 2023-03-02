@@ -45,7 +45,7 @@ struct RelaxedOperatorGroup {
     }
 
     RelaxedOperatorGroup(int original_op_id, int base_cost_)
-        : original_op_id(original_op_id), base_cost(base_cost_), marked(false) {
+        : original_op_id(original_op_id), base_cost(base_cost_), cost(-1), marked(false) {
     }
 };
 
