@@ -9,7 +9,7 @@ Stage: build
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install --no-install-recommends cmake g++ make python
+    apt-get -y install --no-install-recommends python cmake g++ make
 
     ## Build planner.
     cd /planner
