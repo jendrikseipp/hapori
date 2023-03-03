@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import sys
 
@@ -19,6 +20,8 @@ IGNORE_PATTERNS = [
     "Plan not valid!",
     "(soft limit:",
     "(hard limit)",
+    "run.err: unexpected error: {",
+    "std::length_error"
 ]
 
 KEY_UNEXPLAINED_ERRORS = "unexplained_errors"
