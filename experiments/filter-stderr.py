@@ -13,7 +13,8 @@ IGNORE_PATTERNS = [
     "differs from the one in the portfolio file",
     "Terminated",
     "Killed",
-    "underlay of /etc/localtime required more than"
+    "underlay of /etc/localtime required more than",
+    "sched_setaffinity failed: : Invalid argument"
 ]
 
 
