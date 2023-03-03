@@ -21,7 +21,8 @@ IGNORE_PATTERNS = [
     "(soft limit:",
     "(hard limit)",
     "run.err: unexpected error: {",
-    "std::length_error"
+    "std::length_error",
+    "ls: cannot access"
 ]
 
 KEY_UNEXPLAINED_ERRORS = "unexplained_errors"

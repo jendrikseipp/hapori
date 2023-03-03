@@ -14,7 +14,8 @@ IGNORE_PATTERNS = [
     "Terminated",
     "Killed",
     "underlay of /etc/localtime required more than",
-    "sched_setaffinity failed: : Invalid argument"
+    "sched_setaffinity failed: : Invalid argument",
+    "ls: cannot access", # Somewhere symple1 calls an ls, symple2 doesn;t
 ]
 
 
