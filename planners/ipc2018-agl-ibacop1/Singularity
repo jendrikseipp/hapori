@@ -1,9 +1,12 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
-From: ubuntu:xenial
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
 
 %post
-    ## Install all necessary dependencies.
-    ## dependencies siw bsf
     apt-get update
     apt-get install --no-install-recommends -y \
     build-essential \
@@ -12,7 +15,6 @@ From: ubuntu:xenial
     make\
     cmake\
     python\
-    ca-certificates \
     xutils-dev \
     scons \
     gcc-multilib \
@@ -29,30 +31,42 @@ From: ubuntu:xenial
     pypy\
     python-pyparsing\
     python-psutil\
-    libncurses5-dev \
-    git
-    rm -rf /var/lib/apt/lists/*
+    libncurses5-dev
 
-    git clone -b ipc-2018-seq-agl https://bitbucket.org/ipc2018-classical/team18.git /planner
-
-    ## Build
-    MAKE_FLAGS="-j 6"
+    MAKE_FLAGS="-j 16"
     export MAKE_FLAGS
     ./planner/build
 
-    ## Clean up
-    rm -rf /planner/.git
+    # TODO: Strip all binaries
+    strip --strip-all /planner/src/preprocess-old/preprocess
+
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    # TODO: Copy only the necessary files from these directories.
+    /planner/src/arvand/
+    /planner/src/preprocess-old/preprocess
+    /planner/src/probe/
+    /planner/src/translate-old/
+    /planner/src/yahsp2-mt/
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
 %runscript
-    ## The runscript is called whenever the container is used to solve
-    ## an instance.
-    ROOT=$PWD
-
     DOMAINFILE=$1
     PROBLEMFILE=$2
     PLANFILE=$3
-    ## Call your planner.
-    python2.7 /planner/src/launcher/solve_agl.py "$DOMAINFILE" "$PROBLEMFILE" "$PLANFILE"
+    PLANNER=$4
+
+    /planner/src/"$PLANNER"/plan "$DOMAINFILE" "$PROBLEMFILE" "$PLANFILE"
 
 
 ## Update the following fields with meta data about your submission.

@@ -45,11 +45,12 @@ CONFIGS = {
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
     # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
     "ipc2018-opt-metis": ["metis2"],
-    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
-    "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
-    "ipc2018-agl-merwin": ["sat", "agl"],
-    "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
+    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
+    #"ipc2018-agl-ibacop": ["arvand", "probe", "yahsp2-mt"],
+    "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
+    "ipc2018-agl-mercury2014": ["sat", "agl"],
+    "ipc2018-agl-merwin": ["sat", "agl"],
 }
 
 def csv_list(s):
@@ -144,10 +145,10 @@ def main():
                 "--plan-file", args.planfile,
                 "--transform-task", "/planner/preprocess",
                 args.domainfile, args.problemfile] + fdss_config)
-        if image_nick == "ipc2018-agl-lapkt-bfws":
+        elif image_nick == "ipc2018-agl-lapkt-bfws":
             run_image(args, [
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile])
-        if image_nick == "ipc2018-opt-decstar":
+        elif image_nick == "ipc2018-opt-decstar":
             portfolio_path = DIR / "planners" / "ipc2018-opt-decstar" / "src" / "driver" / "portfolios" / "seq_opt_ds.py"
             ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
             print(f"Decstar configs: {len(ds_configs)}")
@@ -162,14 +163,14 @@ def main():
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2-time-limit", "120",
                 "--search-options"] + ds_config)
-        if image_nick == "ipc2018-opt-delfi":
+        elif image_nick == "ipc2018-opt-delfi":
             preprocess = ""
             if "masb50kmiasmdfp" not in config:
                 preprocess = "--transform-task preprocess"
             run_image(
                 args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, preprocess, " ".join(DELFI_CMDS[config])])
-        if image_nick == "ipc2018-opt-fdms":
+        elif image_nick == "ipc2018-opt-fdms":
             if config == "fdms1":
                 merge_strategy = "merge_strategy=merge_sccs(order_of_sccs=topological,merge_selector=score_based_filtering(scoring_functions=[goal_relevance,dfp,total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
             elif config == "fdms2":
@@ -178,7 +179,7 @@ def main():
                 sys.exit(f"unknown config {config}")
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, merge_strategy])
-        if image_nick == "ipc2018-opt-metis":
+        elif image_nick == "ipc2018-opt-metis":
             if config == "metis1":
                 cmd = "--symmetries sym=structural_symmetries(search_symmetries=oss) --search astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
             elif config == "metis2":
@@ -187,7 +188,10 @@ def main():
                 sys.exit(f"unknown config {config}")
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, cmd])
-        if image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
+        elif image_nick == "ipc2018-agl-ibacop":
+            run_image(args, [
+                image_path, args.domainfile, args.problemfile, args.planfile, config])
+        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
 
