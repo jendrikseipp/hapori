@@ -1,0 +1,7 @@
+#! /bin/sh
+
+# include 32bit libs
+cd src
+./build_all
+./build_all clean
+cd ..

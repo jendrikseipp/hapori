@@ -1,0 +1,61 @@
+#! /bin/bash
+set -e
+
+##./plan-ipc seq-sat-jasper "$@"
+BASEDIR="$(dirname "$0")"
+PWD="$(dirname "$3")"
+# Paths to planner components
+TRANSLATE="$BASEDIR/translate/translate.py"
+PREPROCESS="$BASEDIR/preprocess/preprocess"
+SEARCH="$BASEDIR/search/downward"
+
+run_planner() {
+
+if [ ! -f "$PWD"/output.sas ]; then
+    echo "1. Running translator"
+    if [ -e "$2" ]; then
+        echo "Second argument is a file name: use two translator arguments."
+        "$TRANSLATE" "$1" "$2"  || exit 1
+    else
+        echo "Second argument is not a file name: auto-detect domain file."
+        "$TRANSLATE" "$1"|| exit 1
+    fi
+else
+    echo "Skip the translate"
+fi
+if [ ! -f "$PWD"/output ]; then
+    echo "2. Running preprocessor"
+    "$PREPROCESS" < output.sas
+    echo "End Running preprocessor"
+else
+    echo "Skip the preprocess"
+fi
+    echo "3. Running search"
+    "$SEARCH" "$3" ipc "$PLANNER" --plan-file "$3" --groups-file all.groups --output-path output < output
+}
+
+check_input_files() {
+    if [ ! -e "$1" ]; then
+	echo "Domain file \"$1\" does not exist."
+	exit 1
+    fi
+    if [ ! -e "$2" ]; then
+	echo "Problem file \"$2\" does not exist."
+	exit 1
+    fi
+}
+
+# Make sure we have exactly 3 command line arguments
+if [ $# -ne 3 ]; then
+    echo "Usage: \"plan-ipc <domain_file> <problem_file> <result_file>\""
+    exit 1
+fi
+
+PLANNER="seq-agl-jasper"
+
+check_input_files "$1" "$2"
+
+# Command line arguments seem to be fine, run planner
+run_planner "$1" "$2" "$3"
+
+# We do not clean up temporary files here (not necessary for the IPC)

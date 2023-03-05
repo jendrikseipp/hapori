@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd "$(dirname "$0")"
+ROOT=$PWD
+
+mkdir bin
+cd $ROOT/src
+make nodae
+rm *.o
