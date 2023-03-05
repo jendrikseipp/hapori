@@ -17,7 +17,6 @@ from .plan_manager import PlanManager
 DRIVER_DIR = Path(__file__).resolve().parent
 REPO = DRIVER_DIR.parent
 TRANSLATE_PATH = REPO / "planners" / "scorpion" / "src" / "translate" / "translate.py"
-assert TRANSLATE_PATH.is_file()
 
 # TODO: We might want to turn translate into a module and call it with "python3 -m translate".
 REL_TRANSLATE_PATH = os.path.join("translate", "translate.py")
@@ -138,7 +137,6 @@ def run_search(args):
         args.search_time_limit, args.overall_time_limit)
     memory_limit = limits.get_memory_limit(
         args.search_memory_limit, args.overall_memory_limit)
-    executable = str(REPO / "dispatch.py")
 
     plan_manager = PlanManager(
         args.plan_file,
@@ -146,35 +144,13 @@ def run_search(args):
         single_plan=args.portfolio_single_plan)
     plan_manager.delete_existing_plans()
 
-    if args.portfolio:
-        assert not args.search_options
-        logging.info("search portfolio: %s" % args.portfolio)
-        return portfolio_runner.run(
-            args.portfolio, executable, args.search_input, plan_manager,
-            time_limit, memory_limit)
-    else:
-        if not args.search_options:
-            returncodes.exit_with_driver_input_error(
-                "search needs --alias, --portfolio, or search options")
-        if "--help" not in args.search_options:
-            args.search_options.extend(["--internal-plan-file", args.plan_file])
-        try:
-            call.check_call(
-                "search",
-                [executable] + args.search_options,
-                stdin=args.search_input,
-                time_limit=time_limit,
-                memory_limit=memory_limit)
-        except subprocess.CalledProcessError as err:
-            # TODO: if we ever add support for SEARCH_PLAN_FOUND_AND_* directly
-            # in the planner, this assertion no longer holds. Furthermore, we
-            # would need to return (err.returncode, True) if the returncode is
-            # in [0..10].
-            # Negative exit codes are allowed for passing out signals.
-            assert err.returncode >= 10 or err.returncode < 0, "got returncode < 10: {}".format(err.returncode)
-            return (err.returncode, False)
-        else:
-            return (0, True)
+    assert args.portfolio
+    assert not args.search_options
+    logging.info("search portfolio: %s" % args.portfolio)
+    domain_file, problem_file = args.translate_inputs
+    return portfolio_runner.run(
+        args.portfolio, domain_file, problem_file, plan_manager,
+        time_limit, memory_limit)
 
 
 def run_validate(args):

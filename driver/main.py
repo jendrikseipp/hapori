@@ -36,24 +36,15 @@ def main():
     exitcode = None
     for component in args.components:
         if component == "translate":
-            (exitcode, continue_execution) = run_components.run_translate(args)
-            if continue_execution and args.transform_task:
-                print()
-                run_components.transform_task(args)
-        elif component == "search":
             (exitcode, continue_execution) = run_components.run_search(args)
-            if not args.keep_sas_file:
-                print("Remove intermediate file {}".format(args.sas_file))
-                os.remove(args.sas_file)
+        elif component == "search":
+            pass
         elif component == "validate":
             (exitcode, continue_execution) = run_components.run_validate(args)
         else:
             assert False, "Error: unhandled component: {}".format(component)
         print("{component} exit code: {exitcode}".format(**locals()))
         print()
-        if not continue_execution:
-            print("Driver aborting after {}".format(component))
-            break
 
     try:
         logging.info(f"Planner time: {util.get_elapsed_time():.2f}s")

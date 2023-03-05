@@ -59,7 +59,7 @@ def csv_list(s):
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("image", help="path to Apptainer image file")
+    parser.add_argument("image", help="path to or nick for Apptainer image file")
     parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=[])
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
@@ -111,9 +111,14 @@ def run_image(args, cmd):
 
 def main():
     args = parse_args()
-    image_path = args.image
-    image_nick = Path(Path(args.image).name).stem
+    if Path(args.image).exists():
+        image_path = args.image
+        image_nick = Path(Path(args.image).name).stem
+    else:
+        image_nick = args.image
+        image_path = DIR / "images" / f"{image_nick}.img"
     configs = args.configs
+    print(f"Image path: {image_path}")
     print(f"Image nick: {image_nick}")
     print(f"Configs: {configs}")
     if image_nick in CONFIGS:

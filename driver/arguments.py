@@ -48,7 +48,7 @@ that exceed their time or memory limit are aborted, and the next
 configuration is run."""
 
 EXAMPLE_PORTFOLIO = os.path.relpath(
-    aliases.PORTFOLIOS["seq-opt-fdss-1"], start=util.REPO_ROOT_DIR)
+    aliases.PORTFOLIOS["seq-sat-fdss-2018"], start=util.REPO_ROOT_DIR)
 
 EXAMPLES = [
     ("Translate and find a plan with A* + LM-Cut:",
