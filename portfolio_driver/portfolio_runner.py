@@ -68,25 +68,16 @@ def run_sat_config(configs, pos, domain_file, problem_file, plan_manager, timeou
 
 
 def run_sat(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    while configs:
-        configs_next_round = []
-        for pos, (relative_time, args) in enumerate(configs):
-            exitcode = run_sat_config(
-                configs, pos, domain_file, problem_file, plan_manager, timeout, memory)
-            if exitcode is None:
-                return
+    for pos, (relative_time, image, planner) in enumerate(configs):
+        exitcode = run_sat_config(
+            configs, pos, domain_file, problem_file, plan_manager, timeout, memory)
+        if exitcode is None:
+            return
 
-            yield exitcode
-            if exitcode == returncodes.SEARCH_UNSOLVABLE:
-                return
+        yield exitcode
 
-            if exitcode == returncodes.SUCCESS:
-                if plan_manager.abort_portfolio_after_first_plan():
-                    return
-                configs_next_round.append((relative_time, args))
-
-        # Only run the successful configs in the next round.
-        configs = configs_next_round
+        if exitcode == returncodes.SUCCESS and plan_manager.abort_portfolio_after_first_plan():
+            return
 
 
 def run_opt(configs, domain_file, problem_file, plan_manager, timeout, memory):
@@ -98,8 +89,19 @@ def run_opt(configs, domain_file, problem_file, plan_manager, timeout, memory):
                               run_time, memory)
         yield exitcode
 
-        if exitcode in [returncodes.SUCCESS, returncodes.SEARCH_UNSOLVABLE]:
+        if exitcode == returncodes.SUCCESS:
             break
+
+
+def get_track(portfolio):
+    track_names = ["agl", "opt", "sat"]
+    track = None
+    for track_name in track_names:
+        if Path(portfolio).stem.endswith(f"-{track_name}"):
+            track = track_name
+    if not track:
+        returncodes.exit_with_driver_critical_error(f"portfolio paths must end with one of {track_names}")
+    return track
 
 
 def get_portfolio_attributes(portfolio):
@@ -112,10 +114,8 @@ def get_portfolio_attributes(portfolio):
             print(e)
             returncodes.exit_with_driver_critical_error(
                 f"The portfolio {portfolio} could not be loaded: {e}.")
-    if "CONFIGS" not in attributes:
-        returncodes.exit_with_driver_critical_error("portfolios must define CONFIGS")
-    if "OPTIMAL" not in attributes:
-        returncodes.exit_with_driver_critical_error("portfolios must define OPTIMAL")
+    if "PLANNERS" not in attributes:
+        returncodes.exit_with_driver_critical_error("portfolios must define PLANNERS")
     return attributes
 
 
@@ -127,14 +127,8 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     use a maximum of *memory* bytes.
     """
     attributes = get_portfolio_attributes(portfolio)
-    configs = attributes["CONFIGS"]
-    optimal = attributes["OPTIMAL"]
-    final_config = attributes.get("FINAL_CONFIG")
-    final_config_builder = attributes.get("FINAL_CONFIG_BUILDER")
-    if "TIMEOUT" in attributes:
-        returncodes.exit_with_driver_input_error(
-            "The TIMEOUT attribute in portfolios has been removed. "
-            "Please pass a time limit to fast-downward.py.")
+    configs = attributes["PLANNERS"]
+    track = get_track(portfolio)
 
     if time is None:
         if sys.platform == "win32":
@@ -146,7 +140,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
 
     timeout = util.get_elapsed_time() + time
 
-    if optimal:
+    if track == "opt":
         exitcodes = run_opt(
             configs, domain_file, problem_file, plan_manager, timeout, memory)
     else:
