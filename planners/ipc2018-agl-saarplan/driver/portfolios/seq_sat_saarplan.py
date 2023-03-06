@@ -47,7 +47,8 @@ CONFIGS = [
            '                                                    strategy=maintain_fixed_size_probabilistic(generate_initially=true, initial_removal_mode=UNTIL_BOUND, base_probability=0.02, target_growth_ratio=1.50))'
            '                           ], decision_point=1, skip_if_solved=[2], skip_if_failed=[3],'
            '                           delete_after_phase_heuristics=[hn, tmp, hcff, hlm, hn_normalcost, tmp_normalcost],'
-           '                           delete_after_phase_phases=[1, 1, 2, 2, 3, 3], continue_on_fail=true, bound=BOUND)'])
+           '                           delete_after_phase_phases=[1, 1, 2, 2, 3, 3], continue_on_fail=true, bound=BOUND)',
+           '--always'])
      ]
 
 
