@@ -27,12 +27,11 @@ from . import util
 
 DIR = Path(__file__).resolve().parent
 REPO = DIR.parent
-DEFAULT_TIMEOUT = 1800
 
 
-def run_search(image, planner, domain_file, problem_file, plan_manager, time, memory):
+def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
-    complete_args = [sys.executable, str(dispatch), image, domain_file, problem_file, plan_manager.get_plan_prefix()]
+    complete_args = [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
     if planner:
         complete_args += ["--config", planner]
     print("args: %s" % complete_args)
@@ -57,35 +56,27 @@ def compute_run_time(timeout, configs, pos):
     return limits.round_time_limit(remaining_time * relative_time / remaining_relative_time)
 
 
-def run_sat_config(configs, pos, domain_file, problem_file, plan_manager, timeout, memory):
-    run_time = compute_run_time(timeout, configs, pos)
-    if run_time <= 0:
-        return None
-    _, image, planner = configs[pos]
-    result = run_search(image, planner, domain_file, problem_file, plan_manager, run_time, memory)
-    plan_manager.process_new_plans()
-    return result
-
-
-def run_sat(configs, domain_file, problem_file, plan_manager, timeout, memory):
+def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
+    next_plan_id = 1
     for pos, (relative_time, image, planner) in enumerate(configs):
-        exitcode = run_sat_config(
-            configs, pos, domain_file, problem_file, plan_manager, timeout, memory)
-        if exitcode is None:
+        next_plan_file = f"{plan_manager.get_plan_prefix()}.{next_plan_id}"
+        run_time = compute_run_time(timeout, configs, pos)
+        if run_time <= 0:
             return
+        exitcode = run_search(image, planner, domain_file, problem_file, next_plan_file, run_time, memory)
 
         yield exitcode
 
-        if exitcode == returncodes.SUCCESS and plan_manager.abort_portfolio_after_first_plan():
-            return
+        if exitcode == returncodes.SUCCESS:
+            next_plan_id += 1
 
 
-def run_opt(configs, domain_file, problem_file, plan_manager, timeout, memory):
+def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     for pos, (relative_time, image, planner) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             return
-        exitcode = run_search(image, planner, domain_file, problem_file, plan_manager,
+        exitcode = run_search(image, planner, domain_file, problem_file, plan_manager.get_plan_prefix(),
                               run_time, memory)
         yield exitcode
 
@@ -140,10 +131,11 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
 
     timeout = util.get_elapsed_time() + time
 
-    if track == "opt":
-        exitcodes = run_opt(
+    if track in {"agl", "opt"}:
+        exitcodes = run_single_plan_portfolio(
             configs, domain_file, problem_file, plan_manager, timeout, memory)
     else:
-        exitcodes = run_sat(
+        assert track == "sat", track
+        exitcodes = run_multi_plan_portfolio(
             configs, domain_file, problem_file, plan_manager, timeout, memory)
     return returncodes.generate_portfolio_exitcode(list(exitcodes))
