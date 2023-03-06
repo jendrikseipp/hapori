@@ -64,7 +64,7 @@ def parse_args():
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
-    parser.add_argument("--not-check-subprocess", action="store_false")
+    parser.add_argument("--not-check-subprocess", dest="check", action="store_false", help="Don't check planner exitcode and don't validate plan.")
     return parser.parse_args()
 
 
@@ -98,10 +98,11 @@ def prepare_config(config, replacements=None):
     return config
 
 def run_image(args, cmd):
-    subprocess.run(cmd, check=args.not_check_subprocess)
+    subprocess.run(cmd, check=args.check)
     if os.path.exists(args.planfile):
         print("Found plan file.")
-        subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile, args.planfile])
+        if args.check:
+            subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile, args.planfile])
     else:
         print("No plan file.")
         # TODO why do we support running multiple configuations in a single
@@ -199,10 +200,6 @@ def main():
         elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
-
-
-
-
 
 
 if __name__ == "__main__":
