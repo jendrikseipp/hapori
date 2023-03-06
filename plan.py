@@ -40,9 +40,7 @@ DELFI_CMDS = {
 }
 
 CONFIGS = {
-    "ipc2018-decstar-agl": [f"config{i:02d}" for i in range(0, 3)],
-    "ipc2018-decstar-sat": [f"config{i:02d}" for i in range(0, 4)],
-    "ipc2018-decstar-opt": [f"config{i:02d}" for i in range(0, 7)],
+    "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
     # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
@@ -55,10 +53,6 @@ CONFIGS = {
     "ipc2018-agl-merwin": ["sat", "agl"],
 }
 
-TRACKS = {
-    "ipc2018-decstar" : ["agl", "sat", "opt"],
-}
-
 def csv_list(s):
    return s.split(',')
 
@@ -67,7 +61,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", help="path to or nick for Apptainer image file")
     parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and forbidden for other images. Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=[])
-    parser.add_argument("--track", help=f"required for images {', '.join(TRACKS.keys())} and forbidden for other images. Possible values: {TRACKS}")
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
@@ -129,14 +122,8 @@ def main():
         image_nick = args.image
         image_path = DIR / "images" / f"{image_nick}.img"
     configs = args.configs
-    track = args.track
     print(f"Image path: {image_path}")
     print(f"Image nick: {image_nick}")
-    print(f"Track: {track}")
-    if image_nick in TRACKS:
-        if not track:
-            sys.exit(f"Image {image_nick} needs a track.")
-        image_nick = f"{image_nick}-{track}"
     print(f"Configs: {configs}")
     if image_nick in CONFIGS:
         if not configs:
@@ -170,69 +157,45 @@ def main():
         elif image_nick == "ipc2018-agl-lapkt-bfws":
             run_image(args, [
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile])
-        elif image_nick == "ipc2018-decstar-opt":
-            portfolio_path = DIR / "planners" / "ipc2018-decstar" / "src" / "driver" / "portfolios" / "seq_opt_ds.py"
+        elif image_nick == "ipc2018-decstar":
+            track, temp = config.split('-')
+            assert track in ['agl', 'sat', 'opt'], track
+            portfolio_path = DIR / "planners" / "ipc2018-decstar" / "src" / "driver" / "portfolios" / f"seq_{track}_ds.py"
             ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
+            if track == "sat":
+                ds_configs.append(
+                # FINAL_CONFIG of portfolio
+                (-1,[
+                    "--heuristic",
+                    "hlm,hff=lm_ff_syn(lm_rhw(reasonable_orders=true,"
+                    "                         lm_cost_type=H_COST_TYPE,cost_type=H_COST_TYPE))",
+                    "--search", """iterated([
+                                     lazy_greedy([hff,hlm],preferred=[hff,hlm],
+                                                 cost_type=one,reopen_closed=false),
+                                     lazy_greedy([hff,hlm],preferred=[hff,hlm],
+                                                 reopen_closed=false),
+                                     lazy_wastar([hff,hlm],preferred=[hff,hlm],w=5),
+                                     lazy_wastar([hff,hlm],preferred=[hff,hlm],w=3),
+                                     lazy_wastar([hff,hlm],preferred=[hff,hlm],w=2),
+                                     lazy_wastar([hff,hlm],preferred=[hff,hlm],w=1)
+                                     ],repeat_last=true,continue_on_fail=true, bound=BOUND)"""
+                ]))
             print(f"Decstar configs: {len(ds_configs)}")
-            assert config.startswith("config"), config
-            config_index = int(config[len("config"):])
+            assert temp.startswith("config"), temp
+            config_index = int(temp[len("config"):])
             assert 0 <= config_index < len(ds_configs)
             _, ds_config = ds_configs[config_index]
             ds_config = prepare_config(ds_config)
+            h2_time_limit = {
+                'agl' : 10,
+                'sat' : 30,
+                'opt' : 120,
+            }
             run_image(args, [
                 image_path,
                 "--plan-file", args.planfile,
                 args.domainfile, args.problemfile,
-                "--preprocess-options", "--h2-time-limit", "120",
-                "--search-options"] + ds_config)
-        elif image_nick == "ipc2018-decstar-sat":
-            portfolio_path = DIR / "planners" / "ipc2018-decstar" / "src" / "driver" / "portfolios" / "seq_sat_ds.py"
-            ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
-            ds_configs.append(
-            # FINAL_CONFIG of portfolio
-            (-1,[
-                "--heuristic",
-                "hlm,hff=lm_ff_syn(lm_rhw(reasonable_orders=true,"
-                "                         lm_cost_type=H_COST_TYPE,cost_type=H_COST_TYPE))",
-                "--search", """iterated([
-                                 lazy_greedy([hff,hlm],preferred=[hff,hlm],
-                                             cost_type=one,reopen_closed=false),
-                                 lazy_greedy([hff,hlm],preferred=[hff,hlm],
-                                             reopen_closed=false),
-                                 lazy_wastar([hff,hlm],preferred=[hff,hlm],w=5),
-                                 lazy_wastar([hff,hlm],preferred=[hff,hlm],w=3),
-                                 lazy_wastar([hff,hlm],preferred=[hff,hlm],w=2),
-                                 lazy_wastar([hff,hlm],preferred=[hff,hlm],w=1)
-                                 ],repeat_last=true,continue_on_fail=true, bound=BOUND)"""
-            ]))
-            print(f"Decstar configs: {len(ds_configs)}")
-            assert config.startswith("config"), config
-            config_index = int(config[len("config"):])
-            assert 0 <= config_index < len(ds_configs)
-            _, ds_config = ds_configs[config_index]
-            ds_config = prepare_config(ds_config)
-            print(ds_config)
-            run_image(args, [
-                image_path,
-                "--plan-file", args.planfile,
-                args.domainfile, args.problemfile,
-                "--preprocess-options", "--h2-time-limit", "30",
-                "--search-options"] + ds_config)
-        elif image_nick == "ipc2018-decstar-agl":
-            portfolio_path = DIR / "planners" / "ipc2018-decstar" / "src" / "driver" / "portfolios" / "seq_agl_ds.py"
-            ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
-            print(f"Decstar configs: {len(ds_configs)}")
-            assert config.startswith("config"), config
-            config_index = int(config[len("config"):])
-            assert 0 <= config_index < len(ds_configs)
-            _, ds_config = ds_configs[config_index]
-            ds_config = prepare_config(ds_config)
-            print(ds_config)
-            run_image(args, [
-                image_path,
-                "--plan-file", args.planfile,
-                args.domainfile, args.problemfile,
-                "--preprocess-options", "--h2-time-limit", "10",
+                "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
                 "--search-options"] + ds_config)
         elif image_nick == "ipc2018-opt-delfi":
             preprocess = ""
