@@ -117,6 +117,8 @@ class Results(object):
         assert coverage in [0, 1], entry
 
         if coverage:
+            if "cpu_time" in entry:
+                entry["total_time"] = entry["cpu_time"]
             assert "total_time" in entry, entry
             assert "cost" in entry, entry
             time = float(entry["total_time"])
