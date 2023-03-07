@@ -14,6 +14,8 @@ OUTDIR=../images/
 # SAT+AGL
 ./build-image.sh ../planners/ipc2018-saarplan/Singularity ${OUTDIR}/ipc2018-saarplan.img || true
 ./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img
+./build-image.sh ../planners/ipc2018-agl-lapkt-dfs-plus/Singularity ${OUTDIR}/ipc2018-lapkt-dfs-plus.img
+./build-image.sh ../planners/ipc2018-agl-lapkt-dual-bfws/Apptainer ${OUTDIR}/ipc2018-lapkt-bfws.img
 ./build-image.sh ../planners/ipc2018-agl-mercury2014/Singularity ${OUTDIR}/ipc2018-agl-mercury2014.img
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img
 ./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-fd-2018.img
@@ -31,8 +33,6 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2014-agl-jasper/Singularity ${OUTDIR}/ipc2014-agl-jasper.img
 ./build-image.sh ../planners/ipc2014-agl-madagascar/Singularity-MpC ${OUTDIR}/ipc2014-agl-mpc.img
 ./build-image.sh ../planners/ipc2014-agl-probe/Singularity ${OUTDIR}/ipc2014-agl-probe.img
-./build-image.sh ../planners/ipc2018-agl-lapkt-dual-bfws/Apptainer ${OUTDIR}/ipc2018-agl-lapkt-bfws.img
-./build-image.sh ../planners/ipc2018-agl-lapkt-dfs-plus/Singularity ${OUTDIR}/ipc2018-agl-lapkt-dfs-plus.img
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
 
 echo "Finished building images"

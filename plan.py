@@ -16,9 +16,11 @@ import fd_2018_configs
 DIR = Path(__file__).resolve().parent
 
 LAPKT_DRIVERS = {
-    "dual-bfws": "/planner/BFWS/fd-version/bfws.py",
-    "bfws-pref": "/planner/BFWS/fd-version/bfws_f5.py",
-    "poly-bfws": "/planner/BFWS/fd-version/poly_bfws.py",
+    "dual-bfws-agl": "/planner/BFWS/fd-version/bfws.py",
+    "dual-bfws-sat": "/planner/BFWS/fd-version/bfws_anytime_fd_singularity.py",
+    "bfws-pref-agl": "/planner/BFWS/fd-version/bfws_f5.py",
+    "bfws-pref-sat": "/planner/BFWS/fd-version/bfws_f5_anytime_fd_singularity.py",
+    "bfws-pref": "/planner/BFWS/fd-version/poly_bfws.py",  # Same for agl and sat.
 }
 
 DELFI_CMDS = {
@@ -54,7 +56,7 @@ CONFIGS = {
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
     "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(fd_2018_configs.UNIQUE_FD_CONFIGS))],
     #"ipc2018-agl-ibacop": ["arvand", "probe", "yahsp2-mt"],
-    "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
+    "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
 }
@@ -174,7 +176,7 @@ def main():
                 "--plan-file", args.planfile,
                 "--transform-task", "/planner/preprocess",
                 args.domainfile, args.problemfile] + fd_config)
-        elif image_nick == "ipc2018-agl-lapkt-bfws":
+        elif image_nick == "ipc2018-lapkt-bfws":
             run_image(args, [
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile])
         elif image_nick == "ipc2018-decstar":
