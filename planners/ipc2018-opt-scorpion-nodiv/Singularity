@@ -55,6 +55,7 @@ Stage: run
         --plan-file $PLANFILE \
         --transform-task /planner/preprocess \
         --alias seq-opt-scorpion \
+        --overall-time-limit 30m \
         $DOMAINFILE \
         $PROBLEMFILE
 
