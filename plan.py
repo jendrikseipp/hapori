@@ -9,6 +9,8 @@ import subprocess
 import sys
 import traceback
 
+import fd_2018_configs
+
 
 DIR = Path(__file__).resolve().parent
 
@@ -47,7 +49,7 @@ CONFIGS = {
     # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
     "ipc2018-opt-metis": ["metis2"],
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
-    "ipc2018-agl-fdss-2018": [f"config{i:02d}" for i in range(0, 41)],
+    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(fd_2018_configs.UNIQUE_FD_CONFIGS))],
     #"ipc2018-agl-ibacop": ["arvand", "probe", "yahsp2-mt"],
     "ipc2018-agl-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-mercury2014": ["sat", "agl"],
@@ -142,20 +144,18 @@ def main():
 
     for config in configs:
         print(f"Run config {config}")
-        if image_nick == "ipc2018-agl-fdss-2018":
-            portfolio_path = DIR / "planners" / "ipc2018-agl-fdss-2018" / "driver" / "portfolios" / "seq_sat_fdss_2018.py"
-            fdss_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
-            print(f"FDSS configs: {len(fdss_configs)}")
+        if image_nick == "ipc2018-fd-2018":
+            fd_configs = fd_2018_configs.UNIQUE_FD_CONFIGS
+            print(f"FDSS configs: {len(fd_configs)}")
             assert config.startswith("config"), config
             config_index = int(config[len("config"):])
-            assert 0 <= config_index < len(fdss_configs)
-            _, fdss_config = fdss_configs[config_index]
-            fdss_config = prepare_config(fdss_config)
+            assert 0 <= config_index < len(fd_configs)
+            fd_config = prepare_config(fd_configs[config_index])
             run_image(args, [
                 image_path, "--build=release64",
                 "--plan-file", args.planfile,
                 "--transform-task", "/planner/preprocess",
-                args.domainfile, args.problemfile] + fdss_config)
+                args.domainfile, args.problemfile] + fd_config)
         elif image_nick == "ipc2018-agl-lapkt-bfws":
             run_image(args, [
                 image_path, LAPKT_DRIVERS[config], args.domainfile, args.problemfile, args.planfile])
