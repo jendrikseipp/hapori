@@ -125,6 +125,11 @@ void PatternCollectionInformation::include_additive_pdbs(const shared_ptr<PDBCol
     } 
 
       for (const auto & new_pdb : *pdbs_) {
+	if (new_pdb->get_symbolic_variables()) {
+	  if(!symbolic_vars)
+	    symbolic_vars = new_pdb->get_symbolic_variables();
+	}
+
 	const auto & costs1 = new_pdb->get_operator_costs();
 	bool empty_cost=true;
 	for (size_t i = 0; i < costs1.size(); ++i) {
@@ -270,6 +275,16 @@ int PatternCollectionInformation::get_value(const State &state) const {
       //cout<<"max_additive_subsets size is 0, so returning 0"<<endl;
       return 0;
     }
+     
+    if (!dead_ends.empty()) { //If dead ends were not introduced in
+      int * inputs = symbolic_vars->getBinaryDescription(state.get_values());
+      for(const BDD & bdd : dead_ends){
+     	if(!bdd.Eval(inputs).IsZero()){
+     	    return numeric_limits<int>::max();
+     	}
+      }
+    }
+
     //else{
       //cout<<"max_additive_subsets_size:"<<max_additive_subsets->size()<<flush<<endl;
     //}
@@ -295,6 +310,14 @@ int PatternCollectionInformation::get_value(const State &state) const {
 bool PatternCollectionInformation::is_dead_end(const State &state) const {
     if(!max_additive_subsets){
       return false;
+    }
+    if (!dead_ends.empty()) { //If dead ends were not introduced in
+      int * inputs = symbolic_vars->getBinaryDescription(state.get_values());
+      for(const BDD & bdd : dead_ends){
+     	if(!bdd.Eval(inputs).IsZero()){
+     	    return true;
+	}
+      }
     }
     for (const auto &subset : *max_additive_subsets) {
       for (const shared_ptr<PatternDatabaseInterface> &pdb : subset) {
