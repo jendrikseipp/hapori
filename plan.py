@@ -20,7 +20,7 @@ LAPKT_DRIVERS = {
     "dual-bfws-sat": "/planner/BFWS/fd-version/bfws_anytime_fd_singularity.py",
     "bfws-pref-agl": "/planner/BFWS/fd-version/bfws_f5.py",
     "bfws-pref-sat": "/planner/BFWS/fd-version/bfws_f5_anytime_fd_singularity.py",
-    "bfws-pref": "/planner/BFWS/fd-version/poly_bfws.py",  # Same for agl and sat.
+    "poly-bfws": "/planner/BFWS/fd-version/poly_bfws.py",  # Same for agl and sat.
 }
 
 DELFI_CMDS = {
