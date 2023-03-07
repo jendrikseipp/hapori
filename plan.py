@@ -3,6 +3,7 @@
 """Run an Apptainer-based planner."""
 
 import argparse
+import itertools
 import os
 from pathlib import Path
 import subprocess
@@ -104,14 +105,29 @@ def prepare_config(config, replacements=None):
         config[index] = part
     return config
 
+
+def get_existing_plans(plan_prefix):
+    plan_prefix = plan_prefix.resolve()
+    if plan_prefix.exists():
+        yield plan_prefix
+
+    for counter in itertools.count(start=1):
+        plan_filename = Path(f"{plan_prefix}.{counter}")
+        if plan_filename.exists():
+            yield plan_filename
+        else:
+            break
+
+
 def run_image(args, cmd):
     subprocess.run(cmd, check=args.check)
-    if os.path.exists(args.planfile):
-        print("Found plan file.")
-        # TODO: some planners like decstar or saarplan (or rather: FD
-        # configs using iterated search) write their plan to <filename>.1
+    plan_prefix = Path(args.planfile).resolve()
+    existing_plan_files = get_existing_plans(plan_prefix)
+
+    if existing_plan_files:
+        print("Found plan file(s).")
         if args.check:
-            subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile, args.planfile])
+            subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile] + [str(plan) for plan in existing_plan_files])
     else:
         print("No plan file.")
         # TODO why do we support running multiple configuations in a single

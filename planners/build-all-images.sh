@@ -13,11 +13,10 @@ OUTDIR=../images/
 
 # SAT+AGL
 ./build-image.sh ../planners/ipc2018-saarplan/Singularity ${OUTDIR}/ipc2018-saarplan.img || true
-./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img  || true  # finds no plan?
-./build-image.sh ../planners/ipc2018-agl-mercury2014/Singularity ${OUTDIR}/ipc2018-agl-mercury2014.img  || true  # finds no plan?
-./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img || true  # finds no plan?
+./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img
+./build-image.sh ../planners/ipc2018-agl-mercury2014/Singularity ${OUTDIR}/ipc2018-agl-mercury2014.img
+./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img
 ./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-fd-2018.img
-./build-image.sh ../planners/ipc2018-agl-fd-remix/Singularity ${OUTDIR}/ipc2018-agl-fd-remix.img
 
 # OPT
 ./build-image.sh ../planners/ipc2014-opt-symba/Singularity-01 ${OUTDIR}/ipc2014-opt-symba1.img
