@@ -132,13 +132,7 @@ class Results(object):
             cost = None
         return dict(
             config=config,
-            options=[
-                str(s).replace("bound=infinity", "bound=BOUND").replace(
-                    "preferred_successors_first=False)",
-                    "preferred_successors_first=False, bound=BOUND)").replace(
-                    "preferred_successors_first=True)",
-                    "preferred_successors_first=True, bound=BOUND)")
-                for s in entry["component_options"]],
+            options=[entry["algorithm"]],
             problem="%s:%s" % (domain, problem),
             time=time,
             cost=cost)
