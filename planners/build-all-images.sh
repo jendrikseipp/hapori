@@ -7,7 +7,12 @@ cd $(dirname "$0")
 OUTDIR=../images/
 
 # OPT+SAT+AGL
-./build-image.sh ../planners/ipc2018-decstar/Singularity ${OUTDIR}/ipc2018-opt-decstar.img || true
+./build-image.sh ../planners/ipc2018-decstar/Singularity ${OUTDIR}/ipc2018-decstar.img || true
+./build-image.sh ../planners/ipc2018-symple1/Singularity ${OUTDIR}/ipc2018-symple1.img
+./build-image.sh ../planners/ipc2018-symple2/Singularity ${OUTDIR}/ipc2018-symple2.img
+
+# SAT+AGL
+./build-image.sh ../planners/ipc2018-saarplan/Singularity ${OUTDIR}/ipc2018-saarplan.img || true
 
 # OPT
 ./build-image.sh ../planners/ipc2014-opt-symba/Singularity-01 ${OUTDIR}/ipc2014-opt-symba1.img
@@ -17,8 +22,7 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-opt-metis/Singularity ${OUTDIR}/ipc2018-opt-metis.img
 ./build-image.sh ../planners/ipc2018-opt-planning-pdbs/Singularity ${OUTDIR}/ipc2018-opt-planning-pdbs.img
 ./build-image.sh ../planners/ipc2018-opt-scorpion/Singularity ${OUTDIR}/ipc2018-opt-scorpion.img
-./build-image.sh ../planners/ipc2018-opt-symple1/Singularity ${OUTDIR}/ipc2018-opt-symple1.img
-./build-image.sh ../planners/ipc2018-opt-symple2/Singularity ${OUTDIR}/ipc2018-opt-symple2.img
+
 
 # AGL+SAT
 ./build-image.sh ../planners/ipc2014-agl-jasper/Singularity ${OUTDIR}/ipc2014-agl-jasper.img
@@ -32,6 +36,5 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-agl-mercury2014/Singularity ${OUTDIR}/ipc2018-agl-mercury2014.img  || true  # finds no plan?
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img || true  # finds no plan?
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
-./build-image.sh ../planners/ipc2018-agl-saarplan/Singularity ${OUTDIR}/ipc2018-agl-saarplan.img || true  # recipe path is wrong
 
 echo "Finished building images"
