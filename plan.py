@@ -212,7 +212,6 @@ def main():
             assert 0 <= config_index < len(saarplan_configs)
             _, saarplan_config = saarplan_configs[config_index]
             saarplan_config = prepare_config(saarplan_config)
-            print(saarplan_config)
             h2_time_limit = {
                 'agl' : 10,
                 'sat' : 30,
@@ -232,9 +231,6 @@ def main():
                 h2_time_limit = "60"
             else:
                 sys.exit("unknown config for Symple")
-            print("here")
-            print([
-                image_path, args.domainfile, args.problemfile, args.planfile, config, h2_time_limit])
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config, h2_time_limit])
         elif image_nick == "ipc2018-opt-delfi":
