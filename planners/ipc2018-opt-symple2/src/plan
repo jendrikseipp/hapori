@@ -11,7 +11,7 @@ function die {
 }
 
 function usage {
-    die "usage: $(basename "$0") [DOMAIN_FILE] PROBLEM_FILE SEARCH_OPTION ..."
+    die "usage: $(basename "$0") [DOMAIN_FILE] PROBLEM_FILE H2TIMELIMIT SEARCH_OPTION ..."
 }
 
 # Paths to planner components
@@ -36,20 +36,15 @@ if [[ "$#" < 2 ]]; then
 fi
 
 echo "1. Running translator"
-if [[ -e "$2" ]]; then
-    echo "Second argument is a file name: use two translator arguments."
-    $TIME "$TRANSLATE" "$1" "$2"
-    shift 2
-else
-    echo "Second argument is not a file name: auto-detect domain file."
-    $TIME "$TRANSLATE" "$1"
-    shift
-fi
+echo "$TRANSLATE" "$1" "$2"
+$TIME "$TRANSLATE" "$1" "$2"
 echo
 
 echo "2. Running preprocessor"
-$TIME --append "$PREPROCESS" < output.sas
+echo "$PREPROCESS" < output.sas "--h2_time_limit" "$3"
+$TIME --append "$PREPROCESS" < output.sas "--h2_time_limit" "$3"
 echo
+shift 3
 
 echo "3. Running search"
 echo "$SEARCH" < output "$@"

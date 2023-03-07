@@ -44,6 +44,19 @@ int main(int argc, const char ** argv) {
       cout << "*** do not perform relevance analysis ***" << endl;
       g_do_not_prune_variables = true;
       h2_mutex_time = 0;
+    } else if (arg.compare("--h2_time_limit") == 0) {
+        i++;
+        if (i < argc) {
+            try {
+                h2_mutex_time = atoi(argv[i]);
+            }catch (std::invalid_argument) {
+                cerr << "please specify the number of seconds after --h2_time_limit" << endl;
+                exit(2);
+            }
+        } else {
+            cerr << "please specify the number of seconds after --h2_time_limit" << endl;
+            exit(2);
+        }
     } else {
       cerr << "unknown option " << arg << endl << endl;
       cout << "Usage: ./preprocess [--cgamer] [--opt_ordering] < output"

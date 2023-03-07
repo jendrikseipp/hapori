@@ -44,6 +44,8 @@ DELFI_CMDS = {
 CONFIGS = {
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
     "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
+    "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
+    "ipc2018-symple2": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
     # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
@@ -221,6 +223,20 @@ def main():
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2_time_limit", f"{h2_time_limit[track]}",
                 "--search-options"] + saarplan_config)
+        elif image_nick == "ipc2018-symple1" or image_nick == "ipc2018-symple2":
+            if "OPT" in config:
+                h2_time_limit = "60"
+            elif "SAT" in config:
+                h2_time_limit = "300"
+            elif "AGL" in config:
+                h2_time_limit = "60"
+            else:
+                sys.exit("unknown config for Symple")
+            print("here")
+            print([
+                image_path, args.domainfile, args.problemfile, args.planfile, config, h2_time_limit])
+            run_image(args, [
+                image_path, args.domainfile, args.problemfile, args.planfile, config, h2_time_limit])
         elif image_nick == "ipc2018-opt-delfi":
             preprocess = ""
             if "masb50kmiasmdfp" not in config:

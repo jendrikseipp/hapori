@@ -44,9 +44,11 @@ Stage: run
     DOMAINFILE=$1
     PROBLEMFILE=$2
     PLANFILE=$3
+    CONFIG=$4
+    H2TIMELIMIT=$5
 
     ## Call your planner.
-    /planner/plan $DOMAINFILE $PROBLEMFILE $PLANFILE
+    /planner/src/plan $DOMAINFILE $PROBLEMFILE $H2TIMELIMIT ipc-18 $CONFIG --plan-file $PLANFILE
 
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
