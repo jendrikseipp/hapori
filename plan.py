@@ -41,6 +41,7 @@ DELFI_CMDS = {
 
 CONFIGS = {
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
+    "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
     # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
@@ -90,6 +91,7 @@ def prepare_config(config, replacements=None):
         ("H_COST_TRANSFORM", "adapt_costs(one)"),
         ("H_COST_TYPE", "one"), # for decstar
         ("S_COST_TYPE", "one"),
+        ("UNTIL_BOUND", "until_bound"), #  for saarplan to avoid below replacement
         ("BOUND", "infinity"),
     ] + (replacements or [])
     for index, part in enumerate(config):
@@ -102,8 +104,8 @@ def run_image(args, cmd):
     subprocess.run(cmd, check=args.check)
     if os.path.exists(args.planfile):
         print("Found plan file.")
-        # TODO: decstar (or rather: some of its configs using iterated search)
-        # write their plan to <filename>.1
+        # TODO: some planners like decstar or saarplan (or rather: FD
+        # configs using iterated search) write their plan to <filename>.1
         if args.check:
             subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile, args.planfile])
     else:
@@ -197,6 +199,28 @@ def main():
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
                 "--search-options"] + ds_config)
+        elif image_nick == "ipc2018-saarplan":
+            track, temp = config.split('-')
+            assert track in ['agl', 'sat'], track
+            portfolio_path = DIR / "planners" / "ipc2018-saarplan" / "driver" / "portfolios" / f"seq_{track}_saarplan.py"
+            saarplan_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
+            print(f"Saarplan configs: {len(saarplan_configs)}")
+            assert temp.startswith("config"), temp
+            config_index = int(temp[len("config"):])
+            assert 0 <= config_index < len(saarplan_configs)
+            _, saarplan_config = saarplan_configs[config_index]
+            saarplan_config = prepare_config(saarplan_config)
+            print(saarplan_config)
+            h2_time_limit = {
+                'agl' : 10,
+                'sat' : 30,
+            }
+            run_image(args, [
+                image_path,
+                "--plan-file", args.planfile,
+                args.domainfile, args.problemfile,
+                "--preprocess-options", "--h2_time_limit", f"{h2_time_limit[track]}",
+                "--search-options"] + saarplan_config)
         elif image_nick == "ipc2018-opt-delfi":
             preprocess = ""
             if "masb50kmiasmdfp" not in config:
