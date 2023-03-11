@@ -71,7 +71,7 @@ def parse_args():
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
-    parser.add_argument("--not-check-subprocess", dest="check", action="store_false", help="Don't check planner exitcode and don't validate plan.")
+    parser.add_argument("--not-check-subprocess", dest="check", action="store_false", help="Don't check planner exitcode.")
     return parser.parse_args()
 
 
@@ -127,8 +127,7 @@ def run_image(args, cmd):
 
     if existing_plan_files:
         print("Found plan file(s).")
-        if args.check:
-            subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile] + [str(plan) for plan in existing_plan_files])
+        subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile] + [str(plan) for plan in existing_plan_files])
     else:
         print("No plan file.")
         # TODO why do we support running multiple configuations in a single
