@@ -10,7 +10,7 @@ Stage: build
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev ca-certificates git
+    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev python coreutils default-jre default-jdk ant unzip ca-certificates git
 
     ## Build the planner
     cd /planner
@@ -27,9 +27,14 @@ Stage: run
 # Copy planner binary and required files from Stage 1.
 %files from build
     
-    /planner/MpC
     /planner/incplan-lgl 
-    /planner/plan.sh
+    /planner/plan-agl.sh
+    /planner/plan-sat.sh
+
+	/planner/build.xml
+    /planner/fl-ipc18.xml
+	/planner/fl-ipc18.jar 
+	/planner/incplan/lib
 
 %post
     ## Install only dependencies for running the planner.
