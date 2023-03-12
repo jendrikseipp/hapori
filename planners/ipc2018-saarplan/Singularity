@@ -1,0 +1,65 @@
+# Stage 1: Compile the planner
+bootstrap: docker
+From: fedora:28
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    dnf upgrade -y
+    dnf group install -y "Development Tools"
+    dnf install -y python gcc-c++ cmake boost boost-devel glibc-static libstdc++-static clang
+
+    ## Build your planner
+    cd /planner/fast-downward-conjunctions
+    ./build.py release64clangpgonative -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+
+# Stage 2: Run the planner
+bootstrap: docker
+From: fedora:28
+Stage: run
+
+%files from build
+    /planner/fast-downward.py
+    /planner/driver
+    /planner/fast-downward-conjunctions/driver
+    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/translate
+    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
+    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+
+%post
+    ## Install all necessary dependencies.
+    dnf upgrade -y
+    dnf install -y python
+    dnf clean all
+    rm -rf /var/cache/yum
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    SEED=42
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+    CONFIG=$4
+
+    ## Call your planner.
+    /planner/fast-downward.py "$@"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Saarplan
+Description Grey Planning, Decoupled Search, Conjunctions -- Saarland's greatest planning techniques combined!
+Authors     Maximilian Fickert <fickert@cs.uni-saarland.de> and Daniel Gnad <gnad@cs.uni-saarland.de> and Patrick Speicher <speicher@cs.uni-saarland.de> and Jörg Hoffmann <hoffmann@cs.uni-saarland.de>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects yes

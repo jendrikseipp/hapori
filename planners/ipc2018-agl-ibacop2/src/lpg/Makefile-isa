@@ -1,0 +1,97 @@
+#####################
+# Makefile for LPG  #
+#####################
+
+
+####### FLAGS
+
+#CFLAGS 	= -g -DNDEBUG -D__TEST__
+##CFLAGS = -g
+
+LIBS    = -lm  
+
+
+####### INCLUDE CONFIGURATION FILE
+
+include configure.make
+
+
+
+####### COMPILE
+
+CC	= gcc 
+
+SRC_HEADER =include
+
+PATH_HEADERS = -I$(SRC_HEADER)
+
+SRC_HEADER =../include
+
+
+find_header = $(wildcard $(dir)/*.h)
+
+HEADERS := $(foreach dir,../include,$(find_header))
+
+
+SOURCES 	= main.c \
+	BestFirst/output.c \
+    BestFirst/relax.c \
+    BestFirst/search.c \
+    LocalSearch/ActionSubgraph.c \
+    LocalSearch/ComputeReachInf.c \
+    LocalSearch/H_max.c \
+    LocalSearch/H_relaxed.c \
+    LocalSearch/LocalSearch.c \
+    LocalSearch/numeric.c \
+    LocalSearch/time.c \
+    Parser/inst_easy.c \
+    Parser/inst_final.c \
+    Parser/inst_hard.c \
+    Parser/inst_pre.c \
+    Parserinst_utils.c \
+    Parser/memory.c \
+    Parser/parse.c \
+    Parser/scan-fct_pddl.tab.c \
+    Parser/scan-ops_pddl.tab.c \
+    Tmp/astar.c \
+    Tmp/spontaneous.c \
+    Utilities/check.c \
+    Utilities/derivedpred.c \
+    Utilities/LpgOutput.c \
+    Utilities/mutex.c \
+    Utilities/utilities.c
+
+
+OBJECTS = $(SOURCES:.c=.o) 
+
+
+find_header = $(wildcard $(dir)/*.h)
+
+
+####### Implicit rules
+
+.SUFFIXES:
+
+.SUFFIXES: .c .o
+
+.c.o:; $(CC) -I$(PATH_HEADERS) -c $(CFLAGS) $<
+
+
+####### Build rules
+
+
+
+lpg: $(OBJECTS) 
+	$(CC) -o lpg $(OBJECTS)  $(CFLAGS) $(LIBS) 
+
+
+$(OBJECTS): $(HEADERS)
+
+clean:
+	@ for i in $(SUB_DIRS); do $(MAKE) -C $$i clean; done
+	-rm -f *.o *~ $(PATH_HEADERS)/*~ .#*
+
+distclean:
+	@ for i in $(SUB_DIRS); do $(MAKE) -C $$i clean; done
+	-rm -f *.o *~ lpg* $(PATH_HEADERS)/*~ .#*
+#######

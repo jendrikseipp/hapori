@@ -1,0 +1,5 @@
+#!/bin/bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH$:/opt/boost/lib
+
+BASEDIR="$(dirname "$0")"
+$BASEDIR/bfs_f --domain $1 --problem $2 --output $3

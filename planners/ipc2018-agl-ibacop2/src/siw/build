@@ -1,0 +1,13 @@
+#!/bin/bash
+cd external/libff
+make clean
+make depend
+make
+cd ../..
+cd planners/siw-ffparser
+scons -c
+scons ipc14_build=1
+cd ../..
+echo "Copying siw..."
+cp planners/siw-ffparser/siw .
+exit

@@ -1,0 +1,7 @@
+#!/bin/bash
+cd external/libff
+make clean
+cd ../..
+cd planners/bfs_f-ffparser
+scons -c
+cd ../..

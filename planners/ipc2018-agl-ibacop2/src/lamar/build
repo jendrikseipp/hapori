@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"
+ROOT=$PWD
+
+cd $ROOT/search && \
+mkdir obj && \
+(make release || exit 1) && \
+rm -rf obj
+
+if [ $? -eq 0 ]; then
+	cd $ROOT/
+
+else 
+	exit 1
+fi

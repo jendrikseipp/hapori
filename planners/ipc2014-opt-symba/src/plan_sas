@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR="$(dirname "$0")"
+
+function die {
+    echo "$@" 1>&2
+    exit 1
+}
+
+function usage {
+    die "usage: $(basename "$0") SAS_FILE SEARCH_OPTION ..."
+}
+
+# Paths to planner components
+PREPROCESS="$BASEDIR/preprocess/preprocess"
+SEARCH="$BASEDIR/search/downward"
+
+if [[ "$#" < 2 ]]; then
+    usage
+fi
+
+SAS_TASK="$1"
+shift
+
+echo "Running preprocessor"
+"$PREPROCESS" --opt_ordering < "$SAS_TASK"
+echo
+
+echo "Running search"
+"$SEARCH" < output "$@"
+echo

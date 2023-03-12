@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import os
 import re
 import sys
 
@@ -10,6 +11,13 @@ def fix_costs(content, props):
     if "plan_length" in props:
         if props["cost"] is None:
             props["cost"] = props["plan_length"]
+        else:
+            # HACK: At one point validate seems to have change the order in its
+            # output.
+            # Assume all actions have cost at least 1!
+            cost, length = props["cost"], props["plan_length"]
+            props["plan_length"] = min(cost, length)
+            props["cost"] = max(cost, length)
     elif "cost" in props:
         del props["cost"]
 
@@ -17,11 +25,23 @@ def fix_costs(content, props):
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
 
+def unsupported(content, props):
+    if "unsupported" in props and props["unsupported"]:
+        return
+    if (content.find(" does not support axioms!") > -1 or
+            content.find("axioms not supported") > -1 or
+            content.find("Tried to use unsupported feature") > -1 or
+            content.find("This configuration does not support") > -1 or
+            content.find("No factoring found!") > -1):
+        props["unsupported"] = True
+    else:
+        props["unsupported"] = False
 
 def set_outcome(content, props):
     lines = content.splitlines()
     solved = props["coverage"]
     unsolvable = False  # assume all tasks are solvable
+    unsupported = props["unsupported"]
     out_of_time = int("TIMEOUT=true" in lines)
     out_of_memory = int("MEMOUT=true" in lines)
     # runsolver decides "out of time" based on CPU rather than (cumulated)
@@ -31,6 +51,7 @@ def set_outcome(content, props):
         and not unsolvable
         and not out_of_time
         and not out_of_memory
+        and not unsupported
         and props["cpu_time"] > props["time_limit"]
     ):
         out_of_time = 1
@@ -50,7 +71,8 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    if solved ^ unsolvable ^ out_of_time ^ out_of_memory:
+    print(solved, unsolvable, out_of_time, out_of_memory, unsupported)
+    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ unsupported:
         if solved:
             props["error"] = "solved"
         elif unsolvable:
@@ -59,6 +81,8 @@ def set_outcome(content, props):
             props["error"] = "out_of_time"
         elif out_of_memory:
             props["error"] = "out_of_memory"
+        elif unsupported:
+            props["error"] = "unsupported"
     else:
         print(f"unexpected error: {props}", file=sys.stderr)
         props["error"] = "unexpected-error"
@@ -120,6 +144,10 @@ def main():
     parser.add_pattern("cost", r"\nFinal value: .+? (.+)?\n", type=type_int_or_none)
     parser.add_function(fix_costs)
     parser.add_function(coverage)
+    if os.path.exists("run.log"):
+        parser.add_function(unsupported, file="run.log")
+    if os.path.exists("run.err"):
+        parser.add_function(unsupported, file="run.err")
     parser.add_function(set_outcome, file="values.log")
     parser.parse()
 

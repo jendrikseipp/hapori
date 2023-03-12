@@ -320,6 +320,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
 		break;//not going past problem size!
 	 if(double(utils::get_current_memory_in_kb())/1024.0>memory_limit){
 	    cout<<"break-4,memory limit breached,current_memory(MB):"<<utils::get_current_memory_in_kb()/1024.0<<",memory_limit:"<<memory_limit<<endl;
+	    result->set_dead_ends(pdb_factory->get_dead_ends());
 	    return;//Gone past memory limit, best to return with what we have
 	 }
 	Packer2.set_pdb_max_size(temp_pdb_max_size);
@@ -329,6 +330,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
         if(pdb_factory->is_solved()){
           cout<<"Solution found while generating PDB candidate of type:"<<pdb_factory->name()<<", adding PDB and exiting generation at time"<<utils::g_timer()<<endl;
           result->include_additive_pdbs(pdb_factory->terminate_creation(BinPackerV1_ptr2->get_pattern_databases()));
+	  result->set_dead_ends(pdb_factory->get_dead_ends());
           //pdb_ptr_collection.push_back(candidate_ptr);
           return;
         }
@@ -351,6 +353,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
 		break;//not going past problem size!
 	 if(double(utils::get_current_memory_in_kb())/1024.0>memory_limit){
 	    cout<<"break-4,memory limit breached,current_memory(MB):"<<utils::get_current_memory_in_kb()/1024.0<<",memory_limit:"<<memory_limit<<endl;
+	    result->set_dead_ends(pdb_factory->get_dead_ends());
 	    return;//Gone past memory limit, best to return with what we have
 	 }
 	Packer3.set_pdb_max_size(temp_pdb_max_size);
@@ -360,6 +363,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
         if(pdb_factory->is_solved()){
           cout<<"Solution found while generating PDB candidate of type:"<<pdb_factory->name()<<", adding PDB and exiting generation at time"<<utils::g_timer()<<endl;
 	  result->include_additive_pdbs(pdb_factory->terminate_creation(BinPackerV1_ptr3->get_pattern_databases()));
+	  result->set_dead_ends(pdb_factory->get_dead_ends());
           //pdb_ptr_collection.push_back(candidate_ptr);
           return;
 	}
@@ -383,6 +387,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
       while(!modular_heuristic_timer->is_expired()){
 	 if(double(utils::get_current_memory_in_kb())/1024.0>memory_limit){
 	    cout<<"break-3,memory limit breached,current_memory(MB):"<<utils::get_current_memory_in_kb()/1024.0<<",memory_limit:"<<memory_limit<<endl;
+	    result->set_dead_ends(pdb_factory->get_dead_ends());
 	    return;
 	 }
         //First we decide whether to try improving existing pdbs or keep generating new ones
@@ -470,6 +475,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
           cout<<"Solution found while generating PDB candidate of type:"<<pdb_factory->name()<<", adding PDB and exiting generation at time"<<utils::g_timer()<<endl;
           //best_pdb_collections.push_back(pdb_factory->terminate_creation(candidate.get_pattern_databases()));
           result->include_additive_pdbs(pdb_factory->terminate_creation(candidate_ptr->get_pattern_databases()));
+	      result->set_dead_ends(pdb_factory->get_dead_ends());
           return;
         }
         //Now choosing between RandomSplit and CBP pattern generation
@@ -659,6 +665,7 @@ ModularHeuristic::ModularHeuristic(const Options &opts)
           if(pdb_factory->is_solved()){
 		  cout<<"Solution found while generating PDB candidate of type:"<<pdb_factory->name()<<", adding PDB and exiting generation at time"<<utils::g_timer()<<endl;
 		  result->include_additive_pdbs(pdb_factory->terminate_creation(candidate_ptr->get_pattern_databases()));
+		  result->set_dead_ends(pdb_factory->get_dead_ends());
 		  return;
 	  }
 

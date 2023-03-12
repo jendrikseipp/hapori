@@ -13,7 +13,10 @@ IGNORE_PATTERNS = [
     "differs from the one in the portfolio file",
     "Terminated",
     "Killed",
-    "underlay of /etc/localtime required more than"
+    "underlay of /etc/localtime required more than",
+    "sched_setaffinity failed: : Invalid argument",
+    "warning: error reading memory from procfile",
+    "ls: cannot access", # Somewhere symple1 calls an ls, symple2 doesn;t
 ]
 
 

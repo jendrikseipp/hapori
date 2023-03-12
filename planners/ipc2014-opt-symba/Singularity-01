@@ -1,15 +1,17 @@
+# Stage 1: Compile the planner
 Bootstrap: docker
-From: ubuntu:18.04
+From: ubuntu:bionic
+Stage: build
 
 %files
     . /planner
 
 %post
-    ## Install all dependencies.
+    ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install cmake gawk g++ g++-multilib make python
+    apt-get -y install --no-install-recommends python cmake g++ g++-multilib make
 
-    ## Build the planner.
+    ## Build planner.
     cd /planner
     ./build -j4
 
@@ -19,19 +21,28 @@ From: ubuntu:18.04
         /planner/src/search/downward-2 \
         /planner/src/search/downward-4
 
-    ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove cmake g++ make
-    rm -rf /var/lib/apt/lists/*
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:bionic
+Stage: run
 
-    ## Only keep essential binaries.
-    mkdir -p /compiled-planner/src/preprocess
-    mkdir -p /compiled-planner/src/search
-    mv /planner/plan /compiled-planner
-    mv /planner/src/plan-ipc /planner/src/plan /planner/src/translate /compiled-planner/src
-    mv /planner/src/preprocess/preprocess /compiled-planner/src/preprocess
-    mv /planner/src/search/dispatch /planner/src/search/unitcost /planner/src/search/downward /planner/src/search/downward-1 /planner/src/search/downward-2 /planner/src/search/downward-4 /planner/src/search/cudd-2.5.0 /compiled-planner/src/search
-    rm -rf /planner
-    mv /compiled-planner /planner
+%files from build
+    /planner/plan
+    /planner/src/plan
+    /planner/src/plan-ipc
+    /planner/src/translate
+    /planner/src/preprocess/preprocess
+    /planner/src/search/downward
+    /planner/src/search/downward-1
+    /planner/src/search/downward-2
+    /planner/src/search/downward-4
+    /planner/src/search/dispatch
+    /planner/src/search/unitcost
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python gawk
+    rm -rf /var/lib/apt/lists/*
 
 %runscript
     DOMAINFILE=$1
