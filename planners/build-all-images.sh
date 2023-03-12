@@ -34,5 +34,6 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
 ./build-image.sh ../planners/ipc2018-agl-saarplan/Singularity ${OUTDIR}/ipc2018-agl-saarplan.img
+./build-image.sh ../planners/ipc2018-agl-freelunch-madagascar/Singularity ${OUTDIR}/ipc2018-agl-freelunch-madagascar.img
 
 echo "Finished building images"
