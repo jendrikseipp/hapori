@@ -58,6 +58,7 @@ CONFIGS = {
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
+    "ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],
 }
 
 def csv_list(s):
@@ -277,7 +278,7 @@ def main():
         elif image_nick == "ipc2018-agl-ibacop":
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
-        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
+        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014", "ipc2018-agl-freelunch-doubly-relaxed"]:
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
         else:

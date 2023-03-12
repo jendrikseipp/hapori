@@ -45,12 +45,12 @@ Stage: run
     /planner/plan.sh $1 $2 $3
 
 ## Update the following fields with meta data about your submission.
-### Please use the same field names and use only one line for each value.
-#%labels
-#Name        freelunch-madagascar
-#Description Incremental Satisfiasfiability based Planning using Madagascar by Jussi Rintanen for encoding.
-#Authors     Tomas Balyo <biotomas@gmail.com> and Stephan Gocht <gocht@kth.se>
-#SupportsDerivedPredicates no
-#SupportsQuantifiedPreconditions no
-#SupportsQuantifiedEffects no
+## Please use the same field names and use only one line for each value.
+%labels
+Name        freelunch-madagascar
+Description Incremental Satisfiasfiability based Planning using Madagascar by Jussi Rintanen for encoding.
+Authors     Tomas Balyo <biotomas@gmail.com> and Stephan Gocht <gocht@kth.se>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no
 

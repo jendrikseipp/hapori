@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: ubuntu:xenial
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev python coreutils default-jre default-jdk ant unzip ca-certificates git
+    rm -rf /var/lib/apt/lists/*
+
+    git clone -b ipc-2018-seq-agl https://bitbucket.org/ipc2018-classical/team34.git /planner
+
+    ## Build your planner
+    cd /planner
+    # build
+    make
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    /planner/plan.sh $1 $2 $3
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        freelunch-doubly-relaxed
+Description Incremental Satisfiasfiability based Planning using the relaxed relaxed encoding of freelunch
+Authors     Tomas Balyo <tomas.balyo@kit.edu> and Stephan Gocht <gocht@kth.se>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no
