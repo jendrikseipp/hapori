@@ -4,7 +4,7 @@ set -e
 p=/tmp/$$
 rm -f output.sas
 rm -f *.cnf
-python /planner/translate/translate.py $1 $2
+python3 /planner/translate/translate.py $1 $2
 mv output.sas $p.sas
 
 # bfs phase

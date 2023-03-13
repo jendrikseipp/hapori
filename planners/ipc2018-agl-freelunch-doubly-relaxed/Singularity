@@ -29,16 +29,17 @@ Stage: run
     /planner/plan-agl.sh
     /planner/plan-sat.sh
 
-	/planner/build.xml
-    /planner/fl-ipc18.xml
-	/planner/fl-ipc18.jar 
-	/planner/incplan/lib
+    #/planner/build.xml
+    #/planner/fl-ipc18.xml
+    /planner/fl-ipc18.jar 
+    /planner/incplan/lib
     /planner/translate
     
 %post
     ## Install only dependencies for running the planner.
     apt-get update
     apt-get -y install python3-minimal
+    apt-get -y install default-jre
     ## Remove unnecessary files to keep the image small.
     rm -rf /var/lib/apt/lists/*
 
