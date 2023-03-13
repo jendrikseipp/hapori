@@ -1,4 +1,3 @@
-
 # Stage 1: Compile the planner
 Bootstrap: docker
 From: ubuntu:xenial
@@ -10,13 +9,12 @@ Stage: build
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev python coreutils default-jre default-jdk ant unzip ca-certificates git
-    rm -rf /var/lib/apt/lists/*
+    apt-get -y install --no-install-recommends cmake g++ gcc make bison flex zlib1g-dev python coreutils default-jre default-jdk ant unzip
 
     ## Build the planner
     cd /planner
     make
-    #strip --strip-all /planner/incplan-lgl
+    strip --strip-all /planner/incplan-lgl
 
 
 # Stage 2: Run the planner
@@ -60,5 +58,3 @@ Authors     Tomas Balyo <tomas.balyo@kit.edu> and Stephan Gocht <gocht@kth.se>
 SupportsDerivedPredicates no
 SupportsQuantifiedPreconditions no
 SupportsQuantifiedEffects no
-
-
