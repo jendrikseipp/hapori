@@ -21,8 +21,14 @@ IGNORE_PATTERNS = [
     "(soft limit:",
     "(hard limit)",
     "run.err: unexpected error: {",
+    "output-to-slurm.err",
+    "Assertion",
+    "unable to allocate",
     "std::length_error",
-    "ls: cannot access"
+    "ls: cannot access",
+    "WARNING",
+    "Segmentation fault",
+    # "MemoryError"
 ]
 
 KEY_UNEXPLAINED_ERRORS = "unexplained_errors"
@@ -30,6 +36,8 @@ def main(file_properties):
     with open(file_properties, "r") as f:
         properties = json.load(f)
     for props in properties.values():
+        assert "cost" not in props or props["cost"] >= props["plan_length"]
+
         unexplained_errors = props.get(KEY_UNEXPLAINED_ERRORS)
         if unexplained_errors:
             new_unexplained_errors = [ue for ue in unexplained_errors
