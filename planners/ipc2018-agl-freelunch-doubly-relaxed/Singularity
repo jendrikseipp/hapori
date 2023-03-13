@@ -16,7 +16,6 @@ Stage: build
     cd /planner
     make
     strip --strip-all /planner/incplan-lgl
-    strip --strip-all /planner/MpC
 
 
 # Stage 2: Run the planner
@@ -35,7 +34,8 @@ Stage: run
     /planner/fl-ipc18.xml
 	/planner/fl-ipc18.jar 
 	/planner/incplan/lib
-
+    /planner/translate
+    
 %post
     ## Install only dependencies for running the planner.
     apt-get update
