@@ -34,7 +34,6 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2014-agl-madagascar/Singularity-MpC ${OUTDIR}/ipc2014-agl-mpc.img
 ./build-image.sh ../planners/ipc2014-agl-probe/Singularity ${OUTDIR}/ipc2014-agl-probe.img
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
-./build-image.sh ../planners/ipc2018-agl-saarplan/Singularity ${OUTDIR}/ipc2018-agl-saarplan.img
 ./build-image.sh ../planners/ipc2018-agl-freelunch-madagascar/Singularity ${OUTDIR}/ipc2018-agl-freelunch-madagascar.img
 #./build-image.sh ../planners/ipc2018-agl-freelunch-doubly-relaxed/Singularity ${OUTDIR}/ipc2018-agl-freelunch-doubly-relaxed.img  #(not working)
 
