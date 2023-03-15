@@ -73,6 +73,7 @@ Stage: run
     /planner/Fast-Downward-2018-2/builds/release64/bin
     /planner/Fast-Downward-2018-2/driver
     /planner/Fast-Downward-2018-2/fast-downward.py
+    /planner/Fast-Downward-2018-2/fast-downward-singularity.py
     /planner/h2-fd-preprocessor/builds/release32/bin
 
     # To avoid installing the large python-dev and libboost-python-dev packages, we copy only the necessary shared libraries.

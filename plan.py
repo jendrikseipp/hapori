@@ -150,7 +150,7 @@ def main():
     print(f"Configs: {configs}")
     if image_nick in CONFIGS:
         if not configs:
-            sys.exit(f"Image {image_nick} needs at least one config.")
+            sys.exit(f"Image {image_nick} needs at least one config from {list(CONFIGS[image_nick])}.")
         for config in configs:
             if config == "all":
                 configs = CONFIGS[image_nick]
