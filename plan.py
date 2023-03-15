@@ -58,7 +58,7 @@ CONFIGS = {
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
-    "ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],
+    #"ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],  # Image is too large.
 }
 
 def csv_list(s):
