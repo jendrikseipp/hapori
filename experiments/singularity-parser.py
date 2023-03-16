@@ -25,6 +25,9 @@ def fix_costs(content, props):
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
 
+def invalid_plan(content, props):
+    props["invalid_plan"] = content.find("Plan failed to execute") > -1
+
 def unsupported(content, props):
     if "unsupported" in props and props["unsupported"]:
         return
@@ -44,6 +47,7 @@ def set_outcome(content, props):
     unsupported = props["unsupported"]
     out_of_time = int("TIMEOUT=true" in lines)
     out_of_memory = int("MEMOUT=true" in lines)
+    invalid_plan = props["invalid_plan"]
     # runsolver decides "out of time" based on CPU rather than (cumulated)
     # WCTIME.
     if (
@@ -52,6 +56,7 @@ def set_outcome(content, props):
         and not out_of_time
         and not out_of_memory
         and not unsupported
+        and not invalid_plan
         and props["cpu_time"] > props["time_limit"]
     ):
         out_of_time = 1
@@ -71,8 +76,8 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    print(solved, unsolvable, out_of_time, out_of_memory, unsupported)
-    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ unsupported:
+    print(solved, unsolvable, out_of_time, out_of_memory, unsupported, invalid_plan)
+    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
         elif unsolvable:
@@ -83,6 +88,8 @@ def set_outcome(content, props):
             props["error"] = "out_of_memory"
         elif unsupported:
             props["error"] = "unsupported"
+        elif invalid_plan:
+            props["error"] = "invalid_plan"
     else:
         print(f"unexpected error: {props}", file=sys.stderr)
         props["error"] = "unexpected-error"
@@ -144,6 +151,7 @@ def main():
     parser.add_pattern("cost", r"\nFinal value: .+? (.+)?\n", type=type_int_or_none)
     parser.add_function(fix_costs)
     parser.add_function(coverage)
+    parser.add_function(invalid_plan)
     if os.path.exists("run.log"):
         parser.add_function(unsupported, file="run.log")
     if os.path.exists("run.err"):
