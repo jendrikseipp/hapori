@@ -34,7 +34,7 @@ def main():
             if component == "translate":
                 run_components.run_translate(args)
                 #do h2 preprocessing
-                os.system("../../h2-fd-preprocessor/builds/release32/bin/preprocess < output.sas")
+                os.system("/planner/h2-fd-preprocessor/builds/release32/bin/preprocess < output.sas")
             elif component == "search":
                 exitcode = run_components.run_search(args)
             elif component == "validate":
