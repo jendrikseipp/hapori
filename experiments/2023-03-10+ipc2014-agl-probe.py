@@ -1,0 +1,3 @@
+import base_2023_03_10
+
+base_2023_03_10.construct(base_2023_03_10.get_image_name(__file__))
