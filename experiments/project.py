@@ -180,7 +180,7 @@ def fetch_algorithm(exp, expname, algo, *, new_algo=None):
     def rename_and_filter(run):
         if run["algorithm"] == algo:
             run["algorithm"] = new_algo
-            run["id"][0] = new_algo
+            #run["id"][0] = new_algo
             return run
         return False
 

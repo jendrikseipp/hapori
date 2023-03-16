@@ -106,11 +106,7 @@ class Results(object):
         return configs, sorted(problems), data
 
     def _massage_entry(self, entry, timeout):
-        algorithm = entry["algorithm"]
-        if ":" in algorithm:
-            config = algorithm.split(":", 1)[1]
-        else:
-            config = algorithm
+        config = entry["algorithm"]
         domain = entry["domain"]
         problem = entry["problem"]
         coverage = entry.get("coverage", 0)
