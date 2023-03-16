@@ -28,6 +28,9 @@ IGNORE_PATTERNS = [
     "ls: cannot access",
     "WARNING",
     "Segmentation fault",
+    "Parser failed to read file!",
+    "API usage error of",
+    # "unexpected error",
     # "MemoryError"
 ]
 

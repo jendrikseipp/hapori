@@ -26,7 +26,7 @@ def coverage(content, props):
     props["coverage"] = int("cost" in props)
 
 def invalid_plan(content, props):
-    props["invalid_plan"] = content.find("Plan failed to execute") > -1
+    props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1
 
 def unsupported(content, props):
     if "unsupported" in props and props["unsupported"]:
