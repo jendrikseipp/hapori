@@ -129,8 +129,8 @@ def remove_properties(eval_dir: Path):
             pass
 
 
-def compress_properties(eval_dir: Path):
-    subprocess.run(["xz", "--force", str(eval_dir / "properties")])
+def compress(path: Path):
+    subprocess.run(["xz", "--force", str(path)])
 
 
 def add_evaluations_per_time(run):
@@ -143,7 +143,19 @@ def add_evaluations_per_time(run):
 
 def strip_properties(run):
     stripped_run = {}
-    for attribute in ["id", "error", "domain", "problem", "algorithm", "component_options", "cost", "coverage", "memory", "run_dir", "cpu_time", "plan_length"]:
+    for attribute in [
+        "id",
+        "error",
+        "domain",
+        "problem",
+        "algorithm",
+        "component_options",
+        "cost",
+        "coverage",
+        "memory",
+        "run_dir",
+        "total_time",
+    ]:
         if attribute in run:
             stripped_run[attribute] = run[attribute]
     return stripped_run

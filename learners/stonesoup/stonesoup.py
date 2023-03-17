@@ -128,7 +128,7 @@ class Results(object):
             cost = None
         return dict(
             config=config,
-            options=[entry["algorithm"]],
+            options=[entry["image"], entry["config"]],
             problem="%s:%s" % (domain, problem),
             time=time,
             cost=cost)

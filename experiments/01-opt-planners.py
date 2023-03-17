@@ -51,8 +51,8 @@ def strip_runs(run):
     run["algorithm"] = f"{image}:{config}"
     run["image"] = image
     run["config"] = config
-    if run["domain"] in {"ged-strips", "petri-net-alignment-strips", "sokoban-strips"} and run["coverage"]:
-        run["plan_length"], run["cost"] = run["cost"], run["plan_length"]
+    if image == "ipc2018-opt-complementary1" or run["algorithm"] in {"ipc2018-symple1:symple100000AGL", "ipc2018-symple2:symple100000AGL"}:
+        return False
     return run
 
 for expname in [
@@ -86,6 +86,7 @@ for expname in [
     #"2023-03-10+ipc2018-agl-saarplan",
     #"2023-03-10+ipc2018-fd-2018",
     #"2023-03-10+ipc2018-lapkt-dfs-plus",
+    #"2023-03-10+ipc2018-lapkt-bfws",
     #"2023-03-10+ipc2018-saarplan",
 ]:
     project.fetch_algorithms(exp, expname)
@@ -95,8 +96,9 @@ for opt_config in [f"opt-config{i:02d}" for i in range(0, 7)]:
 
 project.add_absolute_report(exp, attributes=ATTRIBUTES, filter=[strip_runs], name=f"{exp.name}-full")
 
-exp.add_report(project.Hardest30Report(filter=[strip_runs]), outfile="properties-hardest.json", name="keep-only-30-hardest-tasks")
-#exp.add_step("compress-properties", project.compress_properties, Path(exp.eval_dir))
+properties_hardest = Path(exp.eval_dir) / "properties-hardest.json"
+exp.add_report(project.Hardest30Report(filter=[strip_runs]), outfile=properties_hardest, name="keep-only-30-hardest-tasks")
+exp.add_step("compress-properties", project.compress, properties_hardest)
 #project.add_absolute_report(exp, attributes=ATTRIBUTES, name=f"{exp.name}-hardest")
 
 exp.run_steps()
