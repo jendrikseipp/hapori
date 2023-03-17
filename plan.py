@@ -124,10 +124,10 @@ def get_existing_plans(plan_prefix):
 def run_image(args, cmd):
     subprocess.run(cmd, check=args.check)
     plan_prefix = Path(args.planfile).resolve()
-    existing_plan_files = get_existing_plans(plan_prefix)
+    existing_plan_files = list(get_existing_plans(plan_prefix))
 
     if existing_plan_files:
-        print("Found plan file(s).")
+        print(f"Found plan file(s): {existing_plan_files}")
         subprocess.call(["validate", "-L", "-v", args.domainfile, args.problemfile] + [str(plan) for plan in existing_plan_files])
     else:
         print("No plan file.")
