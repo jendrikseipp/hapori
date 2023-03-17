@@ -41,6 +41,9 @@ class CollectFeaturesReport(PlanningReport):
                 data_domain = {}
                 for run in runs:
                     source_file = exp_dir / run["run_dir"] / self.source_file
+                    if not source_file.exists():
+                        print(f"Missing {source_file}")
+                        continue
                     with open(source_file, "r") as f:
                         data_domain[run["problem"]] = json.load(f)
                 data[domain] = data_domain
@@ -55,4 +58,5 @@ class CollectFeaturesReport(PlanningReport):
                 for run in runs:
                     source_file = exp_dir / run["run_dir"] / self.source_file
                     target_file = str(domain_dir / run["problem"]) +  source_file.suffix
-                shutil.copy(source_file, target_file)
+                    if source_file.exists():
+                        shutil.copy(source_file, target_file)
