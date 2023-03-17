@@ -58,7 +58,7 @@ def compute_run_time(timeout, configs, pos):
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     next_plan_id = 1
-    for pos, (relative_time, image, planner) in enumerate(configs):
+    for pos, (relative_time, (image, planner)) in enumerate(configs):
         next_plan_file = f"{plan_manager.get_plan_prefix()}.{next_plan_id}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
@@ -72,7 +72,7 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, t
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    for pos, (relative_time, image, planner) in enumerate(configs):
+    for pos, (relative_time, (image, planner)) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             return
