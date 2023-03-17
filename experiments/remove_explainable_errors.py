@@ -30,6 +30,7 @@ IGNORE_PATTERNS = [
     "Segmentation fault",
     "Parser failed to read file!",
     "API usage error of",
+    "could not parse",
     # "unexpected error",
     # "MemoryError"
 ]
