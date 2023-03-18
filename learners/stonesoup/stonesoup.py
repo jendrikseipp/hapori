@@ -326,7 +326,7 @@ def main():
     portfolio.dump()
     print()
     summary = {
-        "Final score": portfolio.ipc_score(),
+        "Final score": round(portfolio.ipc_score(), 2),
         "Configs": sum(1 if time > 0 else 0 for time in list(portfolio.timeouts.values())),
         "Min time": min(val for val in list(portfolio.timeouts.values()) if val > 0),
         "Max time": max(portfolio.timeouts.values()),
