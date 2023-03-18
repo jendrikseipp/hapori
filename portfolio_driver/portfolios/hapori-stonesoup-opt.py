@@ -1,8 +1,8 @@
 """
-Coverage: 1644
+Coverage: 1645
 Granularity: 300s
-Runtime: 1745s
-Score: 1644.0
+Runtime: 1676s
+Score: 1645.0
 """
 PLANNERS = [
     # ipc2018-opt-scorpion:default
@@ -12,5 +12,5 @@ PLANNERS = [
     # ipc2018-opt-metis:metis2
     (287, ['ipc2018-opt-metis', 'metis2']),
     # ipc2018-decstar:opt-config06
-    (278, ['ipc2018-decstar', 'opt-config06']),
+    (209, ['ipc2018-decstar', 'opt-config06']),
 ]

@@ -72,7 +72,7 @@ airport-strips:0-p23.pddl: 1 different costs from 224 to 224
 airport-strips:0-p24.pddl: 1 different costs from 229 to 229
 airport-strips:0-p26.pddl: 1 different costs from 292 to 292
 airport-strips:2-p09-airport2-p4.pddl: 1 different costs from 71 to 71
-airport-strips:2-p16-airport3-p4.pddl: 1 different costs from 79 to 79
+airport-strips:2-p15-airport3-p3.pddl: 1 different costs from 58 to 58
 airport-strips:2-p17-airport3-p5.pddl: 1 different costs from 88 to 88
 airport-strips:2-p18-airport3-p6.pddl: 1 different costs from 107 to 107
 airport-strips:2-p19-airport3-p6.pddl: 1 different costs from 90 to 90
@@ -85,7 +85,7 @@ barman-strips:3-p435-3.pddl: 1 different costs from 49 to 49
 barman-strips:3-p536-1.pddl: 1 different costs from 62 to 62
 barman-strips:3-p536-2.pddl: 1 different costs from 62 to 62
 barman-strips:3-p536-3.pddl: 1 different costs from 62 to 62
-barman-strips:5-pfile02-005.pddl: 1 different costs from 121 to 121
+barman-strips:5-pfile02-007.pddl: 1 different costs from 121 to 121
 barman-strips:5-pfile03-009.pddl: 1 different costs from 152 to 152
 barman-strips:5-pfile03-010.pddl: 1 different costs from 152 to 152
 barman-strips:5-pfile03-011.pddl: 1 different costs from 152 to 152
@@ -107,6 +107,7 @@ barman-strips:7-p027.pddl: 1 different costs from 38 to 38
 barman-strips:7-p028.pddl: 1 different costs from 38 to 38
 barman-strips:7-p029.pddl: 1 different costs from 39 to 39
 barman-strips:7-p030.pddl: 1 different costs from 39 to 39
+blocksworld-strips:0-p02.pddl: 1 different costs from 14 to 14
 blocksworld-strips:0-p06.pddl: 1 different costs from 26 to 26
 blocksworld-strips:0-p07.pddl: 1 different costs from 30 to 30
 blocksworld-strips:0-p08.pddl: 1 different costs from 28 to 28
@@ -115,12 +116,10 @@ blocksworld-strips:0-p10.pddl: 1 different costs from 32 to 32
 blocksworld-strips:0-p11.pddl: 1 different costs from 40 to 40
 blocksworld-strips:0-p12.pddl: 1 different costs from 36 to 36
 blocksworld-strips:0-p13.pddl: 1 different costs from 40 to 40
-blocksworld-strips:0-p22.pddl: 1 different costs from 20 to 20
 blocksworld-strips:0-p23.pddl: 1 different costs from 22 to 22
 blocksworld-strips:0-p24.pddl: 1 different costs from 32 to 32
 blocksworld-strips:0-p25.pddl: 1 different costs from 36 to 36
 blocksworld-strips:0-p26.pddl: 1 different costs from 38 to 38
-blocksworld-strips:1-p01.pddl: 1 different costs from 28 to 28
 blocksworld-strips:1-p02.pddl: 1 different costs from 30 to 30
 blocksworld-strips:2-probBLOCKS-10-0.pddl: 1 different costs from 34 to 34
 blocksworld-strips:2-probBLOCKS-10-1.pddl: 1 different costs from 32 to 32
@@ -136,10 +135,10 @@ blocksworld-strips:2-probBLOCKS-14-0.pddl: 1 different costs from 38 to 38
 blocksworld-strips:2-probBLOCKS-14-1.pddl: 1 different costs from 36 to 36
 blocksworld-strips:2-probBLOCKS-15-0.pddl: 1 different costs from 40 to 40
 blocksworld-strips:2-probBLOCKS-16-2.pddl: 1 different costs from 52 to 52
-blocksworld-strips:2-probBLOCKS-9-0.pddl: 1 different costs from 30 to 30
+blocksworld-strips:2-probBLOCKS-8-0.pddl: 1 different costs from 18 to 18
+blocksworld-strips:2-probBLOCKS-9-1.pddl: 1 different costs from 28 to 28
 briefcaseworld-adl:0-p001.pddl: 1 different costs from 0 to 0
-briefcaseworld-adl:0-p002.pddl: 1 different costs from 5 to 5
-briefcaseworld-adl:0-p005.pddl: 1 different costs from 12 to 12
+briefcaseworld-adl:0-p004.pddl: 1 different costs from 10 to 10
 briefcaseworld-adl:0-p006.pddl: 1 different costs from 17 to 17
 briefcaseworld-adl:0-p007.pddl: 1 different costs from 17 to 17
 briefcaseworld-adl:0-p008.pddl: 1 different costs from 24 to 24
@@ -154,9 +153,10 @@ briefcaseworld-adl:0-p016.pddl: 1 different costs from 35 to 35
 briefcaseworld-adl:0-p017.pddl: 1 different costs from 51 to 51
 briefcaseworld-adl:0-p018.pddl: 1 different costs from 49 to 49
 briefcaseworld-adl:0-p019.pddl: 1 different costs from 48 to 48
-briefcaseworld-adl:1-p03.pddl: 1 different costs from 4 to 4
+briefcaseworld-adl:1-p01.pddl: 1 different costs from 0 to 0
+briefcaseworld-adl:1-p02.pddl: 1 different costs from 5 to 5
 briefcaseworld-adl:1-p04.pddl: 1 different costs from 10 to 10
-briefcaseworld-adl:1-p06.pddl: 1 different costs from 15 to 15
+briefcaseworld-adl:1-p05.pddl: 1 different costs from 13 to 13
 briefcaseworld-adl:1-p07.pddl: 1 different costs from 21 to 21
 briefcaseworld-adl:1-p08.pddl: 1 different costs from 21 to 21
 briefcaseworld-adl:1-p09.pddl: 1 different costs from 23 to 23
@@ -212,6 +212,7 @@ cavediving-adl:0-testing08_easy.pddl: 1 different costs from 90 to 90
 cavediving-adl:0-testing18A_easy.pddl: 1 different costs from 131 to 131
 cavediving-adl:0-testing18_easy.pddl: 1 different costs from 131 to 131
 cavediving-adl:0-testing20A_easy.pddl: 1 different costs from 98 to 98
+childsnack-strips:0-p01.pddl: 1 different costs from 7 to 7
 childsnack-strips:0-p02.pddl: 1 different costs from 11 to 11
 childsnack-strips:0-p03.pddl: 1 different costs from 13 to 13
 childsnack-strips:0-p04.pddl: 1 different costs from 17 to 17
@@ -220,7 +221,6 @@ childsnack-strips:0-p06.pddl: 1 different costs from 24 to 24
 childsnack-strips:0-p07.pddl: 1 different costs from 27 to 27
 childsnack-strips:0-p08.pddl: 1 different costs from 30 to 30
 childsnack-strips:0-p09.pddl: 1 different costs from 33 to 33
-childsnack-strips:0-p14.pddl: 1 different costs from 13 to 13
 childsnack-strips:0-p15.pddl: 1 different costs from 18 to 18
 childsnack-strips:0-p16.pddl: 1 different costs from 20 to 20
 childsnack-strips:0-p17.pddl: 1 different costs from 24 to 24
@@ -243,17 +243,17 @@ childsnack-strips:2-child-snack_pfile03.pddl: 1 different costs from 27 to 27
 childsnack-strips:2-child-snack_pfile04-2.pddl: 1 different costs from 30 to 30
 childsnack-strips:2-child-snack_pfile04.pddl: 1 different costs from 30 to 30
 citycar-adl:0-p2-3-4-3-1.pddl: 1 different costs from 82 to 82
-citycar-adl:0-p3-3-2-2-2.pddl: 1 different costs from 92 to 92
+citycar-adl:0-p3-3-2-2-1.pddl: 1 different costs from 70 to 70
 citycar-adl:0-p3-3-3-3-2.pddl: 1 different costs from 76 to 76
 citycar-adl:1-p3-4-2-0-1.pddl: 1 different costs from 100 to 100
 citycar-adl:1-p3-5-2-0-2.pddl: 1 different costs from 86 to 86
 citycar-adl:2-p001.pddl: 1 different costs from 98 to 98
+citycar-adl:2-p004.pddl: 1 different costs from 88 to 88
 citycar-adl:2-p005.pddl: 1 different costs from 96 to 96
 citycar-adl:2-p006.pddl: 1 different costs from 96 to 96
 citycar-adl:2-p007.pddl: 1 different costs from 96 to 96
 citycar-adl:2-p017.pddl: 1 different costs from 98 to 98
 citycar-adl:2-p018.pddl: 1 different costs from 88 to 88
-citycar-adl:2-p019.pddl: 1 different costs from 70 to 70
 citycar-adl:2-p020.pddl: 1 different costs from 92 to 92
 citycar-adl:2-p021.pddl: 1 different costs from 84 to 84
 citycar-adl:2-p034.pddl: 1 different costs from 68 to 68
@@ -263,13 +263,13 @@ citycar-adl:2-p056.pddl: 1 different costs from 78 to 78
 citycar-adl:2-p145.pddl: 1 different costs from 70 to 70
 citycar-adl:2-p146.pddl: 1 different costs from 110 to 110
 citycar-adl:2-p150.pddl: 1 different costs from 98 to 98
-citycar-adl:2-p151.pddl: 1 different costs from 86 to 86
 citycar-adl:2-p161.pddl: 1 different costs from 98 to 98
 citycar-adl:2-p162.pddl: 1 different costs from 92 to 92
 citycar-adl:2-p163.pddl: 1 different costs from 114 to 114
 citycar-adl:2-p164.pddl: 1 different costs from 80 to 80
 citycar-adl:2-p168.pddl: 1 different costs from 86 to 86
 citycar-adl:2-p178.pddl: 1 different costs from 102 to 102
+citycar-adl:2-p193.pddl: 1 different costs from 72 to 72
 citycar-adl:2-p194.pddl: 1 different costs from 82 to 82
 citycar-adl:2-p195.pddl: 1 different costs from 94 to 94
 data-network-strips:0-p01.pddl: 1 different costs from 96 to 96
@@ -332,6 +332,7 @@ depots-strips:2-p14.pddl: 1 different costs from 29 to 29
 depots-strips:2-p16.pddl: 1 different costs from 25 to 25
 depots-strips:2-p17.pddl: 1 different costs from 22 to 22
 depots-strips:2-p21.pddl: 1 different costs from 32 to 32
+driverlog-strips:0-p02.pddl: 1 different costs from 20 to 20
 driverlog-strips:0-p03.pddl: 1 different costs from 30 to 30
 driverlog-strips:0-p04.pddl: 1 different costs from 33 to 33
 driverlog-strips:0-p05.pddl: 1 different costs from 34 to 34
@@ -353,7 +354,6 @@ driverlog-strips:0-p26.pddl: 1 different costs from 40 to 40
 driverlog-strips:0-p27.pddl: 1 different costs from 46 to 46
 driverlog-strips:0-p28.pddl: 1 different costs from 49 to 49
 driverlog-strips:0-p30.pddl: 1 different costs from 52 to 52
-driverlog-strips:2-p06.pddl: 1 different costs from 11 to 11
 driverlog-strips:2-p08.pddl: 1 different costs from 22 to 22
 driverlog-strips:2-p09.pddl: 1 different costs from 22 to 22
 driverlog-strips:2-p10.pddl: 1 different costs from 17 to 17
@@ -362,20 +362,19 @@ driverlog-strips:2-p12.pddl: 1 different costs from 35 to 35
 driverlog-strips:2-p13.pddl: 1 different costs from 26 to 26
 driverlog-strips:2-p14.pddl: 1 different costs from 28 to 28
 driverlog-strips:2-p15.pddl: 1 different costs from 32 to 32
+elevators-strips:0-p02.pddl: 1 different costs from 53 to 53
 elevators-strips:0-p03.pddl: 1 different costs from 68 to 68
 elevators-strips:0-p04.pddl: 1 different costs from 76 to 76
 elevators-strips:0-p11.pddl: 1 different costs from 29 to 29
 elevators-strips:0-p12.pddl: 1 different costs from 64 to 64
-elevators-strips:0-p18.pddl: 1 different costs from 74 to 74
 elevators-strips:0-p19.pddl: 1 different costs from 41 to 41
 elevators-strips:0-p20.pddl: 1 different costs from 42 to 42
-elevators-strips:0-p25.pddl: 1 different costs from 28 to 28
 elevators-strips:0-p26.pddl: 1 different costs from 39 to 39
 elevators-strips:1-p01.pddl: 1 different costs from 74 to 74
-elevators-strips:2-p05.pddl: 1 different costs from 59 to 59
+elevators-strips:2-p03.pddl: 1 different costs from 54 to 54
 elevators-strips:2-p06.pddl: 1 different costs from 40 to 40
 elevators-strips:2-p07.pddl: 1 different costs from 48 to 48
-elevators-strips:2-p08.pddl: 1 different costs from 55 to 55
+elevators-strips:2-p09.pddl: 1 different costs from 54 to 54
 elevators-strips:2-p10.pddl: 1 different costs from 63 to 63
 elevators-strips:2-p12.pddl: 1 different costs from 53 to 53
 elevators-strips:2-p13.pddl: 1 different costs from 62 to 62
@@ -390,12 +389,13 @@ elevators-strips:4-p10.pddl: 1 different costs from 69 to 69
 elevators-strips:4-p16.pddl: 1 different costs from 87 to 87
 elevators-strips:4-p25.pddl: 1 different costs from 63 to 63
 elevators-strips:4-p27.pddl: 1 different costs from 82 to 82
+elevators-strips:5-p01.pddl: 1 different costs from 52 to 52
 elevators-strips:5-p02.pddl: 1 different costs from 53 to 53
 elevators-strips:5-p03.pddl: 1 different costs from 66 to 66
+ferry-strips:0-p031.pddl: 1 different costs from 40 to 40
 ferry-strips:0-p032.pddl: 1 different costs from 39 to 39
 ferry-strips:0-p033.pddl: 1 different costs from 47 to 47
 ferry-strips:0-p042.pddl: 1 different costs from 41 to 41
-ferry-strips:0-p043.pddl: 1 different costs from 42 to 42
 ferry-strips:0-p044.pddl: 1 different costs from 49 to 49
 ferry-strips:0-p052.pddl: 1 different costs from 39 to 39
 ferry-strips:0-p053.pddl: 1 different costs from 35 to 35
@@ -438,9 +438,9 @@ floortile-strips:0-p21.pddl: 1 different costs from 166 to 166
 floortile-strips:0-p22.pddl: 1 different costs from 165 to 165
 floortile-strips:0-p24.pddl: 1 different costs from 200 to 200
 floortile-strips:2-p01-5-5-2.pddl: 1 different costs from 111 to 111
-floortile-strips:2-p01-6-4-2.pddl: 1 different costs from 104 to 104
 floortile-strips:2-p01-6-5-2.pddl: 1 different costs from 122 to 122
 floortile-strips:2-p02-5-5-2.pddl: 1 different costs from 106 to 106
+floortile-strips:2-p02-6-4-2.pddl: 1 different costs from 109 to 109
 floortile-strips:2-p02-6-5-2.pddl: 1 different costs from 141 to 141
 floortile-strips:2-p03-5-5-2.pddl: 1 different costs from 100 to 100
 floortile-strips:2-p03-6-4-2.pddl: 1 different costs from 116 to 116
@@ -449,41 +449,41 @@ floortile-strips:3-p04-5-5-2.pddl: 1 different costs from 122 to 122
 floortile-strips:3-p04-6-5-2.pddl: 1 different costs from 141 to 141
 floortile-strips:3-p05-6-5-2.pddl: 1 different costs from 119 to 119
 floortile-strips:4-opt-p06-011.pddl: 1 different costs from 101 to 101
-floortile-strips:4-opt-p06-012.pddl: 1 different costs from 106 to 106
 floortile-strips:4-opt-p07-013.pddl: 1 different costs from 108 to 108
 floortile-strips:4-opt-p07-014.pddl: 1 different costs from 110 to 110
+floortile-strips:5-seq-p05-009.pddl: 1 different costs from 106 to 106
 floortile-strips:5-seq-p05-010.pddl: 1 different costs from 105 to 105
 floortile-strips:5-seq-p06-011.pddl: 1 different costs from 102 to 102
 floortile-strips:5-seq-p06-012.pddl: 1 different costs from 115 to 115
-freecell-strips:0-p09.pddl: 1 different costs from 58 to 58
 freecell-strips:0-p10.pddl: 1 different costs from 79 to 79
 freecell-strips:0-p11.pddl: 1 different costs from 51 to 51
 freecell-strips:0-p12.pddl: 1 different costs from 77 to 77
 freecell-strips:0-p13.pddl: 1 different costs from 75 to 75
+freecell-strips:0-p14.pddl: 1 different costs from 112 to 112
 freecell-strips:0-p15.pddl: 1 different costs from 67 to 67
-freecell-strips:0-p16.pddl: 1 different costs from 65 to 65
-freecell-strips:0-p17.pddl: 1 different costs from 76 to 76
-freecell-strips:0-p22.pddl: 1 different costs from 73 to 73
-freecell-strips:0-p23.pddl: 1 different costs from 87 to 87
 freecell-strips:1-p13.pddl: 1 different costs from 71 to 71
+freecell-strips:1-p14.pddl: 1 different costs from 78 to 78
 freecell-strips:1-p16.pddl: 1 different costs from 66 to 66
 freecell-strips:1-p17.pddl: 1 different costs from 119 to 119
 freecell-strips:1-p18.pddl: 1 different costs from 109 to 109
+freecell-strips:1-p20.pddl: 1 different costs from 79 to 79
 freecell-strips:1-p25.pddl: 1 different costs from 161 to 161
 freecell-strips:1-p28.pddl: 1 different costs from 150 to 150
 freecell-strips:2-p13.pddl: 1 different costs from 58 to 58
-freecell-strips:2-p14.pddl: 1 different costs from 54 to 54
 freecell-strips:2-p16.pddl: 1 different costs from 60 to 60
+freecell-strips:2-p17.pddl: 1 different costs from 62 to 62
 freecell-strips:2-p18.pddl: 1 different costs from 74 to 74
-freecell-strips:2-probfreecell-10-1.pddl: 1 different costs from 57 to 57
 freecell-strips:2-probfreecell-10-5.pddl: 1 different costs from 60 to 60
 freecell-strips:2-probfreecell-11-1.pddl: 1 different costs from 65 to 65
 freecell-strips:2-probfreecell-11-3.pddl: 1 different costs from 57 to 57
 freecell-strips:2-probfreecell-12-1.pddl: 1 different costs from 73 to 73
+freecell-strips:2-probfreecell-12-3.pddl: 1 different costs from 65 to 65
 freecell-strips:2-probfreecell-13-2.pddl: 1 different costs from 75 to 75
 freecell-strips:2-probfreecell-13-3.pddl: 1 different costs from 73 to 73
+freecell-strips:2-probfreecell-6-5.pddl: 1 different costs from 32 to 32
 freecell-strips:2-probfreecell-7-5.pddl: 1 different costs from 40 to 40
 freecell-strips:2-probfreecell-8-5.pddl: 1 different costs from 45 to 45
+freecell-strips:2-probfreecell-9-4.pddl: 1 different costs from 49 to 49
 freecell-strips:2-probfreecell-9-5.pddl: 1 different costs from 52 to 52
 fsc-grid-a-strips:0-corner2x2_A2.pddl: 1 different costs from 9 to 9
 fsc-grid-a-strips:1-corner2x2_A.pddl: 1 different costs from 8 to 8
@@ -565,6 +565,7 @@ goldminer-strips:0-p066.pddl: 1 different costs from 37 to 37
 goldminer-strips:0-p068.pddl: 1 different costs from 39 to 39
 goldminer-strips:0-p069.pddl: 1 different costs from 40 to 40
 goldminer-strips:0-p079.pddl: 1 different costs from 41 to 41
+goldminer-strips:0-p080.pddl: 1 different costs from 36 to 36
 goldminer-strips:0-p081.pddl: 1 different costs from 58 to 58
 goldminer-strips:0-p091.pddl: 1 different costs from 44 to 44
 goldminer-strips:0-p092.pddl: 1 different costs from 42 to 42
@@ -573,14 +574,12 @@ goldminer-strips:0-p102.pddl: 1 different costs from 40 to 40
 goldminer-strips:0-p103.pddl: 1 different costs from 38 to 38
 goldminer-strips:0-p104.pddl: 1 different costs from 42 to 42
 goldminer-strips:0-p112.pddl: 1 different costs from 45 to 45
-goldminer-strips:0-p115.pddl: 1 different costs from 33 to 33
 goldminer-strips:0-p116.pddl: 1 different costs from 37 to 37
 goldminer-strips:0-p118.pddl: 1 different costs from 42 to 42
 goldminer-strips:0-p125.pddl: 1 different costs from 48 to 48
 goldminer-strips:0-p126.pddl: 1 different costs from 46 to 46
 goldminer-strips:0-p136.pddl: 1 different costs from 44 to 44
 goldminer-strips:0-p139.pddl: 1 different costs from 41 to 41
-grid-strips:0-p09.pddl: 1 different costs from 40 to 40
 grid-strips:0-p10.pddl: 1 different costs from 39 to 39
 grid-strips:0-p11.pddl: 1 different costs from 37 to 37
 grid-strips:0-p14.pddl: 1 different costs from 51 to 51
@@ -590,6 +589,7 @@ grid-strips:0-p24.pddl: 1 different costs from 45 to 45
 grid-strips:0-p25.pddl: 1 different costs from 45 to 45
 grid-strips:0-p26.pddl: 1 different costs from 52 to 52
 grid-strips:1-p06.pddl: 1 different costs from 68 to 68
+grid-strips:2-prob04.pddl: 1 different costs from 36 to 36
 grid-strips:3-p061.pddl: 1 different costs from 63 to 63
 grid-strips:3-p062.pddl: 1 different costs from 63 to 63
 grid-strips:3-p077.pddl: 1 different costs from 78 to 78
@@ -610,11 +610,13 @@ grid-strips:3-p105.pddl: 1 different costs from 67 to 67
 grid-strips:3-p106.pddl: 1 different costs from 67 to 67
 grid-strips:3-p107.pddl: 1 different costs from 74 to 74
 grid-strips:3-p108.pddl: 1 different costs from 74 to 74
-gripper-strips:0-p23.pddl: 1 different costs from 89 to 89
-gripper-strips:0-p24.pddl: 1 different costs from 93 to 93
-gripper-strips:0-p25.pddl: 1 different costs from 95 to 95
 gripper-strips:0-p26.pddl: 1 different costs from 99 to 99
-gripper-strips:1-p06.pddl: 1 different costs from 135 to 135
+gripper-strips:0-p27.pddl: 1 different costs from 101 to 101
+gripper-strips:0-p28.pddl: 1 different costs from 105 to 105
+gripper-strips:0-p29.pddl: 1 different costs from 107 to 107
+gripper-strips:0-p30.pddl: 1 different costs from 111 to 111
+gripper-strips:1-p05.pddl: 1 different costs from 119 to 119
+gripper-strips:1-p07.pddl: 1 different costs from 149 to 149
 gripper-strips:1-p08.pddl: 1 different costs from 165 to 165
 gripper-strips:1-p09.pddl: 1 different costs from 179 to 179
 gripper-strips:1-p10.pddl: 1 different costs from 195 to 195
@@ -638,8 +640,6 @@ gripper-strips:1-p27.pddl: 1 different costs from 449 to 449
 gripper-strips:1-p28.pddl: 1 different costs from 465 to 465
 gripper-strips:1-p29.pddl: 1 different costs from 479 to 479
 gripper-strips:1-p30.pddl: 1 different costs from 495 to 495
-gripper-strips:2-prob18.pddl: 1 different costs from 113 to 113
-gripper-strips:2-prob20.pddl: 1 different costs from 125 to 125
 hanoi-strips:0-p001.pddl: 1 different costs from 31 to 31
 hanoi-strips:0-p002.pddl: 1 different costs from 63 to 63
 hanoi-strips:0-p003.pddl: 1 different costs from 127 to 127
@@ -660,7 +660,7 @@ hiking-strips:3-ptesting-2-4-7.pddl: 1 different costs from 34 to 34
 hiking-strips:4-ptesting-2-4-8.pddl: 1 different costs from 41 to 41
 hiking-strips:4-ptesting-3-3-5.pddl: 1 different costs from 27 to 27
 hiking-strips:4-ptesting-3-4-5.pddl: 1 different costs from 26 to 26
-hiking-strips:5-p032.pddl: 1 different costs from 60 to 60
+hiking-strips:5-p040.pddl: 1 different costs from 59 to 59
 hiking-strips:5-p047.pddl: 1 different costs from 52 to 52
 hiking-strips:5-p048.pddl: 1 different costs from 59 to 59
 hiking-strips:5-p055.pddl: 1 different costs from 53 to 53
@@ -679,7 +679,6 @@ hiking-strips:5-p101.pddl: 1 different costs from 34 to 34
 hiking-strips:5-p102.pddl: 1 different costs from 41 to 41
 hiking-strips:5-p108.pddl: 1 different costs from 29 to 29
 hiking-strips:5-p109.pddl: 1 different costs from 35 to 35
-logistics-strips:0-p05.pddl: 1 different costs from 34 to 34
 logistics-strips:0-p06.pddl: 1 different costs from 55 to 55
 logistics-strips:0-p07.pddl: 1 different costs from 42 to 42
 logistics-strips:0-p08.pddl: 1 different costs from 63 to 63
@@ -701,6 +700,7 @@ logistics-strips:2-prob17.pddl: 1 different costs from 42 to 42
 logistics-strips:2-prob34.pddl: 1 different costs from 45 to 45
 logistics-strips:2-prob35.pddl: 1 different costs from 30 to 30
 logistics-strips:3-probLOGISTICS-10-0.pddl: 1 different costs from 45 to 45
+logistics-strips:3-probLOGISTICS-10-1.pddl: 1 different costs from 42 to 42
 logistics-strips:3-probLOGISTICS-11-0.pddl: 1 different costs from 48 to 48
 logistics-strips:3-probLOGISTICS-11-1.pddl: 1 different costs from 60 to 60
 logistics-strips:3-probLOGISTICS-12-0.pddl: 1 different costs from 42 to 42
@@ -711,10 +711,9 @@ logistics-strips:3-probLOGISTICS-15-0.pddl: 1 different costs from 77 to 77
 logistics-strips:3-probLOGISTICS-15-1.pddl: 1 different costs from 67 to 67
 maintenance-adl:2-maintenance.1.3.040.050.10-001.pddl: 1 different costs from 11 to 11
 maintenance-adl:2-maintenance.1.3.040.050.9-000.pddl: 1 different costs from 11 to 11
-maintenance-adl:2-maintenance.1.3.040.050.9-001.pddl: 1 different costs from 11 to 11
 maintenance-adl:2-maintenance.1.3.050.050.10-001.pddl: 1 different costs from 12 to 12
 maintenance-adl:2-maintenance.1.3.050.050.8-001.pddl: 1 different costs from 13 to 13
-maintenance-adl:2-maintenance.1.3.050.050.9-000.pddl: 1 different costs from 12 to 12
+maintenance-adl:2-maintenance.1.3.050.055.10-000.pddl: 1 different costs from 11 to 11
 maintenance-adl:2-maintenance.1.3.050.055.10-001.pddl: 1 different costs from 12 to 12
 maintenance-adl:2-maintenance.1.3.050.055.6-001.pddl: 1 different costs from 17 to 17
 maintenance-adl:2-maintenance.1.3.050.055.7-000.pddl: 1 different costs from 15 to 15
@@ -731,6 +730,7 @@ maintenance-adl:2-maintenance.1.3.050.065.10-000.pddl: 1 different costs from 12
 maintenance-adl:2-maintenance.1.3.050.065.10-001.pddl: 1 different costs from 12 to 12
 maintenance-adl:2-maintenance.1.3.050.065.6-000.pddl: 1 different costs from 17 to 17
 maintenance-adl:2-maintenance.1.3.050.065.8-001.pddl: 1 different costs from 14 to 14
+maintenance-adl:2-maintenance.1.3.050.070.6-000.pddl: 1 different costs from 17 to 17
 maintenance-adl:2-maintenance.1.3.060.060.10-000.pddl: 1 different costs from 13 to 13
 maintenance-adl:2-maintenance.1.3.060.060.6-001.pddl: 1 different costs from 18 to 18
 maintenance-adl:2-maintenance.1.3.060.060.7-001.pddl: 1 different costs from 16 to 16
@@ -740,57 +740,57 @@ maintenance-adl:2-maintenance.1.3.060.065.9-001.pddl: 1 different costs from 14 
 maintenance-adl:2-maintenance.1.3.060.070.10-001.pddl: 1 different costs from 14 to 14
 maintenance-adl:2-maintenance.1.3.060.070.8-001.pddl: 1 different costs from 15 to 15
 miconic-fulladl-adl:0-f1-0.pddl: 1 different costs from 4 to 4
-miconic-fulladl-adl:0-f10-3.pddl: 1 different costs from 30 to 30
+miconic-fulladl-adl:0-f10-0.pddl: 1 different costs from 31 to 31
 miconic-fulladl-adl:0-f11-0.pddl: 1 different costs from 29 to 29
-miconic-fulladl-adl:0-f11-1.pddl: 1 different costs from 32 to 32
-miconic-fulladl-adl:0-f12-3.pddl: 1 different costs from 38 to 38
-miconic-fulladl-adl:0-f13-4.pddl: 1 different costs from 34 to 34
-miconic-fulladl-adl:0-f14-0.pddl: 1 different costs from 42 to 42
-miconic-fulladl-adl:0-f14-4.pddl: 1 different costs from 42 to 42
+miconic-fulladl-adl:0-f11-2.pddl: 1 different costs from 31 to 31
+miconic-fulladl-adl:0-f11-3.pddl: 1 different costs from 32 to 32
+miconic-fulladl-adl:0-f12-0.pddl: 1 different costs from 34 to 34
+miconic-fulladl-adl:0-f12-2.pddl: 1 different costs from 34 to 34
+miconic-fulladl-adl:0-f13-0.pddl: 1 different costs from 36 to 36
+miconic-fulladl-adl:0-f13-2.pddl: 1 different costs from 38 to 38
+miconic-fulladl-adl:0-f13-3.pddl: 1 different costs from 38 to 38
+miconic-fulladl-adl:0-f14-1.pddl: 1 different costs from 39 to 39
+miconic-fulladl-adl:0-f14-3.pddl: 1 different costs from 37 to 37
+miconic-fulladl-adl:0-f15-0.pddl: 1 different costs from 46 to 46
 miconic-fulladl-adl:0-f15-2.pddl: 1 different costs from 36 to 36
-miconic-fulladl-adl:0-f15-3.pddl: 1 different costs from 36 to 36
-miconic-fulladl-adl:0-f15-4.pddl: 1 different costs from 38 to 38
-miconic-fulladl-adl:0-f16-0.pddl: 1 different costs from 52 to 52
-miconic-fulladl-adl:0-f16-1.pddl: 1 different costs from 43 to 43
 miconic-fulladl-adl:0-f16-2.pddl: 1 different costs from 50 to 50
-miconic-fulladl-adl:0-f17-2.pddl: 1 different costs from 45 to 45
-miconic-fulladl-adl:0-f2-1.pddl: 1 different costs from 6 to 6
-miconic-fulladl-adl:0-f2-3.pddl: 1 different costs from 6 to 6
+miconic-fulladl-adl:0-f16-3.pddl: 1 different costs from 46 to 46
+miconic-fulladl-adl:0-f17-4.pddl: 1 different costs from 48 to 48
+miconic-fulladl-adl:0-f2-2.pddl: 1 different costs from 6 to 6
+miconic-fulladl-adl:0-f2-4.pddl: 1 different costs from 6 to 6
 miconic-fulladl-adl:0-f3-1.pddl: 1 different costs from 10 to 10
-miconic-fulladl-adl:0-f3-4.pddl: 1 different costs from 8 to 8
-miconic-fulladl-adl:0-f4-0.pddl: 1 different costs from 12 to 12
-miconic-fulladl-adl:0-f4-1.pddl: 1 different costs from 11 to 11
-miconic-fulladl-adl:0-f4-4.pddl: 1 different costs from 14 to 14
-miconic-fulladl-adl:0-f5-0.pddl: 1 different costs from 16 to 16
+miconic-fulladl-adl:0-f5-1.pddl: 1 different costs from 18 to 18
 miconic-fulladl-adl:0-f5-2.pddl: 1 different costs from 13 to 13
-miconic-fulladl-adl:0-f6-0.pddl: 1 different costs from 17 to 17
-miconic-fulladl-adl:0-f6-1.pddl: 1 different costs from 14 to 14
-miconic-fulladl-adl:0-f6-3.pddl: 1 different costs from 16 to 16
+miconic-fulladl-adl:0-f5-4.pddl: 1 different costs from 12 to 12
+miconic-fulladl-adl:0-f7-2.pddl: 1 different costs from 20 to 20
+miconic-fulladl-adl:0-f7-3.pddl: 1 different costs from 19 to 19
 miconic-fulladl-adl:0-f7-4.pddl: 1 different costs from 19 to 19
-miconic-fulladl-adl:0-f8-4.pddl: 1 different costs from 21 to 21
+miconic-fulladl-adl:0-f8-0.pddl: 1 different costs from 20 to 20
+miconic-fulladl-adl:0-f8-1.pddl: 1 different costs from 22 to 22
+miconic-fulladl-adl:0-f9-1.pddl: 1 different costs from 25 to 25
 miconic-fulladl-adl:0-f9-2.pddl: 1 different costs from 24 to 24
-miconic-simpleadl-adl:0-s22-1.pddl: 1 different costs from 53 to 53
 miconic-simpleadl-adl:0-s22-2.pddl: 1 different costs from 54 to 54
 miconic-simpleadl-adl:0-s22-4.pddl: 1 different costs from 56 to 56
-miconic-simpleadl-adl:0-s23-0.pddl: 1 different costs from 60 to 60
 miconic-simpleadl-adl:0-s23-1.pddl: 1 different costs from 60 to 60
 miconic-simpleadl-adl:0-s23-2.pddl: 1 different costs from 54 to 54
-miconic-simpleadl-adl:0-s23-3.pddl: 1 different costs from 52 to 52
 miconic-simpleadl-adl:0-s23-4.pddl: 1 different costs from 56 to 56
 miconic-simpleadl-adl:0-s24-0.pddl: 1 different costs from 62 to 62
+miconic-simpleadl-adl:0-s25-1.pddl: 1 different costs from 70 to 70
 miconic-simpleadl-adl:0-s25-2.pddl: 1 different costs from 59 to 59
 miconic-simpleadl-adl:0-s25-3.pddl: 1 different costs from 70 to 70
+miconic-simpleadl-adl:0-s25-4.pddl: 1 different costs from 66 to 66
 miconic-simpleadl-adl:0-s26-0.pddl: 1 different costs from 64 to 64
 miconic-simpleadl-adl:0-s26-1.pddl: 1 different costs from 64 to 64
 miconic-simpleadl-adl:0-s26-2.pddl: 1 different costs from 76 to 76
 miconic-simpleadl-adl:0-s26-4.pddl: 1 different costs from 62 to 62
 miconic-simpleadl-adl:0-s27-0.pddl: 1 different costs from 70 to 70
 miconic-simpleadl-adl:0-s27-1.pddl: 1 different costs from 75 to 75
+miconic-simpleadl-adl:0-s27-2.pddl: 1 different costs from 67 to 67
 miconic-simpleadl-adl:0-s27-3.pddl: 1 different costs from 70 to 70
 miconic-simpleadl-adl:0-s28-0.pddl: 1 different costs from 78 to 78
 miconic-simpleadl-adl:0-s28-1.pddl: 1 different costs from 76 to 76
 miconic-simpleadl-adl:0-s28-2.pddl: 1 different costs from 76 to 76
-miconic-simpleadl-adl:0-s29-0.pddl: 1 different costs from 73 to 73
+miconic-simpleadl-adl:0-s29-1.pddl: 1 different costs from 67 to 67
 miconic-simpleadl-adl:0-s29-2.pddl: 1 different costs from 74 to 74
 miconic-simpleadl-adl:0-s29-3.pddl: 1 different costs from 78 to 78
 miconic-simpleadl-adl:0-s29-4.pddl: 1 different costs from 82 to 82
@@ -801,33 +801,33 @@ miconic-simpleadl-adl:0-s30-3.pddl: 1 different costs from 84 to 84
 miconic-simpleadl-adl:0-s30-4.pddl: 1 different costs from 79 to 79
 miconic-strips:0-p13.pddl: 1 different costs from 86 to 86
 miconic-strips:0-p14.pddl: 1 different costs from 90 to 90
+miconic-strips:0-p15.pddl: 1 different costs from 96 to 96
 miconic-strips:0-p16.pddl: 1 different costs from 101 to 101
+miconic-strips:0-p17.pddl: 1 different costs from 103 to 103
 miconic-strips:0-p22.pddl: 1 different costs from 133 to 133
 miconic-strips:0-p28.pddl: 1 different costs from 160 to 160
+miconic-strips:1-p02.pddl: 1 different costs from 62 to 62
 miconic-strips:1-p03.pddl: 1 different costs from 75 to 75
 miconic-strips:1-p04.pddl: 1 different costs from 88 to 88
 miconic-strips:1-p24.pddl: 1 different costs from 350 to 350
+miconic-strips:2-s20-0.pddl: 1 different costs from 64 to 64
 miconic-strips:2-s22-1.pddl: 1 different costs from 70 to 70
 miconic-strips:2-s23-0.pddl: 1 different costs from 76 to 76
 miconic-strips:2-s23-1.pddl: 1 different costs from 76 to 76
-miconic-strips:2-s23-2.pddl: 1 different costs from 73 to 73
 miconic-strips:2-s23-3.pddl: 1 different costs from 72 to 72
 miconic-strips:2-s23-4.pddl: 1 different costs from 74 to 74
 miconic-strips:2-s24-0.pddl: 1 different costs from 79 to 79
 miconic-strips:2-s24-2.pddl: 1 different costs from 78 to 78
-miconic-strips:2-s24-3.pddl: 1 different costs from 80 to 80
 miconic-strips:2-s25-0.pddl: 1 different costs from 81 to 81
 miconic-strips:2-s25-1.pddl: 1 different costs from 85 to 85
 miconic-strips:2-s25-3.pddl: 1 different costs from 85 to 85
 miconic-strips:2-s25-4.pddl: 1 different costs from 83 to 83
+miconic-strips:2-s26-0.pddl: 1 different costs from 84 to 84
 miconic-strips:2-s26-2.pddl: 1 different costs from 90 to 90
-miconic-strips:2-s26-3.pddl: 1 different costs from 88 to 88
-miconic-strips:2-s27-1.pddl: 1 different costs from 91 to 91
 miconic-strips:2-s27-2.pddl: 1 different costs from 87 to 87
-miconic-strips:2-s27-3.pddl: 1 different costs from 89 to 89
-miconic-strips:2-s28-2.pddl: 1 different costs from 94 to 94
-miconic-strips:2-s29-4.pddl: 1 different costs from 99 to 99
-miconic-strips:2-s30-2.pddl: 1 different costs from 97 to 97
+miconic-strips:2-s29-1.pddl: 1 different costs from 91 to 91
+miconic-strips:2-s30-0.pddl: 1 different costs from 95 to 95
+miconic-strips:2-s30-1.pddl: 1 different costs from 98 to 98
 miconic-strips:2-s30-4.pddl: 1 different costs from 99 to 99
 movie-strips:0-prob01.pddl: 1 different costs from 7 to 7
 movie-strips:0-prob02.pddl: 1 different costs from 7 to 7
@@ -908,6 +908,7 @@ mystery-strips:0-prob27.pddl: 1 different costs from 5 to 5
 mystery-strips:0-prob28.pddl: 1 different costs from 7 to 7
 mystery-strips:0-prob29.pddl: 1 different costs from 4 to 4
 mystery-strips:0-prob30.pddl: 1 different costs from 9 to 9
+no-mprime-strips:0-prob01.pddl: 1 different costs from 5 to 5
 no-mprime-strips:0-prob02.pddl: 1 different costs from 7 to 7
 no-mprime-strips:0-prob03.pddl: 1 different costs from 4 to 4
 no-mprime-strips:0-prob04.pddl: 1 different costs from 8 to 8
@@ -930,7 +931,6 @@ no-mprime-strips:0-prob24.pddl: 1 different costs from 8 to 8
 no-mprime-strips:0-prob25.pddl: 1 different costs from 4 to 4
 no-mprime-strips:0-prob26.pddl: 1 different costs from 6 to 6
 no-mprime-strips:0-prob27.pddl: 1 different costs from 5 to 5
-no-mprime-strips:0-prob28.pddl: 1 different costs from 7 to 7
 no-mprime-strips:0-prob29.pddl: 1 different costs from 4 to 4
 no-mprime-strips:0-prob30.pddl: 1 different costs from 9 to 9
 no-mprime-strips:0-prob31.pddl: 1 different costs from 4 to 4
@@ -1020,18 +1020,19 @@ nurikabe-adl:1-p05.pddl: 1 different costs from 56 to 56
 nurikabe-adl:1-p06.pddl: 1 different costs from 59 to 59
 nurikabe-adl:1-p07.pddl: 1 different costs from 68 to 68
 nurikabe-adl:1-p08.pddl: 1 different costs from 71 to 71
+openstacks-adl:0-p10.pddl: 1 different costs from 16 to 16
+openstacks-adl:0-p11.pddl: 1 different costs from 13 to 13
+openstacks-adl:0-p12.pddl: 1 different costs from 17 to 17
 openstacks-adl:0-p15.pddl: 1 different costs from 18 to 18
 openstacks-adl:1-p02.pddl: 1 different costs from 16 to 16
-openstacks-adl:1-p17.pddl: 1 different costs from 5 to 5
 openstacks-adl:2-p01.pddl: 1 different costs from 2 to 2
 openstacks-adl:2-p02.pddl: 1 different costs from 2 to 2
 openstacks-adl:2-p04.pddl: 1 different costs from 3 to 3
 openstacks-adl:2-p05.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p06.pddl: 1 different costs from 2 to 2
-openstacks-adl:2-p07.pddl: 1 different costs from 5 to 5
 openstacks-adl:2-p08.pddl: 1 different costs from 5 to 5
 openstacks-adl:2-p09.pddl: 1 different costs from 3 to 3
-openstacks-adl:2-p10.pddl: 1 different costs from 3 to 3
+openstacks-adl:2-p11.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p13.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p14.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p15.pddl: 1 different costs from 4 to 4
@@ -1040,32 +1041,31 @@ openstacks-adl:2-p17.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p19.pddl: 1 different costs from 4 to 4
 openstacks-adl:2-p21.pddl: 1 different costs from 3 to 3
 openstacks-adl:2-p22.pddl: 1 different costs from 4 to 4
-openstacks-adl:2-p25.pddl: 1 different costs from 4 to 4
-openstacks-adl:3-p03.pddl: 1 different costs from 2 to 2
 openstacks-adl:3-p06.pddl: 1 different costs from 4 to 4
 openstacks-adl:3-p08.pddl: 1 different costs from 4 to 4
 openstacks-adl:3-p09.pddl: 1 different costs from 4 to 4
-openstacks-adl:3-p14.pddl: 1 different costs from 4 to 4
+openstacks-adl:3-p12.pddl: 1 different costs from 3 to 3
 openstacks-adl:4-p01.pddl: 1 different costs from 23 to 23
+openstacks-adl:4-p02.pddl: 1 different costs from 23 to 23
 openstacks-adl:4-p04.pddl: 1 different costs from 23 to 23
 openstacks-adl:4-p05.pddl: 1 different costs from 23 to 23
-openstacks-adl:4-p06.pddl: 1 different costs from 45 to 45
+openstacks-adl:4-p07.pddl: 1 different costs from 46 to 46
+openstacks-strips:1-p30_2.pddl: 1 different costs from 4 to 4
 openstacks-strips:1-p30_3.pddl: 1 different costs from 12 to 12
 openstacks-strips:1-p35_3.pddl: 1 different costs from 14 to 14
-openstacks-strips:1-p40_1.pddl: 1 different costs from 3 to 3
 openstacks-strips:1-p40_3.pddl: 1 different costs from 15 to 15
 openstacks-strips:1-p45_1.pddl: 1 different costs from 4 to 4
 openstacks-strips:1-p45_2.pddl: 1 different costs from 5 to 5
 openstacks-strips:1-p45_3.pddl: 1 different costs from 19 to 19
-openstacks-strips:1-p50_1.pddl: 1 different costs from 4 to 4
 openstacks-strips:1-p50_2.pddl: 1 different costs from 5 to 5
 openstacks-strips:1-p50_3.pddl: 1 different costs from 18 to 18
 openstacks-strips:4-p01.pddl: 1 different costs from 6 to 6
 openstacks-strips:4-p03.pddl: 1 different costs from 8 to 8
 openstacks-strips:4-p07.pddl: 1 different costs from 10 to 10
+openstacks-strips:5-p26.pddl: 1 different costs from 5 to 5
+openstacks-strips:5-p27.pddl: 1 different costs from 6 to 6
 openstacks-strips:6-p16.pddl: 1 different costs from 6 to 6
 openstacks-strips:6-p17.pddl: 1 different costs from 6 to 6
-openstacks-strips:6-p18.pddl: 1 different costs from 4 to 4
 openstacks-strips:6-p19.pddl: 1 different costs from 8 to 8
 openstacks-strips:6-p23.pddl: 1 different costs from 8 to 8
 openstacks-strips:7-p09.pddl: 1 different costs from 87 to 87
@@ -1119,7 +1119,8 @@ organic-synthesis-strips:0-p14.pddl: 1 different costs from 2 to 2
 organic-synthesis-strips:1-p06.pddl: 1 different costs from 2 to 2
 organic-synthesis-strips:1-p07.pddl: 1 different costs from 2 to 2
 organic-synthesis-strips:1-p16.pddl: 1 different costs from 8 to 8
-parcprinter-strips:0-p04.pddl: 1 different costs from 182808 to 182808
+parcprinter-strips:0-p01.pddl: 1 different costs from 143411 to 143411
+parcprinter-strips:0-p03.pddl: 1 different costs from 807114 to 807114
 parcprinter-strips:0-p05.pddl: 1 different costs from 510256 to 510256
 parcprinter-strips:0-p09.pddl: 1 different costs from 1216462 to 1216462
 parcprinter-strips:0-p12.pddl: 1 different costs from 1270874 to 1270874
@@ -1141,22 +1142,21 @@ parcprinter-strips:0-p27.pddl: 1 different costs from 2330304 to 2330304
 parcprinter-strips:0-p28.pddl: 1 different costs from 3160821 to 3160821
 parcprinter-strips:0-p29.pddl: 1 different costs from 3119803 to 3119803
 parcprinter-strips:0-p30.pddl: 1 different costs from 3526437 to 3526437
-parcprinter-strips:1-p01.pddl: 1 different costs from 375821 to 375821
 parcprinter-strips:1-p10.pddl: 1 different costs from 1695507 to 1695507
 parcprinter-strips:1-p13.pddl: 1 different costs from 1713576 to 1713576
 parcprinter-strips:1-p15.pddl: 1 different costs from 1891203 to 1891203
 parcprinter-strips:1-p23.pddl: 1 different costs from 3335367 to 3335367
 parcprinter-strips:1-p24.pddl: 1 different costs from 2754187 to 2754187
 parcprinter-strips:1-p26.pddl: 1 different costs from 3353256 to 3353256
-parcprinter-strips:2-p10.pddl: 1 different costs from 1215839 to 1215839
+parcprinter-strips:2-p05.pddl: 1 different costs from 519232 to 519232
 parking-strips:0-p01.pddl: 1 different costs from 2 to 2
+parking-strips:0-p03.pddl: 1 different costs from 12 to 12
 parking-strips:0-p04.pddl: 1 different costs from 16 to 16
 parking-strips:0-p05.pddl: 1 different costs from 18 to 18
 parking-strips:0-p06.pddl: 1 different costs from 21 to 21
-parking-strips:0-p15.pddl: 1 different costs from 17 to 17
+parking-strips:0-p12.pddl: 1 different costs from 7 to 7
 parking-strips:0-p16.pddl: 1 different costs from 19 to 19
 parking-strips:0-p17.pddl: 1 different costs from 23 to 23
-parking-strips:0-p20.pddl: 1 different costs from 10 to 10
 parking-strips:0-p21.pddl: 1 different costs from 14 to 14
 parking-strips:0-p22.pddl: 1 different costs from 16 to 16
 parking-strips:0-p23.pddl: 1 different costs from 18 to 18
@@ -1206,15 +1206,13 @@ pathways-strips:1-p03.pddl: 1 different costs from 18 to 18
 pathways-strips:1-p04.pddl: 1 different costs from 17 to 17
 pathways-strips:1-p05.pddl: 1 different costs from 30 to 30
 pegsol-strips:0-p04.pddl: 1 different costs from 4 to 4
-pegsol-strips:0-p11.pddl: 1 different costs from 5 to 5
-pegsol-strips:0-p12.pddl: 1 different costs from 6 to 6
 pegsol-strips:0-p14.pddl: 1 different costs from 5 to 5
-pegsol-strips:0-p15.pddl: 1 different costs from 4 to 4
 pegsol-strips:0-p17.pddl: 1 different costs from 4 to 4
+pegsol-strips:0-p18.pddl: 1 different costs from 9 to 9
 pegsol-strips:0-p20.pddl: 1 different costs from 8 to 8
+pegsol-strips:0-p21.pddl: 1 different costs from 7 to 7
 pegsol-strips:0-p22.pddl: 1 different costs from 6 to 6
-pegsol-strips:0-p23.pddl: 1 different costs from 8 to 8
-pegsol-strips:0-p25.pddl: 1 different costs from 8 to 8
+pegsol-strips:0-p26.pddl: 1 different costs from 7 to 7
 pegsol-strips:0-p27.pddl: 1 different costs from 9 to 9
 pegsol-strips:0-p28.pddl: 1 different costs from 11 to 11
 pegsol-strips:0-p29.pddl: 1 different costs from 12 to 12
@@ -1222,19 +1220,21 @@ pegsol-strips:0-p30.pddl: 1 different costs from 18 to 18
 pegsol-strips:1-p03.pddl: 1 different costs from 3 to 3
 pegsol-strips:1-p04.pddl: 1 different costs from 7 to 7
 pegsol-strips:1-p05.pddl: 1 different costs from 5 to 5
+pegsol-strips:1-p14.pddl: 1 different costs from 7 to 7
 pegsol-strips:1-p17.pddl: 1 different costs from 12 to 12
 pegsol-strips:1-p22.pddl: 1 different costs from 3 to 3
 pegsol-strips:1-p24.pddl: 1 different costs from 11 to 11
-pegsol-strips:1-p25.pddl: 1 different costs from 7 to 7
-pegsol-strips:2-p02.pddl: 1 different costs from 10 to 10
 pegsol-strips:2-p03.pddl: 1 different costs from 7 to 7
+pegsol-strips:2-p04.pddl: 1 different costs from 8 to 8
+pegsol-strips:2-p06.pddl: 1 different costs from 9 to 9
 pegsol-strips:2-p07.pddl: 1 different costs from 7 to 7
 pegsol-strips:2-p08.pddl: 1 different costs from 7 to 7
 pegsol-strips:2-p11.pddl: 1 different costs from 6 to 6
 pegsol-strips:2-p13.pddl: 1 different costs from 8 to 8
-pegsol-strips:3-p13.pddl: 1 different costs from 9 to 9
 pegsol-strips:3-p15.pddl: 1 different costs from 7 to 7
 pegsol-strips:4-p06.pddl: 1 different costs from 4 to 4
+pegsol-strips:4-p12.pddl: 1 different costs from 8 to 8
+pegsol-strips:4-p15.pddl: 1 different costs from 8 to 8
 petri-net-alignment-strips:0-p01.pddl: 1 different costs from 16 to 16
 petri-net-alignment-strips:0-p02.pddl: 1 different costs from 35 to 35
 petri-net-alignment-strips:0-p03.pddl: 1 different costs from 64 to 64
@@ -1349,36 +1349,35 @@ psr-middle-adl:0-p43-s123-n8-l4-f70.pddl: 1 different costs from 9 to 9
 psr-middle-adl:0-p46-s135-n9-l3-f70.pddl: 1 different costs from 5 to 5
 psr-middle-adl:0-p47-s139-n9-l4-f70.pddl: 1 different costs from 5 to 5
 psr-small-strips:0-p01-s2-n1-l2-f50.pddl: 1 different costs from 8 to 8
-psr-small-strips:0-p02-s5-n1-l3-f30.pddl: 1 different costs from 11 to 11
 psr-small-strips:0-p03-s7-n1-l3-f70.pddl: 1 different costs from 11 to 11
-psr-small-strips:0-p04-s8-n1-l4-f10.pddl: 1 different costs from 10 to 10
 psr-small-strips:0-p06-s10-n1-l4-f50.pddl: 1 different costs from 8 to 8
-psr-small-strips:0-p09-s13-n1-l5-f30.pddl: 1 different costs from 8 to 8
 psr-small-strips:0-p11-s18-n2-l2-f50.pddl: 1 different costs from 19 to 19
+psr-small-strips:0-p12-s21-n2-l3-f30.pddl: 1 different costs from 16 to 16
 psr-small-strips:0-p13-s22-n2-l3-f50.pddl: 1 different costs from 15 to 15
+psr-small-strips:0-p15-s24-n2-l4-f10.pddl: 1 different costs from 10 to 10
+psr-small-strips:0-p16-s29-n2-l5-f30.pddl: 1 different costs from 25 to 25
 psr-small-strips:0-p17-s30-n2-l5-f50.pddl: 1 different costs from 9 to 9
-psr-small-strips:0-p19-s33-n3-l2-f30.pddl: 1 different costs from 25 to 25
 psr-small-strips:0-p20-s34-n3-l2-f50.pddl: 1 different costs from 17 to 17
 psr-small-strips:0-p21-s35-n3-l2-f70.pddl: 1 different costs from 10 to 10
-psr-small-strips:0-p22-s37-n3-l3-f30.pddl: 1 different costs from 33 to 33
-psr-small-strips:0-p23-s38-n3-l3-f50.pddl: 1 different costs from 12 to 12
 psr-small-strips:0-p24-s39-n3-l3-f70.pddl: 1 different costs from 10 to 10
-psr-small-strips:0-p25-s40-n3-l4-f10.pddl: 1 different costs from 9 to 9
-psr-small-strips:0-p27-s42-n3-l4-f50.pddl: 1 different costs from 21 to 21
-psr-small-strips:0-p30-s46-n3-l5-f50.pddl: 1 different costs from 22 to 22
 psr-small-strips:0-p31-s49-n4-l2-f30.pddl: 1 different costs from 19 to 19
 psr-small-strips:0-p32-s50-n4-l2-f50.pddl: 1 different costs from 24 to 24
+psr-small-strips:0-p33-s51-n4-l2-f70.pddl: 1 different costs from 21 to 21
 psr-small-strips:0-p34-s55-n4-l3-f70.pddl: 1 different costs from 21 to 21
+psr-small-strips:0-p35-s57-n5-l2-f30.pddl: 1 different costs from 22 to 22
 psr-small-strips:0-p36-s65-n6-l2-f30.pddl: 1 different costs from 22 to 22
 psr-small-strips:0-p37-s67-n6-l2-f70.pddl: 1 different costs from 23 to 23
-psr-small-strips:0-p38-s78-n3-l3-f50.pddl: 1 different costs from 13 to 13
 psr-small-strips:0-p39-s79-n3-l3-f70.pddl: 1 different costs from 23 to 23
+psr-small-strips:0-p40-s80-n3-l4-f10.pddl: 1 different costs from 20 to 20
+psr-small-strips:0-p41-s81-n3-l4-f30.pddl: 1 different costs from 10 to 10
 psr-small-strips:0-p42-s82-n3-l4-f50.pddl: 1 different costs from 30 to 30
 psr-small-strips:0-p43-s83-n3-l4-f70.pddl: 1 different costs from 20 to 20
 psr-small-strips:0-p44-s89-n4-l2-f30.pddl: 1 different costs from 19 to 19
+psr-small-strips:0-p45-s94-n4-l3-f50.pddl: 1 different costs from 20 to 20
 psr-small-strips:0-p46-s97-n5-l2-f30.pddl: 1 different costs from 34 to 34
+psr-small-strips:0-p47-s98-n5-l2-f50.pddl: 1 different costs from 27 to 27
+psr-small-strips:0-p48-s101-n5-l3-f30.pddl: 1 different costs from 37 to 37
 psr-small-strips:0-p49-s105-n6-l2-f30.pddl: 1 different costs from 47 to 47
-rovers-strips:0-p03.pddl: 1 different costs from 50 to 50
 rovers-strips:0-p04.pddl: 1 different costs from 57 to 57
 rovers-strips:0-p05.pddl: 1 different costs from 67 to 67
 rovers-strips:0-p06.pddl: 1 different costs from 61 to 61
@@ -1404,11 +1403,13 @@ rovers-strips:1-p10.pddl: 1 different costs from 47 to 47
 rovers-strips:1-p11.pddl: 1 different costs from 70 to 70
 rovers-strips:1-p13.pddl: 1 different costs from 89 to 89
 rovers-strips:2-p08.pddl: 1 different costs from 26 to 26
+rovers-strips:2-p09.pddl: 1 different costs from 31 to 31
 rovers-strips:2-p10.pddl: 1 different costs from 35 to 35
 rovers-strips:2-p11.pddl: 1 different costs from 30 to 30
 rovers-strips:2-p14.pddl: 1 different costs from 28 to 28
 rovers-strips:2-p15.pddl: 1 different costs from 41 to 41
 satellite-strips:0-p06.pddl: 1 different costs from 49 to 49
+satellite-strips:0-p09.pddl: 1 different costs from 50 to 50
 satellite-strips:0-p10.pddl: 1 different costs from 65 to 65
 satellite-strips:0-p11.pddl: 1 different costs from 63 to 63
 satellite-strips:0-p13.pddl: 1 different costs from 60 to 60
@@ -1422,7 +1423,6 @@ satellite-strips:0-p22.pddl: 1 different costs from 83 to 83
 satellite-strips:0-p23.pddl: 1 different costs from 85 to 85
 satellite-strips:0-p24.pddl: 1 different costs from 96 to 96
 satellite-strips:0-p25.pddl: 1 different costs from 69 to 69
-satellite-strips:0-p30.pddl: 1 different costs from 76 to 76
 satellite-strips:1-p03.pddl: 1 different costs from 18 to 18
 satellite-strips:1-p04.pddl: 1 different costs from 25 to 25
 satellite-strips:1-p05.pddl: 1 different costs from 29 to 29
@@ -1461,6 +1461,7 @@ scanalyzer-strips:2-p11.pddl: 1 different costs from 26 to 26
 scanalyzer-strips:2-p13.pddl: 1 different costs from 34 to 34
 scanalyzer-strips:2-p14.pddl: 1 different costs from 30 to 30
 schedule-adl:0-probschedule-14-2.pddl: 1 different costs from 17 to 17
+schedule-adl:0-probschedule-15-1.pddl: 1 different costs from 16 to 16
 schedule-adl:0-probschedule-15-2.pddl: 1 different costs from 17 to 17
 schedule-adl:0-probschedule-16-1.pddl: 1 different costs from 18 to 18
 schedule-adl:0-probschedule-17-1.pddl: 1 different costs from 20 to 20
@@ -1477,7 +1478,6 @@ schedule-adl:1-p125.pddl: 1 different costs from 20 to 20
 schedule-adl:1-p132.pddl: 1 different costs from 19 to 19
 schedule-adl:1-p133.pddl: 1 different costs from 18 to 18
 schedule-adl:1-p136.pddl: 1 different costs from 21 to 21
-schedule-adl:1-p139.pddl: 1 different costs from 18 to 18
 schedule-adl:1-p150.pddl: 1 different costs from 18 to 18
 schedule-adl:1-p152.pddl: 1 different costs from 19 to 19
 schedule-adl:1-p153.pddl: 1 different costs from 20 to 20
@@ -1530,6 +1530,7 @@ snake-strips:2-p20.pddl: 1 different costs from 30 to 30
 snake-strips:3-p01.pddl: 1 different costs from 39 to 39
 snake-strips:3-p02.pddl: 1 different costs from 46 to 46
 snake-strips:3-p06.pddl: 1 different costs from 42 to 42
+sokoban-strips:0-p07.pddl: 1 different costs from 68 to 68
 sokoban-strips:0-p08.pddl: 1 different costs from 14 to 14
 sokoban-strips:0-p09.pddl: 1 different costs from 23 to 23
 sokoban-strips:0-p10.pddl: 1 different costs from 38 to 38
@@ -1542,7 +1543,6 @@ sokoban-strips:0-p19.pddl: 1 different costs from 80 to 80
 sokoban-strips:0-p20.pddl: 1 different costs from 46 to 46
 sokoban-strips:0-p21.pddl: 1 different costs from 39 to 39
 sokoban-strips:0-p22.pddl: 1 different costs from 14 to 14
-sokoban-strips:0-p23.pddl: 1 different costs from 23 to 23
 sokoban-strips:0-p24.pddl: 1 different costs from 18 to 18
 sokoban-strips:0-p26.pddl: 1 different costs from 60 to 60
 sokoban-strips:0-p27.pddl: 1 different costs from 47 to 47
@@ -1558,7 +1558,7 @@ sokoban-strips:1-p21.pddl: 1 different costs from 16 to 16
 sokoban-strips:1-p23.pddl: 1 different costs from 110 to 110
 sokoban-strips:2-p16.pddl: 1 different costs from 76 to 76
 sokoban-strips:2-p18.pddl: 1 different costs from 10 to 10
-sokoban-strips:3-p04.pddl: 1 different costs from 33 to 33
+sokoban-strips:2-p19.pddl: 1 different costs from 44 to 44
 sokoban-strips:5-p21.pddl: 1 different costs from 51 to 51
 spanner-strips:0-p081.pddl: 1 different costs from 58 to 58
 spanner-strips:0-p083.pddl: 1 different costs from 68 to 68
@@ -1616,7 +1616,6 @@ spider-strips:1-p09.pddl: 1 different costs from 33 to 33
 spider-strips:1-p14.pddl: 1 different costs from 23 to 23
 spider-strips:1-p15.pddl: 1 different costs from 26 to 26
 spider-strips:1-p17.pddl: 1 different costs from 33 to 33
-storage-strips:0-p06.pddl: 1 different costs from 18 to 18
 storage-strips:0-p07.pddl: 1 different costs from 20 to 20
 storage-strips:0-p08.pddl: 1 different costs from 23 to 23
 storage-strips:0-p09.pddl: 1 different costs from 24 to 24
@@ -1642,6 +1641,7 @@ storage-strips:0-p28.pddl: 1 different costs from 35 to 35
 storage-strips:1-p01.pddl: 1 different costs from 15 to 15
 storage-strips:1-p02.pddl: 1 different costs from 15 to 15
 storage-strips:1-p03.pddl: 1 different costs from 17 to 17
+storage-strips:2-p15.pddl: 1 different costs from 18 to 18
 storage-strips:2-p16.pddl: 1 different costs from 21 to 21
 storage-strips:2-p17.pddl: 1 different costs from 26 to 26
 storage-strips:2-p18.pddl: 1 different costs from 30 to 30
@@ -1719,6 +1719,7 @@ termes-strips:1-p17.pddl: 1 different costs from 68 to 68
 termes-strips:3-p01.pddl: 1 different costs from 78 to 78
 termes-strips:3-p03.pddl: 1 different costs from 130 to 130
 termes-strips:3-p04.pddl: 1 different costs from 122 to 122
+tetris-strips:0-p05.pddl: 1 different costs from 8 to 8
 tetris-strips:0-p06.pddl: 1 different costs from 37 to 37
 tetris-strips:0-p07.pddl: 1 different costs from 55 to 55
 tetris-strips:0-p11.pddl: 1 different costs from 16 to 16
@@ -1726,9 +1727,9 @@ tetris-strips:0-p12.pddl: 1 different costs from 18 to 18
 tetris-strips:0-p13.pddl: 1 different costs from 17 to 17
 tetris-strips:0-p15.pddl: 1 different costs from 37 to 37
 tetris-strips:0-p16.pddl: 1 different costs from 16 to 16
+tetris-strips:0-p17.pddl: 1 different costs from 11 to 11
 tetris-strips:0-p19.pddl: 1 different costs from 40 to 40
 tetris-strips:0-p20.pddl: 1 different costs from 32 to 32
-tetris-strips:0-p21.pddl: 1 different costs from 24 to 24
 tetris-strips:0-p22.pddl: 1 different costs from 33 to 33
 tetris-strips:0-p23.pddl: 1 different costs from 19 to 19
 tetris-strips:0-p24.pddl: 1 different costs from 43 to 43
@@ -1744,7 +1745,6 @@ tetris-strips:2-p01-6.pddl: 1 different costs from 30 to 30
 tetris-strips:2-p02-8.pddl: 1 different costs from 39 to 39
 tetris-strips:2-p03-6.pddl: 1 different costs from 21 to 21
 tetris-strips:2-p03-8.pddl: 1 different costs from 48 to 48
-tetris-strips:2-p04-6.pddl: 1 different costs from 27 to 27
 tetris-strips:2-p04-8.pddl: 1 different costs from 56 to 56
 tetris-strips:2-p05-10.pddl: 1 different costs from 66 to 66
 tetris-strips:2-p05-8.pddl: 1 different costs from 60 to 60
@@ -1802,7 +1802,7 @@ tpp-strips:0-p18.pddl: 1 different costs from 389 to 389
 tpp-strips:0-p19.pddl: 1 different costs from 470 to 470
 tpp-strips:0-p20.pddl: 1 different costs from 596 to 596
 tpp-strips:0-p21.pddl: 1 different costs from 641 to 641
-tpp-strips:1-p03.pddl: 1 different costs from 45 to 45
+tpp-strips:1-p04.pddl: 1 different costs from 55 to 55
 tpp-strips:1-p05.pddl: 1 different costs from 73 to 73
 tpp-strips:1-p06.pddl: 1 different costs from 66 to 66
 tpp-strips:1-p07.pddl: 1 different costs from 88 to 88
@@ -1818,10 +1818,12 @@ tpp-strips:2-p17.pddl: 1 different costs from 76 to 76
 tpp-strips:2-p18.pddl: 1 different costs from 72 to 72
 tpp-strips:2-p19.pddl: 1 different costs from 100 to 100
 tpp-strips:2-p20.pddl: 1 different costs from 115 to 115
+transport-strips:0-p01.pddl: 1 different costs from 482 to 482
 transport-strips:0-p03.pddl: 1 different costs from 1174 to 1174
-transport-strips:0-p08.pddl: 1 different costs from 876 to 876
+transport-strips:0-p06.pddl: 1 different costs from 471 to 471
 transport-strips:0-p09.pddl: 1 different costs from 1142 to 1142
 transport-strips:0-p14.pddl: 1 different costs from 283 to 283
+transport-strips:0-p15.pddl: 1 different costs from 341 to 341
 transport-strips:0-p16.pddl: 1 different costs from 281 to 281
 transport-strips:0-p17.pddl: 1 different costs from 277 to 277
 transport-strips:0-p18.pddl: 1 different costs from 735 to 735
@@ -1836,7 +1838,6 @@ transport-strips:0-p30.pddl: 1 different costs from 225 to 225
 transport-strips:2-p04.pddl: 1 different costs from 250 to 250
 transport-strips:2-p08.pddl: 1 different costs from 1173 to 1173
 transport-strips:2-p09.pddl: 1 different costs from 966 to 966
-transport-strips:2-p14.pddl: 1 different costs from 526 to 526
 transport-strips:2-p15.pddl: 1 different costs from 753 to 753
 transport-strips:4-p07.pddl: 1 different costs from 282 to 282
 transport-strips:4-p08.pddl: 1 different costs from 322 to 322
@@ -1846,8 +1847,7 @@ transport-strips:4-p15.pddl: 1 different costs from 1079 to 1079
 transport-strips:4-p17.pddl: 1 different costs from 332 to 332
 transport-strips:4-p18.pddl: 1 different costs from 941 to 941
 transport-strips:4-p19.pddl: 1 different costs from 970 to 970
-transport-strips:6-p11.pddl: 1 different costs from 456 to 456
-transport-strips:7-p12.pddl: 1 different costs from 795 to 795
+transport-strips:6-p01.pddl: 1 different costs from 54 to 54
 trucks-adl:0-p01.pddl: 1 different costs from 13 to 13
 trucks-adl:0-p02.pddl: 1 different costs from 17 to 17
 trucks-adl:0-p03.pddl: 1 different costs from 20 to 20
@@ -1870,11 +1870,11 @@ trucks-strips:0-p12.pddl: 1 different costs from 40 to 40
 trucks-strips:0-p13.pddl: 1 different costs from 32 to 32
 trucks-strips:0-p14.pddl: 1 different costs from 36 to 36
 trucks-strips:0-p16.pddl: 1 different costs from 42 to 42
+visitall-strips:0-p02.pddl: 1 different costs from 31 to 31
 visitall-strips:0-p08.pddl: 1 different costs from 37 to 37
 visitall-strips:0-p09.pddl: 1 different costs from 42 to 42
 visitall-strips:0-p10.pddl: 1 different costs from 43 to 43
 visitall-strips:0-p11.pddl: 1 different costs from 44 to 44
-visitall-strips:0-p12.pddl: 1 different costs from 39 to 39
 visitall-strips:0-p13.pddl: 1 different costs from 49 to 49
 visitall-strips:0-p14.pddl: 1 different costs from 45 to 45
 visitall-strips:0-p15.pddl: 1 different costs from 52 to 52
@@ -1930,7 +1930,6 @@ woodworking-strips:5-p16.pddl: 1 different costs from 695 to 695
 woodworking-strips:5-p17.pddl: 1 different costs from 915 to 915
 woodworking-strips:5-p24.pddl: 1 different costs from 565 to 565
 woodworking-strips:5-p25.pddl: 1 different costs from 590 to 590
-zenotravel-strips:0-p02.pddl: 1 different costs from 16 to 16
 zenotravel-strips:0-p07.pddl: 1 different costs from 26 to 26
 zenotravel-strips:0-p08.pddl: 1 different costs from 24 to 24
 zenotravel-strips:0-p09.pddl: 1 different costs from 32 to 32
@@ -1952,82 +1951,79 @@ zenotravel-strips:0-p26.pddl: 1 different costs from 26 to 26
 zenotravel-strips:0-p27.pddl: 1 different costs from 22 to 22
 zenotravel-strips:0-p28.pddl: 1 different costs from 32 to 32
 zenotravel-strips:1-p01.pddl: 1 different costs from 26 to 26
-zenotravel-strips:2-p02.pddl: 1 different costs from 6 to 6
+zenotravel-strips:2-p04.pddl: 1 different costs from 8 to 8
 zenotravel-strips:2-p05.pddl: 1 different costs from 11 to 11
 zenotravel-strips:2-p07.pddl: 1 different costs from 15 to 15
+zenotravel-strips:2-p08.pddl: 1 different costs from 11 to 11
 zenotravel-strips:2-p09.pddl: 1 different costs from 21 to 21
 zenotravel-strips:2-p10.pddl: 1 different costs from 22 to 22
 zenotravel-strips:2-p11.pddl: 1 different costs from 14 to 14
 zenotravel-strips:2-p12.pddl: 1 different costs from 21 to 21
 zenotravel-strips:2-p13.pddl: 1 different costs from 26 to 26
 1962 problems
-32 configs
-62784 results
+30 configs
+58860 results
 1962 problems solved by someone
-1099 problems solved by ipc2014-opt-symba1:default
-225 problems solved by ipc2018-decstar:opt-config00
-503 problems solved by ipc2018-decstar:opt-config01
-877 problems solved by ipc2018-decstar:opt-config02
-564 problems solved by ipc2018-decstar:opt-config03
+1097 problems solved by ipc2014-opt-symba1:default
+223 problems solved by ipc2018-decstar:opt-config00
+502 problems solved by ipc2018-decstar:opt-config01
+879 problems solved by ipc2018-decstar:opt-config02
+565 problems solved by ipc2018-decstar:opt-config03
 628 problems solved by ipc2018-decstar:opt-config04
-687 problems solved by ipc2018-decstar:opt-config05
-669 problems solved by ipc2018-decstar:opt-config06
-1137 problems solved by ipc2018-opt-complementary2:default
+688 problems solved by ipc2018-decstar:opt-config05
+667 problems solved by ipc2018-decstar:opt-config06
+1140 problems solved by ipc2018-opt-complementary2:default
 928 problems solved by ipc2018-opt-delfi:h2-simpless-dks-900masb50ksbmiasm
 934 problems solved by ipc2018-opt-delfi:h2-simpless-dks-900masb50ksccdfp
-795 problems solved by ipc2018-opt-delfi:h2-simpless-dks-900masginfsccdfp
-712 problems solved by ipc2018-opt-delfi:h2-simpless-dks-blind
-1099 problems solved by ipc2018-opt-delfi:h2-simpless-dks-celmcut
+792 problems solved by ipc2018-opt-delfi:h2-simpless-dks-900masginfsccdfp
+710 problems solved by ipc2018-opt-delfi:h2-simpless-dks-blind
+1101 problems solved by ipc2018-opt-delfi:h2-simpless-dks-celmcut
 977 problems solved by ipc2018-opt-delfi:h2-simpless-dks-cpdbshc900
 803 problems solved by ipc2018-opt-delfi:h2-simpless-dks-zopdbsgenetic
 866 problems solved by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksbmiasm
-919 problems solved by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksccdfp
-716 problems solved by ipc2018-opt-delfi:h2-simpless-oss-blind
-1097 problems solved by ipc2018-opt-delfi:h2-simpless-oss-celmcut
+920 problems solved by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksccdfp
+714 problems solved by ipc2018-opt-delfi:h2-simpless-oss-blind
+1099 problems solved by ipc2018-opt-delfi:h2-simpless-oss-celmcut
 977 problems solved by ipc2018-opt-delfi:h2-simpless-oss-cpdbshc900
-769 problems solved by ipc2018-opt-delfi:h2-simpless-oss-masginfsccdfp
+766 problems solved by ipc2018-opt-delfi:h2-simpless-oss-masginfsccdfp
 813 problems solved by ipc2018-opt-delfi:h2-simpless-oss-zopdbsgenetic
-852 problems solved by ipc2018-opt-delfi:simpless-dks-masb50kmiasmdfp
-838 problems solved by ipc2018-opt-delfi:simpless-oss-masb50kmiasmdfp
-1082 problems solved by ipc2018-opt-metis:metis2
+851 problems solved by ipc2018-opt-delfi:simpless-dks-masb50kmiasmdfp
+835 problems solved by ipc2018-opt-delfi:simpless-oss-masb50kmiasmdfp
+1084 problems solved by ipc2018-opt-metis:metis2
 1007 problems solved by ipc2018-opt-planning-pdbs:default
 1258 problems solved by ipc2018-opt-scorpion:default
-508 problems solved by ipc2018-symple1:symple100000OPT
-373 problems solved by ipc2018-symple1:symple100000SAT
-509 problems solved by ipc2018-symple2:symple100000OPT
-371 problems solved by ipc2018-symple2:symple100000SAT
-1099.00 score by ipc2014-opt-symba1:default
-225.00 score by ipc2018-decstar:opt-config00
-503.00 score by ipc2018-decstar:opt-config01
-877.00 score by ipc2018-decstar:opt-config02
-564.00 score by ipc2018-decstar:opt-config03
+509 problems solved by ipc2018-symple1:symple100000OPT
+510 problems solved by ipc2018-symple2:symple100000OPT
+1097.00 score by ipc2014-opt-symba1:default
+223.00 score by ipc2018-decstar:opt-config00
+502.00 score by ipc2018-decstar:opt-config01
+879.00 score by ipc2018-decstar:opt-config02
+565.00 score by ipc2018-decstar:opt-config03
 628.00 score by ipc2018-decstar:opt-config04
-687.00 score by ipc2018-decstar:opt-config05
-669.00 score by ipc2018-decstar:opt-config06
-1137.00 score by ipc2018-opt-complementary2:default
+688.00 score by ipc2018-decstar:opt-config05
+667.00 score by ipc2018-decstar:opt-config06
+1140.00 score by ipc2018-opt-complementary2:default
 928.00 score by ipc2018-opt-delfi:h2-simpless-dks-900masb50ksbmiasm
 934.00 score by ipc2018-opt-delfi:h2-simpless-dks-900masb50ksccdfp
-795.00 score by ipc2018-opt-delfi:h2-simpless-dks-900masginfsccdfp
-712.00 score by ipc2018-opt-delfi:h2-simpless-dks-blind
-1099.00 score by ipc2018-opt-delfi:h2-simpless-dks-celmcut
+792.00 score by ipc2018-opt-delfi:h2-simpless-dks-900masginfsccdfp
+710.00 score by ipc2018-opt-delfi:h2-simpless-dks-blind
+1101.00 score by ipc2018-opt-delfi:h2-simpless-dks-celmcut
 977.00 score by ipc2018-opt-delfi:h2-simpless-dks-cpdbshc900
 803.00 score by ipc2018-opt-delfi:h2-simpless-dks-zopdbsgenetic
 866.00 score by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksbmiasm
-919.00 score by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksccdfp
-716.00 score by ipc2018-opt-delfi:h2-simpless-oss-blind
-1097.00 score by ipc2018-opt-delfi:h2-simpless-oss-celmcut
+920.00 score by ipc2018-opt-delfi:h2-simpless-oss-900masb50ksccdfp
+714.00 score by ipc2018-opt-delfi:h2-simpless-oss-blind
+1099.00 score by ipc2018-opt-delfi:h2-simpless-oss-celmcut
 977.00 score by ipc2018-opt-delfi:h2-simpless-oss-cpdbshc900
-769.00 score by ipc2018-opt-delfi:h2-simpless-oss-masginfsccdfp
+766.00 score by ipc2018-opt-delfi:h2-simpless-oss-masginfsccdfp
 813.00 score by ipc2018-opt-delfi:h2-simpless-oss-zopdbsgenetic
-852.00 score by ipc2018-opt-delfi:simpless-dks-masb50kmiasmdfp
-838.00 score by ipc2018-opt-delfi:simpless-oss-masb50kmiasmdfp
-1082.00 score by ipc2018-opt-metis:metis2
+851.00 score by ipc2018-opt-delfi:simpless-dks-masb50kmiasmdfp
+835.00 score by ipc2018-opt-delfi:simpless-oss-masb50kmiasmdfp
+1084.00 score by ipc2018-opt-metis:metis2
 1007.00 score by ipc2018-opt-planning-pdbs:default
 1258.00 score by ipc2018-opt-scorpion:default
-508.00 score by ipc2018-symple1:symple100000OPT
-373.00 score by ipc2018-symple1:symple100000SAT
-509.00 score by ipc2018-symple2:symple100000OPT
-371.00 score by ipc2018-symple2:symple100000SAT
+509.00 score by ipc2018-symple1:symple100000OPT
+510.00 score by ipc2018-symple2:symple100000OPT
 Max problems solved by single config: 1258
 Max score by single config: 1258.0
 Computing portfolio...
@@ -2035,15 +2031,15 @@ portfolio for 0.00 seconds solves 0 problems with score 0.00
 
 run config 13 for 1 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1.00 seconds solves 253 problems with score 253.00
+portfolio for 1.00 seconds solves 256 problems with score 256.00
 
 run config 7 for 1 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 2.00 seconds solves 317 problems with score 317.00
+portfolio for 2.00 seconds solves 318 problems with score 318.00
 
 run config 13 for 3 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 4.00 seconds solves 454 problems with score 454.00
+portfolio for 4.00 seconds solves 452 problems with score 452.00
 
 run config 0 for 2 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
@@ -2051,171 +2047,157 @@ portfolio for 6.00 seconds solves 511 problems with score 511.00
 
 run config 14 for 6 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 12.00 seconds solves 600 problems with score 600.00
+portfolio for 12.00 seconds solves 599 problems with score 599.00
 
-run config 6 for 2 seconds
+run config 2 for 2 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
 portfolio for 14.00 seconds solves 626 problems with score 626.00
 
-run config 2 for 1 seconds
+run config 6 for 2 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 15.00 seconds solves 637 problems with score 637.00
+portfolio for 16.00 seconds solves 647 problems with score 647.00
 
-run config 7 for 2 seconds
+run config 7 for 4 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 16.00 seconds solves 650 problems with score 650.00
+portfolio for 19.00 seconds solves 674 problems with score 674.00
 
-run config 0 for 10 seconds
+run config 0 for 7 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 24.00 seconds solves 713 problems with score 713.00
+portfolio for 24.00 seconds solves 716 problems with score 716.00
 
-run config 7 for 10 seconds
+run config 19 for 11 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 32.00 seconds solves 758 problems with score 758.00
+portfolio for 35.00 seconds solves 766 problems with score 766.00
 
-run config 2 for 5 seconds
+run config 0 for 30 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 36.00 seconds solves 780 problems with score 780.00
+portfolio for 58.00 seconds solves 857 problems with score 857.00
 
 run config 20 for 17 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 53.00 seconds solves 829 problems with score 829.00
+portfolio for 75.00 seconds solves 894 problems with score 894.00
 
-run config 0 for 50 seconds
+run config 2 for 13 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 93.00 seconds solves 953 problems with score 953.00
+portfolio for 86.00 seconds solves 916 problems with score 916.00
 
-run config 6 for 6 seconds
+run config 13 for 49 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 97.00 seconds solves 963 problems with score 963.00
+portfolio for 132.00 seconds solves 995 problems with score 995.00
 
-run config 13 for 23 seconds
+run config 7 for 9 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 117.00 seconds solves 996 problems with score 996.00
+portfolio for 137.00 seconds solves 1005 problems with score 1005.00
 
-run config 3 for 1 seconds
+run config 0 for 98 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 118.00 seconds solves 997 problems with score 997.00
+portfolio for 205.00 seconds solves 1106 problems with score 1106.00
 
-run config 1 for 19 seconds
+run config 27 for 390 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 137.00 seconds solves 1015 problems with score 1015.00
+portfolio for 595.00 seconds solves 1394 problems with score 1394.00
 
-run config 6 for 50 seconds
+run config 7 for 18 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 181.00 seconds solves 1059 problems with score 1059.00
+portfolio for 604.00 seconds solves 1402 problems with score 1402.00
 
-run config 20 for 90 seconds
+run config 0 for 301 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 254.00 seconds solves 1128 problems with score 1128.00
+portfolio for 807.00 seconds solves 1481 problems with score 1481.00
 
-run config 27 for 406 seconds
+run config 1 for 88 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 660.00 seconds solves 1371 problems with score 1371.00
-
-run config 0 for 159 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 769.00 seconds solves 1437 problems with score 1437.00
-
-run config 7 for 23 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 782.00 seconds solves 1446 problems with score 1446.00
-
-run config 25 for 160 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 942.00 seconds solves 1485 problems with score 1485.00
-
-run config 1 for 119 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1042.00 seconds solves 1506 problems with score 1506.00
-
-run config 10 for 12 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1054.00 seconds solves 1508 problems with score 1508.00
+portfolio for 895.00 seconds solves 1500 problems with score 1500.00
 
 run config 7 for 48 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1079.00 seconds solves 1516 problems with score 1516.00
+portfolio for 925.00 seconds solves 1509 problems with score 1509.00
 
-run config 0 for 321 seconds
+run config 25 for 158 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1241.00 seconds solves 1562 problems with score 1562.00
+portfolio for 1083.00 seconds solves 1538 problems with score 1538.00
 
-run config 2 for 7 seconds
+run config 10 for 12 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1243.00 seconds solves 1563 problems with score 1563.00
+portfolio for 1095.00 seconds solves 1540 problems with score 1540.00
 
-run config 27 for 553 seconds
+run config 27 for 703 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1390.00 seconds solves 1612 problems with score 1612.00
-
-run config 24 for 25 seconds
-Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1415.00 seconds solves 1614 problems with score 1614.00
+portfolio for 1408.00 seconds solves 1627 problems with score 1627.00
 
 run config 7 for 153 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1520.00 seconds solves 1624 problems with score 1624.00
+portfolio for 1513.00 seconds solves 1642 problems with score 1642.00
 
-run config 25 for 264 seconds
+run config 6 for 11 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1624.00 seconds solves 1638 problems with score 1638.00
+portfolio for 1522.00 seconds solves 1643 problems with score 1643.00
 
-run config 22 for 102 seconds
+run config 20 for 55 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1726.00 seconds solves 1641 problems with score 1641.00
+portfolio for 1560.00 seconds solves 1648 problems with score 1648.00
 
-run config 4 for 54 seconds
+run config 24 for 25 seconds
 Only keep longest time slice for each config, but preserve order of first occurences.
-portfolio for 1780.00 seconds solves 1642 problems with score 1642.00
+portfolio for 1585.00 seconds solves 1650 problems with score 1650.00
+
+run config 1 for 128 seconds
+Only keep longest time slice for each config, but preserve order of first occurences.
+portfolio for 1625.00 seconds solves 1657 problems with score 1657.00
+
+run config 22 for 116 seconds
+Only keep longest time slice for each config, but preserve order of first occurences.
+portfolio for 1741.00 seconds solves 1662 problems with score 1662.00
+
+run config 6 for 36 seconds
+Only keep longest time slice for each config, but preserve order of first occurences.
+portfolio for 1766.00 seconds solves 1663 problems with score 1663.00
 
 Improvement below 0.0001
-portfolio for 1780.00 seconds solves 1642 problems with score 1642.00
+portfolio for 1766.00 seconds solves 1663 problems with score 1663.00
 
-Time for computing portfolio: 15.11s
+Time for computing portfolio: 17.05s
 
-Configs: 15
-Unique configs: 15
-Min time limit: 1
-Max time limit: 553
-Final score:  1642.0
+Configs: 14
+Unique configs: 14
+Min time limit: 6
+Max time limit: 703
+Final score:  1663.0
 
 """
-Coverage: 1642
-Runtime: 1780s
-Score: 1642.0
+Coverage: 1663
+Runtime: 1766s
+Score: 1663.0
 """
 
 TRACK = "opt"
 CONFIGS = [
     # ipc2018-opt-delfi:h2-simpless-dks-celmcut
-    (23, ['ipc2018-opt-delfi', 'h2-simpless-dks-celmcut']),
+    (49, ['ipc2018-opt-delfi', 'h2-simpless-dks-celmcut']),
     # ipc2018-decstar:opt-config06
     (153, ['ipc2018-decstar', 'opt-config06']),
     # ipc2014-opt-symba1:default
-    (321, ['ipc2014-opt-symba1', 'default']),
+    (301, ['ipc2014-opt-symba1', 'default']),
     # ipc2018-opt-delfi:h2-simpless-dks-cpdbshc900
     (6, ['ipc2018-opt-delfi', 'h2-simpless-dks-cpdbshc900']),
-    # ipc2018-decstar:opt-config05
-    (50, ['ipc2018-decstar', 'opt-config05']),
     # ipc2018-decstar:opt-config01
-    (7, ['ipc2018-decstar', 'opt-config01']),
+    (13, ['ipc2018-decstar', 'opt-config01']),
+    # ipc2018-decstar:opt-config05
+    (36, ['ipc2018-decstar', 'opt-config05']),
+    # ipc2018-opt-delfi:h2-simpless-oss-celmcut
+    (11, ['ipc2018-opt-delfi', 'h2-simpless-oss-celmcut']),
     # ipc2018-opt-delfi:h2-simpless-oss-cpdbshc900
-    (90, ['ipc2018-opt-delfi', 'h2-simpless-oss-cpdbshc900']),
-    # ipc2018-decstar:opt-config02
-    (1, ['ipc2018-decstar', 'opt-config02']),
-    # ipc2018-decstar:opt-config00
-    (119, ['ipc2018-decstar', 'opt-config00']),
+    (55, ['ipc2018-opt-delfi', 'h2-simpless-oss-cpdbshc900']),
     # ipc2018-opt-scorpion:default
-    (553, ['ipc2018-opt-scorpion', 'default']),
+    (703, ['ipc2018-opt-scorpion', 'default']),
+    # ipc2018-decstar:opt-config00
+    (128, ['ipc2018-decstar', 'opt-config00']),
     # ipc2018-opt-metis:metis2
-    (264, ['ipc2018-opt-metis', 'metis2']),
+    (158, ['ipc2018-opt-metis', 'metis2']),
     # ipc2018-opt-delfi:h2-simpless-dks-900masb50ksccdfp
     (12, ['ipc2018-opt-delfi', 'h2-simpless-dks-900masb50ksccdfp']),
     # ipc2018-opt-delfi:simpless-oss-masb50kmiasmdfp
     (25, ['ipc2018-opt-delfi', 'simpless-oss-masb50kmiasmdfp']),
     # ipc2018-opt-delfi:h2-simpless-oss-zopdbsgenetic
-    (102, ['ipc2018-opt-delfi', 'h2-simpless-oss-zopdbsgenetic']),
-    # ipc2018-decstar:opt-config03
-    (54, ['ipc2018-decstar', 'opt-config03']),
+    (116, ['ipc2018-opt-delfi', 'h2-simpless-oss-zopdbsgenetic']),
 ]

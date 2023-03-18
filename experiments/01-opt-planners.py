@@ -51,20 +51,11 @@ def strip_runs(run):
     run["algorithm"] = f"{image}:{config}"
     run["image"] = image
     run["config"] = config
-    if image == "ipc2018-opt-complementary1" or run["algorithm"] in {"ipc2018-symple1:symple100000AGL", "ipc2018-symple2:symple100000AGL"}:
+    if image == "ipc2018-opt-complementary1" or run["algorithm"] in {"ipc2018-symple1:symple100000AGL", "ipc2018-symple1:symple100000SAT", "ipc2018-symple2:symple100000AGL", "ipc2018-symple2:symple100000SAT"}:
         return False
     return run
 
 for expname in [
-    #"2023-03-02-A-complementary1",
-    #"2023-03-02-B-complementary2",
-    #"2023-03-02-C-decstar",
-    #"2023-03-02-D-symple1",
-    #"2023-03-02-E-symple2",
-    #"2023-03-02-F-metis2",
-    #"2023-03-02-G-delfi",
-    #"2023-03-02-H-planningpdb",
-    #"2023-03-02-I-scorpion",
     "2023-03-10+ipc2018-opt-complementary1",
     "2023-03-10+ipc2018-opt-complementary2",
     "2023-03-10+ipc2018-opt-delfi",
@@ -74,20 +65,6 @@ for expname in [
     "2023-03-10+ipc2018-symple1",
     "2023-03-10+ipc2018-symple2",
     "2023-03-10+ipc2014-opt-symba1",
-
-    #"2023-03-10+ipc2014-agl-jasper",
-    #"2023-03-10+ipc2014-agl-mpc",
-    #"2023-03-10+ipc2014-agl-probe",
-    #"2023-03-10+ipc2018-agl-cerberus",
-    #"2023-03-10+ipc2018-agl-freelunch-madagascar",
-    #"2023-03-10+ipc2018-agl-mercury2014",
-    #"2023-03-10+ipc2018-agl-merwin",
-    #"2023-03-10+ipc2018-agl-olcff",
-    #"2023-03-10+ipc2018-agl-saarplan",
-    #"2023-03-10+ipc2018-fd-2018",
-    #"2023-03-10+ipc2018-lapkt-dfs-plus",
-    #"2023-03-10+ipc2018-lapkt-bfws",
-    #"2023-03-10+ipc2018-saarplan",
 ]:
     project.fetch_algorithms(exp, expname)
 
