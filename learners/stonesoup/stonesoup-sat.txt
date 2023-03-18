@@ -6698,7 +6698,7 @@ portfolio for 1800.00 seconds solves 2245 problems with score 2131.69:
       0.00 seconds for ipc2018-symple2:symple100000AGL
       0.00 seconds for ipc2018-symple2:symple100000SAT
 
-Time for computing portfolio: 3.5480258559999998s
+Time for computing portfolio: 4.557762923s
 
 Reducing portfolio...
 portfolio for 1726.00 seconds solves 2245 problems with score 2131.69:

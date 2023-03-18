@@ -2156,7 +2156,7 @@ portfolio for 1766.00 seconds solves 1663 problems with score 1663.00
 Improvement below 0.0001
 portfolio for 1766.00 seconds solves 1663 problems with score 1663.00
 
-Time for computing portfolio: 17.05s
+Time for computing portfolio: 14.37s
 
 Configs: 14
 Unique configs: 14

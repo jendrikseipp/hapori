@@ -2772,7 +2772,7 @@ portfolio for 1800.00 seconds solves 2213 problems with score 2106.87
 
 portfolio for 1800.00 seconds solves 2213 problems with score 2106.87
 
-Time for computing portfolio: 109.06s
+Time for computing portfolio: 119.15s
 
 Configs: 70
 Unique configs: 50

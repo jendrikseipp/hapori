@@ -2251,7 +2251,7 @@ portfolio for 1800.00 seconds solves 1645 problems with score 1645.00:
       0.00 seconds for ipc2018-symple1:symple100000OPT
       0.00 seconds for ipc2018-symple2:symple100000OPT
 
-Time for computing portfolio: 0.12880308200000012s
+Time for computing portfolio: 0.12814086599999985s
 
 Reducing portfolio...
 portfolio for 1676.00 seconds solves 1645 problems with score 1645.00:
