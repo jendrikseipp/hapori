@@ -2,11 +2,14 @@
 
 set -euo pipefail
 
+cd $(dirname "$0")
+
 TMPDIR="/tmp/apptainer-rundir"
 
 RECIPE=$(realpath ${1})
 IMAGE=$(realpath ${2})
-BENCHMARKS_DIR=${DOWNWARD_BENCHMARKS}
+BENCHMARKS_DIR=benchmarks
+
 
 printf "\n\n**********************************************************************\n\n\n"
 echo "Recipe: ${RECIPE}"
@@ -22,11 +25,10 @@ fi
 echo "Testing image at ${IMAGE}:"
 rm -rf ${TMPDIR}
 mkdir ${TMPDIR}
-cp ${BENCHMARKS_DIR}/miconic/domain.pddl ${TMPDIR}/domain.pddl
-cp ${BENCHMARKS_DIR}/miconic/s1-0.pddl ${TMPDIR}/problem.pddl
+cp ${BENCHMARKS_DIR}/miconic-strips/domain-2-s1-0.pddl ${TMPDIR}/domain.pddl
+cp ${BENCHMARKS_DIR}/miconic-strips/2-s1-0.pddl ${TMPDIR}/problem.pddl
 DOMAIN="${TMPDIR}/domain.pddl"
 PROBLEM="${TMPDIR}/problem.pddl"
 PLANFILE="${TMPDIR}/my_sas_plan"
 
-ulimit -St 1800
 ${IMAGE} ${DOMAIN} ${PROBLEM} ${PLANFILE}

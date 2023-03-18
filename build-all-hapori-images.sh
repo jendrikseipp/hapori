@@ -4,7 +4,7 @@ set -euo pipefail
 
 cd $(dirname "$0")
 
-OUTDIR=images/
+OUTDIR=.
 mkdir -p ${OUTDIR}
 
 for recipe in Apptainer.* ; do
