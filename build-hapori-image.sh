@@ -5,6 +5,9 @@ set -euo pipefail
 cd $(dirname "$0")
 
 TMPDIR="/tmp/apptainer-rundir"
+DOMAIN="${TMPDIR}/domain.pddl"
+PROBLEM="${TMPDIR}/problem.pddl"
+PLANFILE="${TMPDIR}/my_sas_plan"
 
 RECIPE=$(realpath ${1})
 IMAGE=$(realpath ${2})
@@ -22,13 +25,19 @@ else
     popd
 fi
 
-echo "Testing image at ${IMAGE}:"
-rm -rf ${TMPDIR}
-mkdir ${TMPDIR}
-cp ${BENCHMARKS_DIR}/miconic-strips/domain-2-s1-0.pddl ${TMPDIR}/domain.pddl
-cp ${BENCHMARKS_DIR}/miconic-strips/2-s1-0.pddl ${TMPDIR}/problem.pddl
-DOMAIN="${TMPDIR}/domain.pddl"
-PROBLEM="${TMPDIR}/problem.pddl"
-PLANFILE="${TMPDIR}/my_sas_plan"
+function test_image {
+    domain=${1}
+    problem=${2}
+    rm -rf ${TMPDIR}
+    mkdir ${TMPDIR}
+    cp ${BENCHMARKS_DIR}/${domain} ${DOMAIN}
+    cp ${BENCHMARKS_DIR}/${problem} ${PROBLEM}
 
-${IMAGE} ${DOMAIN} ${PROBLEM} ${PLANFILE}
+    ${IMAGE} ${DOMAIN} ${PROBLEM} ${PLANFILE}
+}
+
+echo "Testing image at ${IMAGE} with STRIPS task:"
+test_image miconic-strips/{domain-,}2-s1-0.pddl
+
+echo "Testing image at ${IMAGE} with conditional effects task:"
+test_image briefcaseworld-adl/{domain-,}0-p002.pddl
