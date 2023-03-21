@@ -4,11 +4,32 @@ import sys
 
 from . import aliases
 from . import arguments
-from . import cleanup
 from . import limits
-from . import run_components
+from . import portfolio_runner
 from . import util
-from . import __version__
+from .plan_manager import PlanManager
+
+
+def run_portfolio(args):
+    logging.info("Running alias (%s)." % args.alias)
+    time_limit = limits.get_time_limit(
+        args.overall_time_limit)
+    memory_limit = limits.get_memory_limit(
+        args.overall_memory_limit)
+
+    plan_manager = PlanManager(
+        args.plan_file,
+        portfolio_bound=args.portfolio_bound,
+        single_plan=args.portfolio_single_plan)
+    plan_manager.delete_existing_plans()
+
+    assert args.portfolio
+    logging.info("search portfolio: %s" % args.portfolio)
+    domain_file = args.domain_file
+    problem_file = args.problem_file
+    return portfolio_runner.run(
+        args.portfolio, domain_file, problem_file, plan_manager,
+        time_limit, memory_limit)
 
 
 def main():
@@ -18,33 +39,11 @@ def main():
                         stream=sys.stdout)
     logging.debug("processed args: %s" % args)
 
-    if args.version:
-        print(__version__)
-        sys.exit()
-
-    if args.show_aliases:
-        aliases.show_aliases()
-        sys.exit()
-
-    if args.cleanup:
-        cleanup.cleanup_temporary_files(args)
-        sys.exit()
-
     limits.print_limits("planner", args.overall_time_limit, args.overall_memory_limit)
     print()
 
     exitcode = None
-    for component in args.components:
-        if component == "translate":
-            (exitcode, continue_execution) = run_components.run_search(args)
-        elif component == "search":
-            pass
-        elif component == "validate":
-            (exitcode, continue_execution) = run_components.run_validate(args)
-        else:
-            assert False, "Error: unhandled component: {}".format(component)
-        print("{component} exit code: {exitcode}".format(**locals()))
-        print()
+    (exitcode, continue_execution) = run_portfolio(args)
 
     try:
         logging.info(f"Planner time: {util.get_elapsed_time():.2f}s")

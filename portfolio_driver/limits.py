@@ -61,11 +61,11 @@ def convert_to_mb(num_bytes):
     return num_bytes / (1024 * 1024)
 
 
-def get_memory_limit(component_limit, overall_limit):
+def get_memory_limit(overall_limit):
     """
     Return the minimum of the component and overall limits or None if neither is set.
     """
-    limits = [limit for limit in [component_limit, overall_limit] if limit is not None]
+    limits = [limit for limit in [overall_limit] if limit is not None]
     return min(limits) if limits else None
 
 
@@ -78,11 +78,11 @@ def round_time_limit(limit):
     return int(limit + 0.001)
 
 
-def get_time_limit(component_limit, overall_limit):
+def get_time_limit(overall_limit):
     """
     Return the minimum time limit imposed by the component and overall limits.
     """
-    limit = component_limit
+    limit = None
     if overall_limit is not None:
         try:
             elapsed_time = util.get_elapsed_time()
