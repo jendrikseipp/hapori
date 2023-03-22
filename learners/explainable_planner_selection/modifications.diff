@@ -1,0 +1,123 @@
+diff --git a/src/data_loader.py b/src/data_loader.py
+index a8a3215..fa89ede 100755
+--- a/src/data_loader.py
++++ b/src/data_loader.py
+@@ -77,6 +77,7 @@ def load_features(
+     problem_names = problem_names[task_mask]
+     feature_names = feature_names[feature_mask]
+     feature_values = feature_values[:, feature_mask][task_mask, :]
++    problem_names = np.array([p[:-5] if p.endswith(".pddl") else p for p in problem_names])
+     return problem_names, feature_names, feature_values
+ 
+ 
+@@ -86,6 +87,7 @@ def load_runtimes(
+         file_task_whitelist: Optional[str]
+ ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+     ary = np.loadtxt(path, dtype=object, delimiter=",")
++    ary[ary == "-"] = 10000
+     planner_names = ary[0, 1:]
+     problem_names = np.array(list(map(
+         lambda x: x[:-5] if x.endswith(".pddl") else x,
+@@ -93,7 +95,7 @@ def load_runtimes(
+     runtimes = ary[1:, 1:].astype(float)
+ 
+     planner_whitelist = get_white_black_list(
+-        planner_names, file_planner_whitelist, None, None)
++        planner_names, None, None, None)
+     planner_mask = get_mask(planner_names, planner_whitelist, None)
+ 
+     task_whitelist = get_white_black_list(
+@@ -144,7 +146,7 @@ def load_data(options: argparse.Namespace,
+         file_planner_whitelist=options.file_planner_whitelist,
+         file_task_whitelist=options.file_task_whitelist
+     )
+-    assert set(task_names).issubset(set(task_names2))
++    assert set(task_names).issubset(set(task_names2)), task_names
+     task_names2, runtimes = select_subset(
+         task_names, task_names2, runtimes)
+     assert set(task_names) == set(task_names2)
+@@ -158,7 +160,7 @@ def load_data(options: argparse.Namespace,
+ 
+     # Split the tasks into train/valid/test set
+     split_masks = splits[options.split](options, task_names)
+-    assert all(sum(m[i] for m in split_masks) <= 1
++    assert all(sum(m[i] for m in split_masks) <= 3
+                for i in range(len(split_masks[0])))
+     if options.only_print_task_sets:
+         print()
+diff --git a/src/data_splits.py b/src/data_splits.py
+index f555915..9aff2d5 100755
+--- a/src/data_splits.py
++++ b/src/data_splits.py
+@@ -11,6 +11,7 @@ class Splits(enum.Enum):
+     RANDOM = "random"  # randomly split the task
+     DOMAIN_PRESERVING = "domain_preserving"  # key tasks of same domain together
+     PREDEFINED = "predefined"  # use a predefined task split
++    TRAINING = "training"
+ 
+ 
+ def load_split_file(file_name: str) -> Set[str]:
+@@ -49,6 +50,22 @@ def get_mask_for_split(problem_names: np.ndarray, split: Set[str]
+     return np.array([p in split for p in problem_names])
+ 
+ 
++def split_training(options: argparse.Namespace,
++                     problem_names: np.ndarray
++                     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
++    """
++    Split the tasks into training, validation, test data as defined by the
++    provided split files.
++    :param options: main command line arguments
++    :param problem_names: list of tasks as given in the data arrays
++    :return: boolean mask for training, validation and test tasks.
++    """
++    assert options.cross_validate is None
++    true_mask = [True for _ in problem_names]
++    false_mask = [False for _ in problem_names]
++    return true_mask, false_mask, true_mask
++
++
+ def split_predefined(options: argparse.Namespace,
+                      problem_names: np.ndarray
+                      ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+@@ -173,7 +190,8 @@ def _split_domain(options: argparse.Namespace, folds: List[int],
+ splits = {
+     Splits.PREDEFINED: split_predefined,
+     Splits.RANDOM: split_func(_split_random),
+-    Splits.DOMAIN_PRESERVING: split_func(_split_domain)
++    Splits.DOMAIN_PRESERVING: split_func(_split_domain),
++    Splits.TRAINING: split_training,
+ 
+ }
+ assert all(_x in splits for _x in Splits)
+diff --git a/src/learners/__init__.py b/src/learners/__init__.py
+index c450559..8ea2237 100755
+--- a/src/learners/__init__.py
++++ b/src/learners/__init__.py
+@@ -3,7 +3,7 @@ import enum
+ from .best import Best, BestFactory
+ from .decision_tree import DecisionTreeFactory
+ from .linear_regression import LinearRegressionFactory
+-from .mlp import MLPFactory
++# from .mlp import MLPFactory
+ from .ml_technique import BaseML, BaseMLFactory, evaluate_coverage
+ from .random_forest import RandomForestFactory
+ from .svm import SVMFactory
+@@ -12,7 +12,7 @@ from .svr import SVRFactory
+ 
+ class Learners(enum.Enum):
+     RANDOM_FOREST = "random_forest"
+-    MLP = "mlp"
++    # MLP = "mlp"
+     LINEAR_REGRESSION = "linear_regression"
+     SVM = "svm"
+     SVR = "svr"
+@@ -22,7 +22,7 @@ class Learners(enum.Enum):
+ 
+ learner_factories = {
+     Learners.RANDOM_FOREST: RandomForestFactory(),
+-    Learners.MLP: MLPFactory(),
++    # Learners.MLP: MLPFactory(),
+     Learners.LINEAR_REGRESSION: LinearRegressionFactory(),
+     Learners.SVM: SVMFactory(),
+     Learners.SVR: SVRFactory(),
