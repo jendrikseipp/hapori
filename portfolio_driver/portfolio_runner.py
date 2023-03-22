@@ -16,6 +16,10 @@ the process is started.
 __all__ = ["run"]
 
 from pathlib import Path
+import itertools
+import random
+import shutil
+import string
 import subprocess
 import sys
 
@@ -27,6 +31,7 @@ from . import util
 
 DIR = Path(__file__).resolve().parent
 REPO = DIR.parent
+PLAN_FILE_NAME_LENGTH = 10
 
 
 def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
@@ -56,19 +61,21 @@ def compute_run_time(timeout, configs, pos):
     return limits.round_time_limit(remaining_time * relative_time / remaining_relative_time)
 
 
-def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    next_plan_id = 1
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result = ''.join(random.choice(letters) for i in range(length))
+    return result
+
+
+def run_multi_plan_portfolio(configs, domain_file, problem_file, timeout, memory):
     for pos, (relative_time, (image, planner)) in enumerate(configs):
-        next_plan_file = f"{plan_manager.get_plan_prefix()}.{next_plan_id}"
+        next_plan_prefix = f"tmp_plan_{get_random_string(PLAN_FILE_NAME_LENGTH)}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             return
-        exitcode = run_search(image, planner, domain_file, problem_file, next_plan_file, run_time, memory)
+        exitcode = run_search(image, planner, domain_file, problem_file, next_plan_prefix, run_time, memory)
 
-        yield exitcode
-
-        if exitcode == returncodes.SUCCESS:
-            next_plan_id += 1
+        yield (exitcode, next_plan_prefix)
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
@@ -110,6 +117,19 @@ def get_portfolio_attributes(portfolio):
     return attributes
 
 
+def get_existing_plans(plan_prefix):
+    plan_prefix = Path(plan_prefix).resolve()
+    if plan_prefix.exists():
+        yield plan_prefix
+
+    for counter in itertools.count(start=1):
+        plan_filename = Path(f"{plan_prefix}.{counter}")
+        if plan_filename.exists():
+            yield plan_filename
+        else:
+            break
+
+
 def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     """
     Run the configs in the given portfolio file.
@@ -136,6 +156,13 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
             configs, domain_file, problem_file, plan_manager, timeout, memory)
     else:
         assert track == "sat", track
-        exitcodes = run_multi_plan_portfolio(
-            configs, domain_file, problem_file, plan_manager, timeout, memory)
+        exitcodes_planprefixes = run_multi_plan_portfolio(
+            configs, domain_file, problem_file, timeout, memory)
+        exitcodes, planprefixes = list(zip(*list(exitcodes_planprefixes)))
+
+        existing_plan_files = [str(plan) for plan_prefix in planprefixes for plan in get_existing_plans(plan_prefix) ]
+        print(f"Portfolio computed the following plans: {existing_plan_files}")
+        print(f"Moving the last found plan {existing_plan_files[-1]} to {plan_manager.get_plan_prefix()}")
+        shutil.move(existing_plan_files[-1], plan_manager.get_plan_prefix())
+
     return returncodes.generate_portfolio_exitcode(list(exitcodes))

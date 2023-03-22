@@ -140,8 +140,8 @@ def parse_args():
         help="set log level (most verbose: debug; least verbose: warning; default: %(default)s)")
 
     driver_other.add_argument(
-        "--plan-file", metavar="FILE", default="sas_plan",
-        help="write plan(s) to FILE (default: %(default)s; anytime configurations append .1, .2, ...)")
+        "--plan-file", metavar="FILE", required=True,
+        help="write plan(s) to FILE (anytime configurations append .1, .2, ...)")
 
     driver_other.add_argument(
         "--portfolio", metavar="FILE",
