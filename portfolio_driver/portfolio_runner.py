@@ -56,9 +56,11 @@ def compute_run_time(timeout, configs, pos):
     print("remaining time: {}".format(remaining_time))
     relative_time = configs[pos][0]
     remaining_relative_time = sum(config[0] for config in configs[pos:])
-    print("config {}: relative time {}, remaining {}".format(
-          pos, relative_time, remaining_relative_time))
-    return limits.round_time_limit(remaining_time * relative_time / remaining_relative_time)
+    absolute_time_limit = limits.round_time_limit(remaining_time * relative_time / remaining_relative_time)
+    print("config {}: relative time {}, remaining time {}, absolute time {}".format(
+          pos, relative_time, remaining_relative_time, absolute_time_limit))
+    return absolute_time_limit
+
 
 
 def get_random_string(length):
@@ -72,7 +74,7 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, timeout, memory
         next_plan_prefix = f"tmp_plan_{get_random_string(PLAN_FILE_NAME_LENGTH)}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
-            return
+            continue
         exitcode = run_search(image, planner, domain_file, problem_file, next_plan_prefix, run_time, memory)
 
         yield (exitcode, next_plan_prefix)
@@ -82,7 +84,7 @@ def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, 
     for pos, (relative_time, (image, planner)) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
-            return
+            continue
         exitcode = run_search(image, planner, domain_file, problem_file, plan_manager.get_plan_prefix(),
                               run_time, memory)
         yield exitcode
