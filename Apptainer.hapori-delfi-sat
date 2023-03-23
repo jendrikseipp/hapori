@@ -5,6 +5,8 @@ From: ubuntu:22.04
     images /planner/images
     plan.py /planner/plan.py
     fd_2018_configs.py /planner/fd_2018_configs.py
+    planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py /planner/planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py
+    planners/ipc2018-saarplan/driver/portfolios/ /planner/planners/ipc2018-saarplan/driver/portfolios/
     learners/delfi/create-image-from-graph.py /planner/create-image-from-graph.py
     learners/delfi/models/satisficing.json /planner/models/satisficing.json
     learners/delfi/models/satisficing.h5 /planner/models/satisficing.h5

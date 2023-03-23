@@ -10,6 +10,8 @@ From: ubuntu:22.04
     learners/explainable_planner_selection/src /planner/src
     learners/explainable_planner_selection/models /planner/models
     learners/explainable_planner_selection/feature_extractor /planner/feature_extractor
+    planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py /planner/planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py
+    planners/ipc2018-saarplan/driver/portfolios/ /planner/planners/ipc2018-saarplan/driver/portfolios/
 
 %post
     apt-get update
