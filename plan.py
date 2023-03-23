@@ -45,22 +45,50 @@ DELFI_CMDS = {
 }
 
 CONFIGS = {
+    "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
+    #"ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],  # Image is too large.
+    "ipc2018-agl-mercury2014": ["sat", "agl"],
+    "ipc2018-agl-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
+    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(fd_2018_configs.UNIQUE_FD_CONFIGS))],
+    "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
+    "ipc2018-opt-delfi": DELFI_CMDS.keys(),
+    # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
+    "ipc2018-opt-metis": ["metis2"],  # Metis 1 is contained in the configurations of Delfi
     "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
     "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
     "ipc2018-symple2": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
-    "ipc2018-opt-delfi": DELFI_CMDS.keys(),
-    # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
-    # "ipc2018-opt-metis": ["metis1", "metis2"],  # Metis 1 is contained in the configurations of Delfi
-    "ipc2018-opt-metis": ["metis2"],
-    "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
-    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(fd_2018_configs.UNIQUE_FD_CONFIGS))],
-    #"ipc2018-agl-ibacop": ["arvand", "probe", "yahsp2-mt"],
-    "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
-    "ipc2018-agl-mercury2014": ["sat", "agl"],
-    "ipc2018-agl-merwin": ["sat", "agl"],
-    #"ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],  # Image is too large.
 }
+
+SINGLE_CONFIG_IMAGES = [
+    "ipc2014-agl-jasper",
+    "ipc2014-agl-mpc",
+    "ipc2014-agl-probe",
+    "ipc2014-opt-symba1",
+    "ipc2018-agl-freelunch-madagascar",
+    "ipc2018-agl-olcff",
+    "ipc2018-lapkt-dfs-plus",
+    #"ipc2018-opt-complementary1",  # Suboptimal.
+    "ipc2018-opt-complementary2",
+    "ipc2018-opt-planning-pdbs",
+    "ipc2018-opt-scorpion",
+]
+
+for image_nick in SINGLE_CONFIG_IMAGES:
+    assert image_nick not in CONFIGS, image_nick
+    CONFIGS[image_nick] = ["default"]
+
+
+def check_consistency():
+    defined_images = set(CONFIGS)
+    existing_images = set(Path(path.name).stem for path in (DIR / "images").glob("*.img"))
+    missing_images = defined_images - existing_images
+    undefined_images = existing_images - defined_images
+    print("Defined images:", sorted(defined_images))
+    print("Existing images:", sorted(existing_images))
+    print("Missing images:", sorted(missing_images))
+    print("Undefined images:", sorted(undefined_images))
+
 
 def csv_list(s):
    return s.split(',')
@@ -78,6 +106,7 @@ def parse_args():
     parser.add_argument("problemfile", type=abs_path)
     parser.add_argument("planfile", type=abs_path)
     parser.add_argument("--check", action="store_true", help="Check planner exitcode and validate plans.")
+    parser.add_argument("--list-configs", action="store_true", help="Show list of image and config names and exit.")
     return parser.parse_args()
 
 
@@ -142,6 +171,13 @@ def run_image(args, cmd):
 
 def main():
     args = parse_args()
+    check_consistency()
+    if args.list_configs:
+        for image_nick, configs in sorted(CONFIGS.items()):
+            for config in sorted(configs):
+                print(f"(1, ['{image_nick}', '{config}']),")
+        sys.exit()
+
     if args.image.exists():
         image_path = args.image
         image_nick = Path(image_path.name).stem
