@@ -8,8 +8,6 @@ From: ubuntu:22.04
     planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py /planner/planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py
     planners/ipc2018-saarplan/driver/portfolios/ /planner/planners/ipc2018-saarplan/driver/portfolios/
     learners/delfi/create-image-from-graph.py /planner/create-image-from-graph.py
-    learners/delfi/models/satisficing.json /planner/models/satisficing.json
-    learners/delfi/models/satisficing.h5 /planner/models/satisficing.h5
     learners/delfi/opt_planners.json /planner/opt_planners.json
     learners/delfi/plan-ipc.py /planner/plan-ipc.py
     learners/delfi/requirements.txt /planner/requirements.txt
@@ -19,7 +17,7 @@ From: ubuntu:22.04
 
 %post
     apt-get update
-    apt-get -y install --no-install-recommends gpg-agent python3.11 build-essential python2.7 python2.7-dev virtualenv software-properties-common
+    apt-get -y install --no-install-recommends gpg-agent python3.11 build-essential python2.7 python2.7-dev virtualenv software-properties-common wget
     add-apt-repository -y ppa:apptainer/ppa
     apt-get update
     apt-get install -y apptainer
@@ -30,6 +28,12 @@ From: ubuntu:22.04
     . /planner/venv/bin/activate
     pip install wheel
     pip install -r /planner/requirements.txt
+    mkdir /planner/models/
+    wget https://ai.dmi.unibas.ch/_tmp_files/ferber/satisficing.json
+    mv satisficing.json /planner/models/satisficing.json
+    wget https://ai.dmi.unibas.ch/_tmp_files/ferber/satisficing.h5
+    mv satisficing.h5 /planner/models/satisficing.h5
+
 
 %runscript
     #! /bin/bash
