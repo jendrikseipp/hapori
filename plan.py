@@ -131,9 +131,7 @@ def run_image(args, cmd):
         if args.check:
             subprocess.check_call(["validate", "-L", "-v", args.domainfile, args.problemfile] + existing_plan_files)
     else:
-        # TODO why do we support running multiple configuations in a single
-        #  call? If this line should be reworked if there is really is a use
-        # case for running multiple configs at once.
+        # We use --config=all only for testing small instances, so exit here if one config fails to solve the easy task.
         sys.exit(99)
 
 def main():
