@@ -72,7 +72,7 @@ def parse_args():
     parser.add_argument("domainfile")
     parser.add_argument("problemfile")
     parser.add_argument("planfile")
-    parser.add_argument("--not-check-subprocess", dest="check", action="store_false", help="Don't check planner exitcode.")
+    parser.add_argument("--check", action="store_true", help="Check planner exitcode and validate plans.")
     return parser.parse_args()
 
 

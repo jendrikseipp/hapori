@@ -36,7 +36,7 @@ PLAN_FILE_NAME_LENGTH = 10
 
 def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
-    complete_args = [sys.executable, str(dispatch), "--not-check-subprocess", image, domain_file, problem_file, plan_file]
+    complete_args = [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
     if planner:
         complete_args += ["--config", planner]
     print("args: %s" % complete_args)
