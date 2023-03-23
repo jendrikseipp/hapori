@@ -13,11 +13,11 @@ Stage: build
 
     ## Build your planner
     cd /planner/fast-downward-conjunctions
-    ./build.py release64clangpgonative -j4
+    ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
-    strip --strip-all /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64/bin/downward
 
 # Stage 2: Run the planner
 Bootstrap: docker
@@ -28,9 +28,9 @@ Stage: run
     /planner/fast-downward.py
     /planner/driver
     /planner/fast-downward-conjunctions/driver
-    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/translate
-    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
-    /planner/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+    /planner/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/fast-downward-conjunctions/builds/release64/bin/downward
 
 %post
     ## Install all necessary dependencies.

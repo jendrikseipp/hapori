@@ -161,7 +161,7 @@ def run_sat_config(configs, pos, search_cost_type, heuristic_cost_type,
         return None
     _, args_template = configs[pos]
     args = list(args_template)
-    adapt_args(args, search_cost_type, heuristic_cost_type, plan_manager, executable.endswith("fast-downward-conjunctions/builds/release64clangpgonative/bin/downward")) # dirty HACK
+    adapt_args(args, search_cost_type, heuristic_cost_type, plan_manager, executable.endswith("fast-downward-conjunctions/builds/release64/bin/downward")) # dirty HACK
     args.extend([
         "--internal-previous-portfolio-plans", str(plan_manager.get_plan_counter())])
     result = run_search(executable, args, sas_file, plan_manager, run_timeout, memory)
@@ -325,7 +325,7 @@ def run(portfolio, executable, sas_file, plan_manager, args):
     timeout = attributes.get("TIMEOUT")
     memout = attributes.get("MEMORY")
     executables = attributes.get("EXECUTABLES") # set if not default
-    
+
     if (executables is not None):
         curr_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../")
         for i in range(len(executables)):
@@ -366,7 +366,7 @@ def run(portfolio, executable, sas_file, plan_manager, args):
         memory = hard_mem_limit
         if (memout is not None):
             memory = min(memout, memory)
-        
+
     print("Internal memory limit: %s" % memory)
 
     remaining_time_at_start = float(timeout)

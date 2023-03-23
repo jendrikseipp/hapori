@@ -12,9 +12,9 @@ from .plan_manager import PlanManager
 
 DRIVER_DIR = os.path.abspath(os.path.dirname(__file__))
 SRC_DIR = os.path.dirname(DRIVER_DIR)
-TRANSLATE = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64clangpgonative", "bin", "translate", "translate.py") # was TRANSLATE = os.path.join(SRC_DIR, "translate", "translate.py")
-PREPROCESS = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64clangpgonative", "bin", "preprocess") # was PREPROCESS = os.path.join(SRC_DIR, "preprocess", "preprocess")
-SEARCH = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64clangpgonative", "bin", "downward") # was SEARCH_DIR = os.path.join(SRC_DIR, "search")
+TRANSLATE = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64", "bin", "translate", "translate.py") # was TRANSLATE = os.path.join(SRC_DIR, "translate", "translate.py")
+PREPROCESS = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64", "bin", "preprocess") # was PREPROCESS = os.path.join(SRC_DIR, "preprocess", "preprocess")
+SEARCH = os.path.join(DRIVER_DIR, "../fast-downward-conjunctions", "builds", "release64", "bin", "downward") # was SEARCH_DIR = os.path.join(SRC_DIR, "search")
 
 
 def call_cmd(cmd, args, debug, stdin=None):
