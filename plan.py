@@ -101,7 +101,7 @@ def abs_path(arg):
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", type=Path, help="path to or nick for Apptainer image file")
-    parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and must be omitted or 'default' for other images. Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=[])
+    parser.add_argument("--configs", help=f"Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=["default"])
     parser.add_argument("domainfile", type=abs_path)
     parser.add_argument("problemfile", type=abs_path)
     parser.add_argument("planfile", type=abs_path)
@@ -198,12 +198,9 @@ def main():
                 configs = CONFIGS[image_nick]
             elif config not in CONFIGS[image_nick]:
                 sys.exit(f"Image {image_nick} does not support config {config}.")
-    elif configs:
-        if len(configs) == 1 and configs[0] in {"all", "default"}:
-            run_image(args, [image_path, args.domainfile, args.problemfile, args.planfile])
-            return
-        else:
-            sys.exit(f"The --configs parameter is only allowed for the images {list(CONFIGS.keys())}")
+    elif len(configs) == 1 and configs[0] in {"all", "default"}:
+        run_image(args, [image_path, args.domainfile, args.problemfile, args.planfile])
+        return
 
     for config in configs:
         print(f"Run config {config}")
