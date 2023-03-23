@@ -64,17 +64,21 @@ for expname in [
     "2023-03-10+ipc2018-agl-mercury2014",
     "2023-03-10+ipc2018-agl-merwin",
     "2023-03-10+ipc2018-agl-olcff",
-    "2023-03-10+ipc2018-agl-saarplan",
+    "2023-03-10+ipc2018-agl-saarplan",  # Outdated: runs the full Saarplan agile portfolio. Keep it for now to have consistent training data.
     "2023-03-10+ipc2018-fd-2018",
     "2023-03-10+ipc2018-lapkt-dfs-plus",
     "2023-03-10+ipc2018-lapkt-bfws",
-    "2023-03-10+ipc2018-saarplan",
+    "2023-03-10+ipc2018-saarplan",  # TODO: These configs fail. Keep for consistency.
 ]:
     project.fetch_algorithms(exp, expname)
 
 for config in ["symple100000AGL", "symple100000SAT"]:
     project.fetch_algorithm(exp, "2023-03-10+ipc2018-symple1", ["ipc2018-symple1", config])
     project.fetch_algorithm(exp, "2023-03-10+ipc2018-symple2", ["ipc2018-symple2", config])
+
+# TODO: Add these runs that are missing from the IPC training set.
+#for config in [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)]:
+#    project.fetch_algorithm(exp, "2023-03-10+ipc2018-decstar", ["ipc2018-decstar", config])
 
 project.add_absolute_report(exp, attributes=ATTRIBUTES, filter=[strip_runs], name=f"{exp.name}-full")
 
