@@ -7,6 +7,7 @@ import itertools
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import traceback
 
 import fd_2018_configs
@@ -65,13 +66,17 @@ def csv_list(s):
    return s.split(',')
 
 
+def abs_path(arg):
+    return Path(arg).resolve()
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("image", help="path to or nick for Apptainer image file")
+    parser.add_argument("image", type=Path, help="path to or nick for Apptainer image file")
     parser.add_argument("--configs", help=f"required for images {', '.join(CONFIGS.keys())} and must be omitted or 'default' for other images. Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=[])
-    parser.add_argument("domainfile")
-    parser.add_argument("problemfile")
-    parser.add_argument("planfile")
+    parser.add_argument("domainfile", type=abs_path)
+    parser.add_argument("problemfile", type=abs_path)
+    parser.add_argument("planfile", type=abs_path)
     parser.add_argument("--check", action="store_true", help="Check planner exitcode and validate plans.")
     return parser.parse_args()
 
@@ -122,7 +127,8 @@ def get_existing_plans(plan_prefix):
 
 
 def run_image(args, cmd):
-    subprocess.run(cmd, check=args.check)
+    with tempfile.TemporaryDirectory() as d:
+        subprocess.run(cmd, check=args.check, cwd=d)
     plan_prefix = Path(args.planfile).resolve()
     existing_plan_files = [str(plan) for plan in get_existing_plans(plan_prefix)]
 
@@ -136,12 +142,14 @@ def run_image(args, cmd):
 
 def main():
     args = parse_args()
-    if Path(args.image).exists():
+    if args.image.exists():
         image_path = args.image
-        image_nick = Path(Path(args.image).name).stem
+        image_nick = Path(image_path.name).stem
     else:
-        image_nick = args.image
+        image_nick = str(args.image)
         image_path = DIR / "images" / f"{image_nick}.img"
+    image_path = image_path.resolve()
+
     configs = args.configs
     print(f"Image path: {image_path}")
     print(f"Image nick: {image_nick}")
