@@ -209,7 +209,7 @@ def main(args):
     image_file = compute_image(pwd, graph_file)
 
     if image_file is None:
-        planner = None # TODO Fallback
+        planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:default'
     else:
         json_model = os.path.join(DIR_SCRIPT, 'models', args.model_name + ".json")
         h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
