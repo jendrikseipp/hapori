@@ -84,7 +84,8 @@ HEADERS += landmarks/exploration.h \
 HEADERS += red_black/red_black_operator.h \
 		   red_black/red_black_DAG_fact_following_heuristic.h \
 		   red_black/dtg_operators.h \
-		   		   
+
+
 HEADERS += graph_algorithms/scc.h \
 		   graph_algorithms/topological_sort.h \
 		   graph_algorithms/transitive_closure.h \

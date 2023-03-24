@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# planners=("parser" "preprocess" "search" "features" "search-mercury")
+planners=("features" "search-mercury")
 # planners=("features")
 
 cd "$(dirname "$0")"

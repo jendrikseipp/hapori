@@ -45,7 +45,9 @@ def extract_features(rootpath, domain, problem, ft_file):
     os.system(command)
 
     timeHeuristic = time.time()
-    command = "ulimit -v 4194304;ulimit -t 100; "+  rootpath +"/search/downward-4 --landmarks \"lm=lm_merged([lm_hm(m=1),lm_rhw(),lm_zg()])\" < " + startpath + "/output"
+    # command = "ulimit -v 4194304;ulimit -t 100; "+  rootpath +"/search/downward-4 --landmarks \"lm=lm_merged([lm_hm(m=1),lm_rhw(),lm_zg()])\" < " + startpath + "/output"
+#    command = "ulimit -v 4194304;ulimit -t 100; "+  rootpath +"/features/heuristics/search/downward-4 --landmarks \"lm=lm_merged([lm_hm(m=1),lm_rhw(),lm_zg()])\" < " + startpath + "/heuristic"
+    command = "ulimit -v 4194304;ulimit -t 100; "+  rootpath +"/search-mercury/downward-4 --landmarks \"lm=lm_merged([lm_hm(m=1),lm_rhw(),lm_zg()])\" < " + startpath + "/output"
     os.system(command)
     timeLandmark = time.time()
     ## print "Run command: " + str(command)            
@@ -210,9 +212,10 @@ if __name__ == '__main__':
     begin_time = time.time()
     # # Parse original domain and original problem (conditional effects)
     # begin = time.time()
-    command = "python2.7 " + rootpath + "/parser/parse.py " + original_domain + " " + original_problem
-    print "Run command: " + str(command)
-    os.system(command)
+    # We couldn't make it. To big to handle
+    # command = "python2.7 " + rootpath + "/parser/parse.py " + original_domain + " " + original_problem
+    # print "Run command: " + str(command)
+    # os.system(command)
     # end = time.time()
 
     init_time_features = time.time()

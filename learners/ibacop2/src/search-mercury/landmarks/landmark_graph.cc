@@ -13,6 +13,14 @@
 #include <sstream>
 #include <utility>
 #include <vector>
+//Isa
+
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include <math.h>
+//Isa
 
 using namespace __gnu_cxx;
 
@@ -238,7 +246,7 @@ void LandmarkGraph::set_landmark_ids() {
         id++;
     }
 }
-
+//Isabel
 void LandmarkGraph::dump_node(const LandmarkNode *node_p) const {
     cout << "LM " << node_p->get_id() << " ";
     if (node_p->disjunctive)
@@ -250,18 +258,22 @@ void LandmarkGraph::dump_node(const LandmarkNode *node_p) const {
         cout << g_fact_names[var_no][value] << " ("
              << g_variable_name[var_no] << "(" << var_no << ")"
              << "->" << value << ")";
+        
         if (i < node_p->vars.size() - 1)
             cout << ", ";
     }
+    
     if (node_p->disjunctive || node_p->conjunctive)
         cout << "}";
     if (node_p->in_goal)
         cout << "(goal)";
     cout << " Achievers (" << node_p->possible_achievers.size() << ", " << node_p->first_achievers.size() << ")";
     cout << endl;
+    
 }
 
-void LandmarkGraph::dump() const {
+/**
+*void LandmarkGraph::dump() const {
     cout << "Landmark graph: " << endl;
     set<LandmarkNode *, LandmarkNodeComparer> nodes2(nodes.begin(), nodes.end());
 
@@ -322,6 +334,130 @@ void LandmarkGraph::dump() const {
         cout << endl;
     }
     cout << "Landmark graph end." << endl;
+}
+**/
+//Cambios Isa
+void LandmarkGraph::dump() const {
+    //Isa Features
+    int numberEdges = 0;
+    int landmarks = nodes.size();
+    int goals = 0;
+    bool *isfather = new bool [landmarks];
+    bool *ischildren = new bool [landmarks];
+    int *inputEdges = new int [landmarks];
+    int *outputEdges = new int [landmarks];
+    
+    for (int i = 0; i < landmarks; i++){
+           isfather[i] = false;  
+           ischildren[i] = false;
+           inputEdges[i] = 0;
+           outputEdges[i] = 0;
+    }
+    //isaFeatures 
+   // cout << "Landmark graph: " << endl; --> antes estaba
+    set<LandmarkNode *, LandmarkNodeComparer> nodes2(nodes.begin(), nodes.end());
+   //Isa
+     ofstream outfile;
+     outfile.open("landmark-graph", ios::out);
+     outfile <<"digraph G {"<<endl;
+    //isa
+    for (set<LandmarkNode *>::const_iterator it = nodes2.begin(); it
+         != nodes2.end(); it++) {
+        LandmarkNode *node_p = *it;
+       // dump_node(node_p); -> antes si estaba
+        if(node_p->is_goal())
+                goals++;
+        
+            outfile << "v" << node_p->get_id() << " ";
+            for (unsigned int i = 0; i < node_p->vars.size(); i++) {
+                int var_no = node_p->vars[i], value = node_p->vals[i];
+          
+                if(node_p->vars.size() == 1){
+                     outfile <<" [label=\""<< g_fact_names[var_no][value];
+                
+                
+                }else{
+                    if(i == 0)
+                        outfile <<" [label=\""<< g_fact_names[var_no][value];
+                    else
+                        outfile <<  g_fact_names[var_no][value];
+                }
+                if (i < node_p->vars.size() - 1)
+                    outfile << ", ";
+             }
+             outfile << "\"]"<<endl; 
+        }
+        //isa
+        
+        for (set<LandmarkNode *>::const_iterator it = nodes2.begin(); it
+         != nodes2.end(); it++) {
+        LandmarkNode *node_p = *it;
+        //dump_node(node_p); --> antes si estaba
+        for (hash_map<LandmarkNode *, edge_type, hash_pointer>::const_iterator
+             parent_it = node_p->parents.begin(); parent_it
+             != node_p->parents.end(); parent_it++) {
+            //const edge_type &edge = parent_it->second;
+            const LandmarkNode *parent_p = parent_it->first;
+            isfather[parent_p->get_id()] = true;
+            
+        }
+        for (hash_map<LandmarkNode *, edge_type, hash_pointer>::const_iterator
+             child_it = node_p->children.begin(); child_it
+             != node_p->children.end(); child_it++) {
+          //  const edge_type &edge = child_it->second;
+            const LandmarkNode *child_p = child_it->first;
+
+            ischildren[child_p->get_id()]= true;
+            outfile << "v"<<node_p->get_id()<<" -> v"<<child_p->get_id()<<endl;
+            numberEdges++;
+            inputEdges[node_p->get_id()]++;
+            outputEdges[child_p->get_id()]++;
+        }
+        //cout << endl; --> antes estaba
+    } 
+   // cout << "Landmark graph end." << endl;
+    outfile <<"}"<<endl;
+    outfile.close();
+    
+    int numberFather = 0;
+    int numberChildren = 0;
+    int nodosbetween = 0;
+    double avginput = 0.0;
+    double avgoutput = 0.0;
+    int maxinput = 0;
+    int maxoutput = 0;
+    
+    for (int i = 0; i< landmarks;i++){
+        if(isfather[i] == true and ischildren[i] == false)
+            numberFather++;
+        else if(isfather[i] == true and ischildren[i] == true)
+            nodosbetween++;
+        else
+            numberChildren++;
+        //cout<<i<<" input: "<<inputEdges[i]<<" output "<< outputEdges[i]<<endl;
+        if(maxinput < inputEdges[i])
+            maxinput = inputEdges[i];
+        if(maxoutput < outputEdges[i])
+            maxoutput = outputEdges[i];
+        avginput += inputEdges[i];
+        avgoutput += outputEdges[i];
+    }
+    avgoutput = avgoutput / landmarks;
+    avginput = avginput / landmarks;
+    int sum_deviation = 0;
+    int sum_deviation_out = 0;
+    for(int i = 0; i < landmarks; ++i){
+        sum_deviation+=(inputEdges[i]-avginput)*(inputEdges[i]-avginput);
+        sum_deviation_out+=(outputEdges[i]-avgoutput)*(outputEdges[i]-avgoutput);
+    }
+    double stdinput = sqrt(sum_deviation/landmarks);
+    double stdoutput = sqrt(sum_deviation_out/landmarks);
+    ofstream features;
+    features.open("landmark.arff", ios::out);
+    features<<landmarks<<","<<numberEdges<<","<<numberEdges/double(landmarks)<<",";
+    features<<numberFather<<","<<numberChildren<< ","<<nodosbetween<<",";
+    features<<avginput<<","<<maxinput<< ","<<stdinput<<","<<avgoutput<<","<<maxoutput<<","<<stdoutput<<endl;
+    features.close();
 }
 
 void LandmarkGraph::add_options_to_parser(OptionParser &parser) {

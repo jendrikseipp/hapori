@@ -77,15 +77,15 @@ HEADERS += hm_heuristic.h
 HEADERS += lm_cut_heuristic.h
 HEADERS += max_heuristic.h
 
-HEADERS += merge_and_shrink/abstraction.h \
-           merge_and_shrink/label_reducer.h \
-           merge_and_shrink/merge_and_shrink_heuristic.h \
-           merge_and_shrink/shrink_bisimulation.h \
-           merge_and_shrink/shrink_bucket_based.h \
-           merge_and_shrink/shrink_fh.h \
-           merge_and_shrink/shrink_random.h \
-           merge_and_shrink/shrink_strategy.h \
-           merge_and_shrink/variable_order_finder.h \
+# HEADERS += merge_and_shrink/abstraction.h \
+#           merge_and_shrink/label_reducer.h \
+#           merge_and_shrink/merge_and_shrink_heuristic.h \
+#           merge_and_shrink/shrink_bisimulation.h \
+#           merge_and_shrink/shrink_bucket_based.h \
+#           merge_and_shrink/shrink_fh.h \
+#           merge_and_shrink/shrink_random.h \
+#           merge_and_shrink/shrink_strategy.h \
+#           merge_and_shrink/variable_order_finder.h \
 
 HEADERS += landmarks/exploration.h \
            landmarks/h_m_landmarks.h \
@@ -100,27 +100,6 @@ HEADERS += landmarks/exploration.h \
            landmarks/landmark_factory_rpg_sasp.h \
            landmarks/landmark_factory_zhu_givan.h \
            landmarks/util.h \
-
-HEADERS += learning/AODE.h \
-           learning/classifier.h \
-           learning/composite_feature_extractor.h \
-           learning/feature_extractor.h \
-           learning/maximum_heuristic.h \
-           learning/naive_bayes_classifier.h \
-           learning/PDB_state_space_sample.h \
-           learning/probe_state_space_sample.h \
-           learning/selective_max_heuristic.h \
-           learning/state_space_sample.h \
-           learning/state_vars_feature_extractor.h \
-
-HEADERS += pdbs/canonical_pdbs_heuristic.h \
-           pdbs/match_tree.h \
-           pdbs/max_cliques.h \
-           pdbs/pattern_generation_edelkamp.h \
-           pdbs/pattern_generation_haslum.h \
-           pdbs/pdb_heuristic.h \
-           pdbs/util.h \
-           pdbs/zero_one_pdbs_heuristic.h \
 
 SHELL = /bin/bash
 

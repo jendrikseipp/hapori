@@ -786,16 +786,16 @@ void RedBlackDAGFactFollowingHeuristic::precalculate_shortest_paths_for_var(int 
     if (!black_vars[var])
     	return;
 
-	if (get_cg_predecessors(var).size() == 0) {
+    if (get_cg_predecessors(var).size() == 0) {
 //    	cout << "Storing shortest paths and costs for root variable " << var << endl;
-		get_dtg(var)->calculate_shortest_paths_for_root();
+	get_dtg(var)->calculate_shortest_paths_for_root();
     	return;
     }
 
 	// Storing shortest paths ignoring external preconditions for all black variables
 	// Since it is already done for the root variables, skipping them here
 //	cout << "Storing shortest paths costs ignoring external preconditions for variable " << var << endl;
-	get_dtg(var)->calculate_shortest_paths_ignore_prevail_conditions();
+    get_dtg(var)->calculate_shortest_paths_ignore_prevail_conditions();
 }
 
 

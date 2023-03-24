@@ -1,6 +1,7 @@
+# STAGE 1
 Bootstrap: docker
-From: ubuntu:xenial
-# Stage: build
+From: ubuntu:18.04
+Stage: build
 
 # Copy planner binary and required files from Stage 1.
 %files 
@@ -9,26 +10,18 @@ From: ubuntu:xenial
 %post
     ## Install only dependencies for running the planner.
     ## apt-get update
-    ## apt-get -y install python3-minimal
     ## Remove unnecessary files to keep the image small.
 
     apt-get update
     apt-get install --no-install-recommends -y \
-	build-essential \
-	g++\
-	gcc\
-	make\
 	cmake\
-	xutils-dev \
-	scons \
+	make\
 	gcc-multilib \
 	flex \
 	bison \
 	g++-multilib \
     	gawk \
 	pypy\
-	python-pyparsing\
-	python-psutil\
 	python-pandas\
 	python-sklearn
 
@@ -38,12 +31,44 @@ From: ubuntu:xenial
     export MAKE_FLAGS
     ./build
 
-    strip --strip-all /planner/src/search/downward-4
-    strip --strip-all /planner/src/search-mercury/downward-4
+    strip --strip-all /planner/src/features/ff-learner/roller3.0
+    strip --strip-all /planner/src/features/heuristics/preprocess/preprocess
     strip --strip-all /planner/src/features/heuristics/search/downward-4
-    
+    strip --strip-all /planner/src/features/preprocess/preprocess
+    strip --strip-all /planner/src/search-mercury/downward-4
+
+    rm -rf /planner/src/features/heuristics/translate/*.pyc
+    rm -rf /planner/src/features/heuristics/translate/pddl/*.pyc
+    rm -rf /planner/src/features/translate/*.pyc
+    rm -rf /planner/src/features/translate/pddl/*.pyc
+
     rm -rf /var/lib/apt/lists/*
-    # apt-get -y autoremove bison flex make g++
+
+# STAGE 2
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/src/features/ff-learner/roller3.0
+    /planner/src/features/heuristics/training.sh
+    /planner/src/features/heuristics/translate
+    /planner/src/features/heuristics/preprocess/preprocess
+    /planner/src/features/heuristics/search/downward-4
+    /planner/src/features/preprocess/preprocess
+    /planner/src/features/translate
+    /planner/src/launcher
+    /planner/src/models
+    /planner/src/search-mercury/downward*
+    
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends \
+        python\
+	python-pandas\
+	python-sklearn
+
+    rm -rf /var/lib/apt/lists/*
 
 
 # The runscript is called whenever the container is used to solve an instance.
@@ -51,32 +76,19 @@ From: ubuntu:xenial
     DOMAINFILE="$1"
     PROBLEMFILE="$2"
     FEATUREFILE="$3"
-    # RESTARGS="${@:4}"
     
     ROOT=$PWD
      
     echo $DOMAINFILE
     echo $PROBLEMFILE
     echo $FEATUREFILE
-    # echo $RESTARGS
 
     python2.7 /planner/src/launcher/genfeatures.py "$@"
-    ## Gemeral feature calculator
-    ## Include extra args to produce model output and schedule
-    #  python2.7 /planner/src/launcher/genfeatures.py \
-    #   -d "$DOMAINFILE" \
-    #   -p "$PROBLEMFILE" \
-    #   -f "$FEATUREFILE" \
-    #   "$RESTARGS"
-
 		
-## Update the following fields with meta data about your submission.
-## Please use the same field names and use only one line for each value.
+
 %labels
 Name        IBaCoP2-2018
 Description New version IBaCoP2 Sat  Dynamic portfolio. The selection of planner changes per instance.
 Authors     Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomas.delarosaturbides@jpmorgan.com and Fernando Fernandez <ffernand@inf.uc3m.es>
-SupportsDerivedPredicates yes
-SupportsQuantifiedPreconditions no
 
 
