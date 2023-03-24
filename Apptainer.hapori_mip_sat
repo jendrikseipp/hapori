@@ -2,14 +2,12 @@ Bootstrap: docker
 From: ubuntu:22.04
 
 %files
+    configs /planner/configs
     images /planner/images
     plan.py /planner/plan.py
-    fd_2018_configs.py /planner/fd_2018_configs.py
     run-portfolio.py /planner/run-portfolio.py
     portfolio_driver /planner/portfolio_driver
-    planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py /planner/planners/ipc2018-decstar/src/driver/portfolios/seq_opt_ds.py
-    planners/ipc2018-saarplan/driver/portfolios/ /planner/planners/ipc2018-saarplan/driver/portfolios/
-
+   
 %post
     apt-get update
     apt-get -y install --no-install-recommends gpg-agent python3.11 software-properties-common
