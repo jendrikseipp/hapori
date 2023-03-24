@@ -10,8 +10,6 @@ import sys
 import tempfile
 import traceback
 
-import fd_2018_configs
-
 
 DIR = Path(__file__).resolve().parent
 
@@ -44,13 +42,31 @@ DELFI_CMDS = {
     'h2-simpless-oss-zopdbsgenetic': ['--symmetries', 'sym=structural_symmetries(search_symmetries=oss)', '--search', 'astar(zopdbs(patterns=genetic(pdb_max_size=50000,num_collections=5,num_episodes=30,mutation_probability=0.01),transform=multiply_out_conditional_effects),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)'],
 }
 
+def get_portfolio_attributes(portfolio):
+    attributes = {}
+    with open(portfolio) as portfolio_file:
+        content = portfolio_file.read()
+        try:
+            exec(content, attributes)
+        except Exception:
+            traceback.print_exc()
+            raise ImportError(
+                "The portfolio %s could not be loaded. Maybe it still "
+                "uses the old portfolio syntax? See the FDSS portfolios "
+                "for examples using the new syntax." % portfolio)
+    if "CONFIGS" not in attributes:
+        raise ValueError("portfolios must define CONFIGS")
+    return attributes
+
+FD_CONFIGS = get_portfolio_attributes(DIR / "configs" / "fd_2018_configs.py")["CONFIGS"]
+
 CONFIGS = {
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
     #"ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],  # Image is too large.
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
-    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(fd_2018_configs.UNIQUE_FD_CONFIGS))],
+    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))],
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
@@ -108,23 +124,6 @@ def parse_args():
     parser.add_argument("--check", action="store_true", help="Check planner exitcode and validate plans.")
     parser.add_argument("--list-configs", action="store_true", help="Show list of image and config names and exit.")
     return parser.parse_args()
-
-
-def get_portfolio_attributes(portfolio):
-    attributes = {}
-    with open(portfolio) as portfolio_file:
-        content = portfolio_file.read()
-        try:
-            exec(content, attributes)
-        except Exception:
-            traceback.print_exc()
-            raise ImportError(
-                "The portfolio %s could not be loaded. Maybe it still "
-                "uses the old portfolio syntax? See the FDSS portfolios "
-                "for examples using the new syntax." % portfolio)
-    if "CONFIGS" not in attributes:
-        raise ValueError("portfolios must define CONFIGS")
-    return attributes
 
 
 def prepare_config(config, replacements=None):
@@ -205,12 +204,11 @@ def main():
     for config in configs:
         print(f"Run config {config}")
         if image_nick == "ipc2018-fd-2018":
-            fd_configs = fd_2018_configs.UNIQUE_FD_CONFIGS
-            print(f"FDSS configs: {len(fd_configs)}")
+            print(f"FD configs: {len(FD_CONFIGS)}")
             assert config.startswith("config"), config
             config_index = int(config[len("config"):])
-            assert 0 <= config_index < len(fd_configs)
-            fd_config = prepare_config(fd_configs[config_index])
+            assert 0 <= config_index < len(FD_CONFIGS)
+            fd_config = prepare_config(FD_CONFIGS[config_index])
             run_image(args, [
                 image_path, "--build=release64",
                 "--plan-file", args.planfile,
@@ -222,7 +220,7 @@ def main():
         elif image_nick == "ipc2018-decstar":
             track, temp = config.split('-')
             assert track in ['agl', 'sat', 'opt'], track
-            portfolio_path = DIR / "planners" / "ipc2018-decstar" / "src" / "driver" / "portfolios" / f"seq_{track}_ds.py"
+            portfolio_path = DIR / "configs" / f"seq_{track}_ds.py"
             ds_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
             if track == "sat":
                 ds_configs.append(
@@ -262,7 +260,7 @@ def main():
         elif image_nick == "ipc2018-saarplan":
             track, temp = config.split('-')
             assert track in ['agl', 'sat'], track
-            portfolio_path = DIR / "planners" / "ipc2018-saarplan" / "driver" / "portfolios" / f"seq_{track}_saarplan.py"
+            portfolio_path = DIR / "configs" / f"seq_{track}_saarplan.py"
             saarplan_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
             print(f"Saarplan configs: {len(saarplan_configs)}")
             assert temp.startswith("config"), temp

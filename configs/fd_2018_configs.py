@@ -183,7 +183,7 @@ FD_REMIX_CONFIGS = [
 #print(f"FDSS: {len(FDSS_2018_CONFIGS)}, unique: {len({tuple(c) for t, c in FDSS_2018_CONFIGS})}")
 #print(f"FDSS: {len(FD_REMIX_CONFIGS)}, unique: {len({tuple(c) for t, c in FD_REMIX_CONFIGS})}")
 UNIQUE_FD_CONFIGS = {tuple(x.replace(" ", "").replace(",", ", ") for x in c) for t, c in FDSS_2018_CONFIGS + FD_REMIX_CONFIGS}
-UNIQUE_FD_CONFIGS = [list(config) for config in UNIQUE_FD_CONFIGS]
+CONFIGS = [list(config) for config in UNIQUE_FD_CONFIGS]
 #print(f"Combo: {len(FD_REMIX_CONFIGS) + len(FD_REMIX_CONFIGS)}, unique: {len(UNIQUE_FD_CONFIGS)}")
 #for config in UNIQUE_CONFIGS:
 #    print(f"    {list(config)},")
