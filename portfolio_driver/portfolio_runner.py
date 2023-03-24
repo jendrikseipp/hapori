@@ -69,9 +69,9 @@ def get_random_string(length):
     return result
 
 
-def run_multi_plan_portfolio(configs, domain_file, problem_file, timeout, memory):
+def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     for pos, (relative_time, (image, planner)) in enumerate(configs):
-        next_plan_prefix = f"tmp_plan_{get_random_string(PLAN_FILE_NAME_LENGTH)}"
+        next_plan_prefix = f"{plan_manager.get_plan_prefix()}.{pos}.{image}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             continue
@@ -147,7 +147,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     attributes = get_portfolio_attributes(portfolio, domain_file, problem_file, time)
     configs = attributes["PLANNERS"]
     track = get_track(portfolio)
-    
+
     if time is None:
         if sys.platform == "win32":
             returncodes.exit_with_driver_unsupported_error(limits.CANNOT_LIMIT_TIME_MSG)
@@ -164,7 +164,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     else:
         assert track == "sat", track
         exitcodes_planprefixes = run_multi_plan_portfolio(
-            configs, domain_file, problem_file, timeout, memory)
+            configs, domain_file, problem_file, plan_manager, timeout, memory)
         exitcodes, planprefixes = list(zip(*list(exitcodes_planprefixes)))
 
         existing_plan_files = [str(plan) for plan_prefix in planprefixes for plan in get_existing_plans(plan_prefix) ]
