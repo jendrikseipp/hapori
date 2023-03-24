@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-schedule_file = "ibacop_schedule.out"
+schedule_file = "ibacop_planners.out"
 
 DEFAULT_PLANNERS = [
     (1795, ['ipc2018-opt-scorpion','default']), 

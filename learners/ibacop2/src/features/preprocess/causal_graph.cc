@@ -321,14 +321,15 @@ const {
              it != curr->end(); ++it) {
             if (it->first->get_level() != -1
                 // && it->first->get_level() > ordered_vars[i]->get_level()
-                )
+                ){
                 // the variable it->first is important and influenced by variable i
                 // print level and weight of influence
                 outfile << it->first->get_level() << " " << it->second << endl;
-                //Isa
-                simplyCG simplycg = simplyCG(i,number_of_succ[i],it->first->get_level(), it->second);
-                store.addSimplyCG(simplycg);
-                //Isa
+	    }
+            //Isa
+            simplyCG simplycg = simplyCG(i,number_of_succ[i],it->first->get_level(), it->second);
+            store.addSimplyCG(simplycg);
+            //Isa
                 
         }
     }

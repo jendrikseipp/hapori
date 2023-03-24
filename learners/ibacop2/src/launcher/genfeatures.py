@@ -143,7 +143,7 @@ for the empirical performance modelling of planners
     parser.add_argument(
         '-o', '--outproba', 
         help = 'output file with planner probabilities',
-        default = 'planner_schedule.txt'
+        default = 'ibacop_planners.out'
     )
     parser.add_argument(
         '-t', '--fulltime', 
@@ -242,7 +242,7 @@ if __name__ == '__main__':
         )
         print("Plan schedule")
         print(planner_schedule)
-        with open('ibacop_planners.out','w') as f:
+        with open(args.outproba,'w') as f:
             f.write("SCHEDULE = " + str(planner_schedule) + "\n")
         
 

@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-schedule_file = "ibacop_schedule.out"
+schedule_file = "ibacop_planners.out"
 
 DEFAULT_PLANNERS = [
     (600, ['ipc2014-agl-jasper', 'default']),
@@ -30,10 +30,9 @@ cmd_args = [
     "-f", 'ibacop_task_features.csv',
     "-t", str(AVAIL_TIME),
     "-m", model_file,
-    "-n", n_planners 
+    "-n", n_planners,
 ]
 subprocess.run([cpt_features_program] + cmd_args)
-
 
 p_attributes = {}
 if os.path.exists(schedule_file):
