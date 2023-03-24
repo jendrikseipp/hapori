@@ -38,7 +38,7 @@ From: ubuntu:22.04
 %labels
 Name        Hapori MIPlan Optimal All Data
 Description Sequential portfolio of optimal IPC planners computed with the MIP formulation by Nunez, Borrajo and Linares (2015).
-Authors     Sergio Nunez <sergio.nunez@repsol.de>, Alberto Pozanco <alberto.pozanco@gmail.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Carlos Linares <clinares@inf.uc3m.es>, Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Fernando Fernandez-Rebollo <ffernand@inf.uc3m.es>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Jendrik Seipp <jendrik.seipp@liu.se>, Silvan Sievers <silvan.sievers@unibas.ch>
+Authors     Sergio Nunez <sergio.nunez@repsol.com>, Alberto Pozanco <alberto.pozanco@gmail.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Carlos Linares <clinares@inf.uc3m.es>, Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Fernando Fernandez-Rebollo <ffernand@inf.uc3m.es>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Jendrik Seipp <jendrik.seipp@liu.se>, Silvan Sievers <silvan.sievers@unibas.ch>
 License     GPL 3
 Tracks      optimal
 SupportsDerivedPredicates                       yes
