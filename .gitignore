@@ -1,1 +1,5 @@
 *.img
+
+portfolio_driver/__pycache__/
+
+*.pyc

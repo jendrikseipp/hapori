@@ -1,0 +1,9 @@
+#!/bin/bash
+
+rm -f $1/domain_ready.txt
+rm -f $1/problem_ready.txt
+rm -rf $1/action_costs_from*
+rm -f $1/domain_wce.txt
+rm -f $1/facts_wce.txt
+rm -f $1/problem_without_action_costs.txt
+rm -f $1/domain_without_*

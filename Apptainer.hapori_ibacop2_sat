@@ -1,0 +1,51 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%files
+    images /planner/images
+    learners/ibacop2/ibacop-features.img /planner/learners/ibacop2/ibacop-features.img
+    fd_2018_configs.py /planner/fd_2018_configs.py	
+    plan.py /planner/plan.py
+    run-portfolio.py /planner/run-portfolio.py
+    portfolio_driver /planner/portfolio_driver
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends gpg-agent python3.11 software-properties-common
+    add-apt-repository -y ppa:apptainer/ppa
+    apt-get update
+    apt-get install -y apptainer
+    apt-get -y autoremove gpg-agent software-properties-common
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    #! /bin/bash
+    set -euo pipefail
+
+    DOMAINFILE="$1"
+    PROBLEMFILE="$2"
+    PLANFILE="$3"
+
+    python3.11 /planner/run-portfolio.py \
+        --alias hapori-ibacop2-sat \
+        --overall-time-limit 30m \
+        --plan-file "$PLANFILE" \
+        "$DOMAINFILE" \
+        "$PROBLEMFILE" \
+
+%labels
+Name        Hapori IBaCop2 Sat
+Description Sequential portfolio of satisficing IPC planners computed on an instance-based fashion. A set of 5 planners are pre-selected based on PDDL task and heuristic features.
+Authors     Sergio Nunez <sergio.nunez@repsol.de>, Alberto Pozanco <alberto.pozanco@gmail.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Carlos Linares <clinares@inf.uc3m.es>, Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Fernando Fernandez-Rebollo <ffernand@inf.uc3m.es>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Jendrik Seipp <jendrik.seipp@liu.se>, Silvan Sievers <silvan.sievers@unibas.ch>
+License     GPL 3
+Tracks      satisficing
+SupportsDerivedPredicates                       yes
+SupportsUniversallyQuantifiedPreconditions      yes
+SupportsExistentiallyQuantifiedPreconditions    yes
+SupportsUniversallyQuantifiedEffects            yes
+SupportsNegativePreconditions                   yes
+SupportsEqualityPreconditions                   yes
+SupportsInequalityPreconditions                 yes
+SupportsConditionalEffects                      yes
+SupportsImplyPreconditions                      yes
