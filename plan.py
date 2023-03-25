@@ -170,7 +170,7 @@ def run_image(args, cmd):
 
 def main():
     args = parse_args()
-    check_consistency()
+    #check_consistency()
     if args.list_configs:
         for image_nick, configs in sorted(CONFIGS.items()):
             for config in sorted(configs):
@@ -189,6 +189,7 @@ def main():
     print(f"Image path: {image_path}")
     print(f"Image nick: {image_nick}")
     print(f"Configs: {configs}")
+    print(f"Plan file: {args.planfile}")
     if image_nick in CONFIGS:
         if not configs:
             sys.exit(f"Image {image_nick} needs at least one config from {list(CONFIGS[image_nick])}.")
@@ -202,9 +203,8 @@ def main():
         return
 
     for config in configs:
-        print(f"Run config {config}")
+        print(f"Run image config {config}")
         if image_nick == "ipc2018-fd-2018":
-            print(f"FD configs: {len(FD_CONFIGS)}")
             assert config.startswith("config"), config
             config_index = int(config[len("config"):])
             assert 0 <= config_index < len(FD_CONFIGS)
@@ -240,7 +240,6 @@ def main():
                                      lazy_wastar([hff,hlm],preferred=[hff,hlm],w=1)
                                      ],repeat_last=true,continue_on_fail=true, bound=BOUND)"""
                 ]))
-            print(f"Decstar configs: {len(ds_configs)}")
             assert temp.startswith("config"), temp
             config_index = int(temp[len("config"):])
             assert 0 <= config_index < len(ds_configs)
@@ -262,7 +261,6 @@ def main():
             assert track in ['agl', 'sat'], track
             portfolio_path = DIR / "configs" / f"seq_{track}_saarplan.py"
             saarplan_configs = get_portfolio_attributes(portfolio_path)["CONFIGS"]
-            print(f"Saarplan configs: {len(saarplan_configs)}")
             assert temp.startswith("config"), temp
             config_index = int(temp[len("config"):])
             assert 0 <= config_index < len(saarplan_configs)
@@ -321,7 +319,6 @@ def main():
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
         else:
-            print("No special casing for this planner")
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile])
 
