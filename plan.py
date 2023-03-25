@@ -111,7 +111,7 @@ def csv_list(s):
 
 
 def abs_path(arg):
-    return Path(arg).resolve()
+    return str(Path(arg).resolve())
 
 
 def parse_args():

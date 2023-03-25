@@ -68,7 +68,7 @@ for expname in [
     "2023-03-10+ipc2018-fd-2018",
     "2023-03-10+ipc2018-lapkt-dfs-plus",
     "2023-03-10+ipc2018-lapkt-bfws",
-    "2023-03-10+ipc2018-saarplan",  # TODO: These configs fail. Keep for consistency.
+    "2023-03-10+ipc2018-saarplan",  # TODO: These configs fail. Keep for consistency. We fixed this by using Ubuntu in the image.
 ]:
     project.fetch_algorithms(exp, expname)
 
