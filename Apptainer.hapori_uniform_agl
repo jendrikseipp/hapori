@@ -36,7 +36,7 @@ From: ubuntu:22.04
 %labels
 Name        Hapori Uniform Agile
 Description Sequential portfolio of satisficing IPC planners with uniformly distributed time slices.
-Authors     Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Jendrik Seipp <jendrik.seipp@liu.se>, Silvan Sievers <silvan.sievers@unibas.ch>
+Authors     Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Jendrik Seipp <jendrik.seipp@liu.se>, Silvan Sievers <silvan.sievers@unibas.ch>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Fernando Fernandez-Rebollo <ffernand@inf.uc3m.es>, Carlos Linares <clinares@inf.uc3m.es>, Sergio Nunez <sergio.nunez@repsol.com>, Alberto Pozanco <alberto.pozanco@gmail.com>, Horst Samulowitz <samulowitz@us.ibm.com>, Shirin Sohrabi <shirin.sohrabi@gmail.com>
 License     GPL 3
 Tracks      agile
 SupportsDerivedPredicates                       yes
