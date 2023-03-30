@@ -21,7 +21,7 @@ PLANNERS = DEFAULT_PLANNERS
 model_file = "/planner/src/models/iba_model_data_rf_opt.pkl"
 n_planners = "3"
 
-cpt_features_program = os.path.join(cwd,'learners','ibacop2','ibacop-features.img')
+cpt_features_program = "/planner/learners/ibacop2/ibacop-features.img"
 cmd_args = [
     "-d", DOMAIN,
     "-p", PROBLEM,
