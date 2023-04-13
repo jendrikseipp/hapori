@@ -27,13 +27,6 @@ DIR_REPO_BASE = DIR_SCRIPT if os.path.exists(os.path.join(DIR_SCRIPT, "images"))
 FILE_PLAN_PY = os.path.join(DIR_REPO_BASE, "plan.py")
 DIR_IMAGES = os.path.join(DIR_REPO_BASE, "images")
 
-def print_highlighted_line(string, block=True):
-    if block:
-        print
-    print("==== " + string + " ====")
-    if block:
-        print
-
 
 def compute_graph_for_task(pwd, domain, problem):
     command = [sys.executable, os.path.join(DIR_SCRIPT, 'translate/abstract_structure_module.py'), '--only-functions-from-initial-state', domain, problem]
@@ -84,58 +77,6 @@ def compute_image(pwd, graph_file):
     image_path = os.path.join(pwd, image_file_name)
     assert os.path.exists(image_path)
     return os.path.abspath(image_path)
-
-
-def build_planner_from_command_line_options(base_dir, command_line_options, use_h2_preprocessor):
-    planner = [sys.executable, os.path.join(base_dir, 'fast-downward.py')]
-    if use_h2_preprocessor:
-        planner.extend(['--transform-task', 'preprocess'])
-    planner.extend(['--build', 'release64', '--search-memory-limit', '7600M', '--plan-file', plan, domain, problem])
-    planner.extend(command_line_options)
-    return planner
-
-
-def run_planner(base_dir, selected_planner):
-    if selected_planner == 'seq-opt-symba-1':
-        planner = [sys.executable, os.path.join(base_dir, 'symba.py'), selected_planner, domain, problem, plan]
-    elif selected_planner == 'fallback':
-        planner = build_planner_from_command_line_options(base_dir, FALLBACK_COMMAND_LINE_OPTIONS, use_h2_preprocessor=True)
-    else:
-        command_line_options = selector.ALGORITHM_TO_COMMAND_LINE_STRING[selected_planner]
-        use_h2_preprocessor = selected_planner not in selector.ALGORITHMS_WITHOUT_H2_PREPROCESSOR
-        planner = build_planner_from_command_line_options(base_dir, command_line_options, use_h2_preprocessor)
-    print("Running planner, call string: {}".format(planner))
-    sys.stdout.flush()
-    subprocess.call(planner)
-
-
-def determine_planner(domain, problem, plan, image_from_lifted_task):
-    """Return true iff the determined planner succesfully solved the task."""
-    base_dir = get_base_dir()
-    pwd = os.getcwd()
-
-
-    if graph_file is None:
-        print_highlighted_line("Computing abstract structure graph failed, using fallback planner!")
-        return False
-    else:
-        print_highlighted_line("Done computing an abstract structure graph.")
-
-    print_highlighted_line("Selecting planner from learned model...")
-    selected_planner = select_planner_from_model(base_dir, pwd, graph_file, image_from_lifted_task)
-    if selected_planner is None:
-        print_highlighted_line("Image creation or selection from model failed, using fallback planner!")
-        return False
-    else:
-        print_highlighted_line("Done selecting planner from learned model.")
-
-    print_highlighted_line("Running the selected planner...")
-    # Uncomment the following line for testing running symba.
-    # selected_planner = 'seq-opt-symba-1'
-    run_planner(base_dir, selected_planner)
-    print_highlighted_line("Done running the selected planner.")
-    # Consider any non-crashed planner run as succesful.
-    return True
 
 
 def select_algorithm_from_model(json_model, h5_model, image, planner_names):
@@ -204,9 +145,12 @@ def main(args):
         planner_names = json.load(f)
 
     pwd = os.path.abspath(".")
-    print_highlighted_line("Computing an abstract structure graph from the lifted task ""description...")
+    print("Computing an abstract structure graph from the lifted task description...")
+    sys.stdout.flush()
     graph_file = compute_graph_for_task(pwd, domain, problem)
+    sys.stdout.flush()
     image_file = compute_image(pwd, graph_file)
+    sys.stdout.flush()
 
     if image_file is None:
         planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:default'
@@ -214,6 +158,7 @@ def main(args):
         json_model = os.path.join(DIR_SCRIPT, 'models', args.model_name + ".json")
         h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
         planner = select_algorithm_from_model(json_model, h5_model, image_file, planner_names)
+    sys.stdout.flush()
     execute_planner(pwd, domain, problem, plan, planner)
 
 if __name__ == "__main__":
