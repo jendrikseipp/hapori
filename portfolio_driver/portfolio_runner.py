@@ -70,7 +70,7 @@ def get_random_string(length):
 
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    plan_counter = 0
+    plan_counter = 1
     for pos, (relative_time, (image, planner)) in enumerate(configs):
         next_plan_prefix = f"config.{pos}.{image}"
         run_time = compute_run_time(timeout, configs, pos)
