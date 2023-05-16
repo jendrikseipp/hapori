@@ -1,6 +1,0 @@
-#!/bin/bash
-mkdir obj
-make release
-make
-make clean
-rm -rf obj

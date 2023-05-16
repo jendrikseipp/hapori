@@ -1,4 +1,0 @@
-#! /bin/bash
-set -e
-
-"$(dirname "$0")"/src/plan-ipc seq-agl-mercury "$@"
