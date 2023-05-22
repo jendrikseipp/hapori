@@ -1,9 +1,0 @@
-#!/bin/bash
-set -e
-
-if [ $# -ne 3 ]; then
-	echo "Usage: "$0" <domain_file> <problem_file> <result_file>"
-	exit 1
-else
-	python2.7 "$(dirname "$0")"/src/launcher/solve_agl.py "$@"
-fi

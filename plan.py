@@ -66,7 +66,7 @@ CONFIGS = {
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
-    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))],
+    "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))], # covers both fdss and fd-remix
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi

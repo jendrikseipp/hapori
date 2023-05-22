@@ -70,14 +70,22 @@ def get_random_string(length):
 
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
+    plan_counter = 1
     for pos, (relative_time, (image, planner)) in enumerate(configs):
-        next_plan_prefix = f"{plan_manager.get_plan_prefix()}.{pos}.{image}"
+        next_plan_prefix = f"config.{pos}.{image}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             continue
         exitcode = run_search(image, planner, domain_file, problem_file, next_plan_prefix, run_time, memory)
 
-        yield (exitcode, next_plan_prefix)
+        existing_plan_files = [str(plan) for plan in get_existing_plans(next_plan_prefix) ]
+        # print(f"Component computed the following plan(s): {existing_plan_files}")
+        for plan_file in existing_plan_files:
+            print(f"Moving {plan_file} to {plan_manager.get_plan_prefix()}.{plan_counter}")
+            shutil.move(plan_file, f"{plan_manager.get_plan_prefix()}.{plan_counter}")
+            plan_counter += 1
+
+        yield exitcode
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
@@ -163,25 +171,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
             configs, domain_file, problem_file, plan_manager, timeout, memory)
     else:
         assert track == "sat", track
-        exitcodes_planprefixes = run_multi_plan_portfolio(
+        exitcodes = run_multi_plan_portfolio(
             configs, domain_file, problem_file, plan_manager, timeout, memory)
-        exitcodes, planprefixes = list(zip(*list(exitcodes_planprefixes)))
-
-        existing_plan_files = [str(plan) for plan_prefix in planprefixes for plan in get_existing_plans(plan_prefix) ]
-        print(f"Portfolio computed the following plans: {existing_plan_files}")
-        best_plan_file = existing_plan_files[-1]
-        best_cost = float('inf')
-        for plan_file in existing_plan_files:
-            for line in reversed(list(open(plan_file))):
-                line = line.lower()
-                if 'cost' in line:
-                    cost = int(line.split(' ')[3])
-                    if cost < best_cost:
-                        best_cost = cost
-                        best_plan_file = plan_file
-
-        print(f"Moving the best found plan {best_plan_file} to {plan_manager.get_plan_prefix()}")
-        shutil.move(best_plan_file, plan_manager.get_plan_prefix())
-
 
     return returncodes.generate_portfolio_exitcode(list(exitcodes))

@@ -4,7 +4,7 @@ From: ubuntu:xenial
 Stage: build
 
 %files
-    .
+    . /planner
 
 %post
     ## Install all necessary dependencies.
@@ -12,11 +12,12 @@ Stage: build
     apt-get -y install --no-install-recommends cmake g++ make python
 
     ## Build your planner
+    cd /planner
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all builds/release64/bin/downward \
-        builds/release64/bin/preprocess
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/release64/bin/preprocess
 
 # Stage 2: Run the planner
 Bootstrap: docker
@@ -25,9 +26,9 @@ Stage: run
 
 # Copy planner binary and required files from Stage 1.
 %files from build
-    fast-downward.py /planner/fast-downward.py
-    builds/release64/bin/ /planner/builds/release64/bin/
-    driver /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin/
+    /planner/driver
 
 %post
     ## Install only dependencies for running the planner.

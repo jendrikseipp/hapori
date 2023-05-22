@@ -15,14 +15,13 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2018-saarplan/Singularity ${OUTDIR}/ipc2018-saarplan.img || true
 ./build-image.sh ../planners/ipc2018-agl-cerberus/Singularity ${OUTDIR}/ipc2018-agl-cerberus.img
 ./build-image.sh ../planners/ipc2018-agl-lapkt-dfs-plus/Singularity ${OUTDIR}/ipc2018-lapkt-dfs-plus.img
-./build-image.sh ../planners/ipc2018-agl-lapkt-dual-bfws/Apptainer ${OUTDIR}/ipc2018-lapkt-bfws.img
+./build-image.sh ../planners/ipc2018-agl-lapkt-dual-bfws/Apptainer ${OUTDIR}/ipc2018-lapkt-bfws.img # covers the three LAPKT BFWS planners
 ./build-image.sh ../planners/ipc2018-agl-mercury2014/Singularity ${OUTDIR}/ipc2018-agl-mercury2014.img
 ./build-image.sh ../planners/ipc2018-agl-merwin/Singularity ${OUTDIR}/ipc2018-agl-merwin.img
-./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-fd-2018.img
+./build-image.sh ../planners/ipc2018-agl-fdss-2018/Singularity ${OUTDIR}/ipc2018-fd-2018.img # covers both FDSS and FD-Remix
 
 # OPT
 ./build-image.sh ../planners/ipc2014-opt-symba/Singularity-01 ${OUTDIR}/ipc2014-opt-symba1.img
-#./build-image.sh ../planners/ipc2018-opt-complementary1/Singularity ${OUTDIR}/ipc2018-opt-complementary1.img  # yields suboptimal plans
 ./build-image.sh ../planners/ipc2018-opt-complementary2/Singularity ${OUTDIR}/ipc2018-opt-complementary2.img
 ./build-image.sh ../planners/ipc2018-opt-delfi/Apptainer ${OUTDIR}/ipc2018-opt-delfi.img
 ./build-image.sh ../planners/ipc2018-opt-metis/Singularity ${OUTDIR}/ipc2018-opt-metis.img
@@ -35,6 +34,5 @@ OUTDIR=../images/
 ./build-image.sh ../planners/ipc2014-agl-probe/Singularity ${OUTDIR}/ipc2014-agl-probe.img
 ./build-image.sh ../planners/ipc2018-agl-olcff/Singularity ${OUTDIR}/ipc2018-agl-olcff.img
 ./build-image.sh ../planners/ipc2018-agl-freelunch-madagascar/Singularity ${OUTDIR}/ipc2018-agl-freelunch-madagascar.img
-# ./build-image.sh ../planners/ipc2018-agl-freelunch-doubly-relaxed/Singularity ${OUTDIR}/ipc2018-agl-freelunch-doubly-relaxed.img  # image too large
 
 echo "Finished building images"

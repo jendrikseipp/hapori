@@ -1,7 +1,0 @@
-#!/bin/bash
-cd external/libff
-make clean
-cd ../..
-cd planners/siw-ffparser
-scons -c
-cd ../..
