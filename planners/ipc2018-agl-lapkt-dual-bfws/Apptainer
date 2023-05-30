@@ -93,7 +93,7 @@ Stage: run
 ## Please use the same field names and use only one line for each value.
 %labels
 Name        BFWS
-Description BFWS implementations based on LAPKT
+Description BFWS implementations based on LAPKT. NOTE: this covers all three LAPKT BFWS planners!
 Authors     Nir Lipovetzky <nir.lipovetzky@unimelb.edu.au> and Miquel Ramirez <miguel.ramirez@unimelb.edu.au> and Guillem Frances <guillem.frances@unibas.ch> and Hector Geffner <hector.geffner@upf.edu>
 SupportsDerivedPredicates no
 SupportsQuantifiedPreconditions yes

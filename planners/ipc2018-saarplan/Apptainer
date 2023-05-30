@@ -56,7 +56,7 @@ Stage: run
 ## Please use the same field names and use only one line for each value.
 %labels
 Name        Saarplan
-Description Grey Planning, Decoupled Search, Conjunctions -- Saarland's greatest planning techniques combined!
+Description Grey Planning, Decoupled Search, Conjunctions -- Saarland's greatest planning techniques combined! NOTE: this planner only covers the conjunctions-based planner (the rest is covered by decstar already).
 Authors     Maximilian Fickert <fickert@cs.uni-saarland.de> and Daniel Gnad <gnad@cs.uni-saarland.de> and Patrick Speicher <speicher@cs.uni-saarland.de> and Jörg Hoffmann <hoffmann@cs.uni-saarland.de>
 SupportsDerivedPredicates no
 SupportsQuantifiedPreconditions no

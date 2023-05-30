@@ -48,7 +48,7 @@ Stage: run
 ## Please use the same field names and use only one line for each value.
 %labels
 Name        Fast Downward Stone Soup 2018
-Description portfolio of satisficing Fast Downward configurations
+Description portfolio of satisficing Fast Downward configurations. NOTE: this planner covers both FDSS and FD Remix!
 Authors     Jendrik Seipp <jendrik.seipp@unibas.ch> and Gabriele Röger <gabriele.roeger@unibas.ch>
 SupportsDerivedPredicates yes
 SupportsQuantifiedPreconditions yes

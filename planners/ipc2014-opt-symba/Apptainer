@@ -29,7 +29,6 @@ Stage: run
 %files from build
     /planner/plan
     /planner/src/plan
-    /planner/src/plan_sas
     /planner/src/plan-ipc
     /planner/src/translate
     /planner/src/preprocess/preprocess
@@ -46,4 +45,11 @@ Stage: run
     rm -rf /var/lib/apt/lists/*
 
 %runscript
-    "$@"
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+
+    /planner/plan seq-opt-symba-1 $DOMAINFILE $PROBLEMFILE $PLANFILE
+
+%labels
+Description SymBA* 1
