@@ -62,14 +62,12 @@ FD_CONFIGS = get_portfolio_attributes(DIR / "configs" / "fd_2018_configs.py")["C
 
 CONFIGS = {
     "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
-    #"ipc2018-agl-freelunch-doubly-relaxed": ["sat", "agl"],  # Image is too large.
     "ipc2018-agl-mercury2014": ["sat", "agl"],
     "ipc2018-agl-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
     "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))], # covers both fdss and fd-remix
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
-    # "ipc2018-opt-fdms": ["fdms1", "fdms2"], # covered by Delfi
     "ipc2018-opt-metis": ["metis2"],  # Metis 1 is contained in the configurations of Delfi
     "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
     "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
@@ -294,28 +292,12 @@ def main():
             run_image(
                 args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, preprocess, " ".join(DELFI_CMDS[config])])
-        elif image_nick == "ipc2018-opt-fdms":
-            if config == "fdms1":
-                merge_strategy = "merge_strategy=merge_sccs(order_of_sccs=topological,merge_selector=score_based_filtering(scoring_functions=[goal_relevance,dfp,total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
-            elif config == "fdms2":
-                merge_strategy = "merge_strategy=merge_stateless(merge_selector=score_based_filtering(scoring_functions=[sf_miasm(shrink_strategy=shrink_bisimulation(greedy=false),max_states=50000,threshold_before_merge=1),total_order(atomic_ts_order=reverse_level,product_ts_order=new_to_old,atomic_before_product=false)]))"
-            else:
-                sys.exit(f"unknown config {config}")
-            run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile, merge_strategy])
         elif image_nick == "ipc2018-opt-metis":
-            if config == "metis1":
-                cmd = "--symmetries sym=structural_symmetries(search_symmetries=oss) --search astar(celmcut,symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
-            elif config == "metis2":
-                cmd = "--symmetries sym=structural_symmetries(search_symmetries=dks) --search astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
-            else:
-                sys.exit(f"unknown config {config}")
+            assert config == "metis2"
+            cmd = "--symmetries sym=structural_symmetries(search_symmetries=dks) --search astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, cmd])
-        elif image_nick == "ipc2018-agl-ibacop":
-            run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile, config])
-        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014", "ipc2018-agl-freelunch-doubly-relaxed"]:
+        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-merwin", "ipc2018-agl-mercury2014"]:
             run_image(args, [
                 image_path, args.domainfile, args.problemfile, args.planfile, config])
         else:
