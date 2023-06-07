@@ -294,12 +294,14 @@ def main():
             run_image(args, cmd)
         elif image_nick == "ipc2018-opt-metis":
             assert config == "metis2"
-            cmd = "--symmetries sym=structural_symmetries(search_symmetries=dks) --search astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"
-            run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile, cmd])
-        elif image_nick in ["ipc2018-agl-cerberus", "ipc2018-agl-mercury2014"]:
-            run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile, config])
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{image_nick}/builds/release64/bin/preprocess", "--overall-time-limit", "30m", args.domainfile, args.problemfile, "--symmetries", "sym=structural_symmetries(search_symmetries=dks)", "--search", "astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"]
+            run_image(args, cmd)
+        elif image_nick == "ipc2018-agl-mercury2014":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/src/plan-ipc", f"seq-{config}-mercury", args.domainfile, args.problemfile, args.planfile]
+            run_image(args, cmd)
+        elif image_nick == "ipc2018-agl-cerberus":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
+            run_image(args, cmd)
         elif image_nick == "ipc2018-opt-scorpion":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{image_nick}/builds/h2-mutexes/bin/preprocess", "--alias", "seq-opt-scorpion", "--overall-time-limit", "30m", args.domainfile, args.problemfile]
             run_image(args, cmd)

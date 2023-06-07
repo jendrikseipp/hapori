@@ -197,6 +197,69 @@ Stage: build-ipc2018-agl-merwin
 
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build-ipc2018-agl-mercury2014
+
+%files
+    #planners/ipc2018-agl-mercury2014 /planner/planners/ipc2018-agl-mercury2014
+
+%post
+    ## Install all necessary dependencies.
+    #apt-get update
+    #apt-get -y install bison flex make g++-multilib python gawk
+    #apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
+
+    ## Build planner.
+    #cd /planner/planners/ipc2018-agl-mercury2014
+    #./build DOWNWARD_BITWIDTH=64
+
+    ## Strip binaries.
+    #strip --strip-all /planner/planners/ipc2018-agl-mercury2014/src/search/downward-1 \
+    #    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-2 \
+    #    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-4 \
+    #    /planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-metis
+
+%files
+    #planners/ipc2018-opt-metis /planner/planners/ipc2018-opt-metis
+
+%post
+    ## Install all necessary dependencies.
+    #apt-get update
+    #apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build your planner
+    #cd /planner/planners/ipc2018-opt-metis
+    #./build.py release64 -j4
+
+    ## Strip binaries.
+    #strip --strip-all /planner/planners/ipc2018-opt-metis/builds/release64/bin/downward \
+    #    /planner/planners/ipc2018-opt-metis/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-cerberus
+
+%files
+    #planners/ipc2018-agl-cerberus /planner/planners/ipc2018-agl-cerberus
+
+%post
+    ## Install all necessary dependencies.
+    #apt-get update
+    #apt-get -y install --no-install-recommends cmake g++ g++-multilib make python
+
+    ## Build your planner
+    #cd /planner/planners/ipc2018-agl-cerberus
+    #./build.py release64 -j4
+
+    ## Strip binaries.
+    #strip --strip-all /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/downward \
+    #    /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
 Stage: build-ipc2018-lapkt-dfs-plus
 
 %files
@@ -391,6 +454,34 @@ Stage: run
     #/planner/planners/ipc2018-agl-merwin/plan-agl
     #/planner/planners/ipc2018-agl-merwin/plan-sat
 
+
+%files from build-ipc2018-agl-mercury2014
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/downward
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/downward-1
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/downward-2
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/downward-4
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/dispatch
+    #/planner/planners/ipc2018-agl-mercury2014/src/search/unitcost
+    #/planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
+    #/planner/planners/ipc2018-agl-mercury2014/src/translate/
+    #/planner/planners/ipc2018-agl-mercury2014/src/plan
+    #/planner/planners/ipc2018-agl-mercury2014/src/plan-ipc
+    #/planner/planners/ipc2018-agl-mercury2014/plan
+
+
+%files from build-ipc2018-opt-metis
+    #/planner/planners/ipc2018-opt-metis/fast-downward.py
+    #/planner/planners/ipc2018-opt-metis/builds/release64/bin/
+    #/planner/planners/ipc2018-opt-metis/driver
+
+
+%files from build-ipc2018-agl-cerberus
+    #/planner/planners/ipc2018-agl-cerberus/fast-downward.py
+    #/planner/planners/ipc2018-agl-cerberus/plan.py
+    #/planner/planners/ipc2018-agl-cerberus/builds/release64/bin/
+    #/planner/planners/ipc2018-agl-cerberus/driver
+
+
 %files from build-ipc2018-lapkt-dfs-plus
     ## Only keep essential binaries.
     #/planner/planners/ipc2018-lapkt-dfs-plus/dfs_plus
@@ -461,6 +552,12 @@ Stage: run
     #/planner/new-plan.py ipc2018-fd-2018 $DOMAINFILE $PROBLEMFILE $PLANFILE --configs all
     # test ipc2018-agl-merwin
     #/planner/new-plan.py ipc2018-agl-merwin $DOMAINFILE $PROBLEMFILE $PLANFILE --configs sat,agl
+    # test ipc2018-agl-mercury2014
+    #/planner/new-plan.py ipc2018-agl-mercury2014 $DOMAINFILE $PROBLEMFILE $PLANFILE --configs sat,agl
+    # test ipc2018-opt-metis
+    #/planner/new-plan.py ipc2018-opt-metis $DOMAINFILE $PROBLEMFILE $PLANFILE --configs metis2
+    # test ipc2018-agl-cerberus
+    #/planner/new-plan.py ipc2018-agl-cerberus $DOMAINFILE $PROBLEMFILE $PLANFILE --configs sat,agl
     # test ipc2018-lapkt-dfs-plus
     #/planner/new-plan.py ipc2018-lapkt-dfs-plus $DOMAINFILE $PROBLEMFILE $PLANFILE
     # test ipc2018-lapkt-bfws
