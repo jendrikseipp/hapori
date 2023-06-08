@@ -517,12 +517,9 @@ Stage: run
 
 %post
     apt-get update
-    apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
+    apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip python3
     pip2 install -U wheel setuptools
     pip2 install networkx
-    add-apt-repository ppa:deadsnakes/ppa
-    apt-get update
-    apt-get -y install --no-install-recommends python3.11
     apt-get clean
     rm -rf /var/lib/apt/lists/*
 
