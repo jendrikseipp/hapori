@@ -1,7 +1,6 @@
-
 # Stage 1: Compile the planner
 Bootstrap: docker
-From: ubuntu:xenial
+From: ubuntu:18.04
 Stage: build
 
 %files
@@ -21,14 +20,13 @@ Stage: build
 
 # Stage 2: Run the planner
 Bootstrap: docker
-From: ubuntu:xenial
+From: ubuntu:18.04
 Stage: run
 
 # Copy planner binary and required files from Stage 1.
 %files from build
-    
     /planner/MpC
-    /planner/incplan-lgl 
+    /planner/incplan-lgl
     /planner/plan.sh
 
 %post
@@ -41,7 +39,6 @@ Stage: run
 
 # The runscript is called whenever the container is used to solve an instance.
 %runscript
-
     /planner/plan.sh $1 $2 $3
 
 ## Update the following fields with meta data about your submission.
