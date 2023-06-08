@@ -246,12 +246,13 @@ def main():
                 'sat' : 30,
                 'opt' : 120,
             }
-            run_image(args, [
-                image_path,
+            cmd = [
+                "python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/src/fast-downward.py",
                 "--plan-file", args.planfile,
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
-                "--search-options"] + ds_config)
+                "--search-options"] + ds_config
+            run_image(args, cmd)
         elif image_nick == "ipc2018-saarplan":
             track, temp = config.split('-')
             assert track in ['agl', 'sat'], track
