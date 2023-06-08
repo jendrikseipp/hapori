@@ -39,7 +39,8 @@ Stage: run
 
 # The runscript is called whenever the container is used to solve an instance.
 %runscript
-    /planner/plan.sh $1 $2 $3
+    # parameters: 1 - domain file, 2 - problem file, 3 plan file
+    /planner/plan.sh $1 $2 $3 /planner/MpC /planner/incplan-lgl
 
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
