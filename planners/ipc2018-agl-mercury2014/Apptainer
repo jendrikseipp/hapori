@@ -1,43 +1,48 @@
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
 
 %post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends bison flex make g++ g++-multilib python gawk
+
+    ## Build planner.
+    cd /planner
+    ./build DOWNWARD_BITWIDTH=64
+
+    ## Strip binaries.
+    strip --strip-all /planner/src/search/downward-1 \
+        /planner/src/search/downward-2 \
+        /planner/src/search/downward-4 \
+        /planner/src/preprocess/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/src/search/downward
+    /planner/src/search/downward-1
+    /planner/src/search/downward-2
+    /planner/src/search/downward-4
+    /planner/src/search/dispatch
+    /planner/src/search/unitcost
+    /planner/src/preprocess/preprocess
+    /planner/src/translate/
+    /planner/src/plan
+    /planner/src/plan-ipc
+    /planner/plan
+
+%post
     ## Install all dependencies.
     apt-get update
-    apt-get -y install bison flex make g++-multilib python gawk
-
-    ## Build the planner.
-    cd /planner
-    ./build
-
-    ## Strip binary.
-    strip --strip-all /planner/src/preprocess/preprocess
-    strip --strip-all /planner/src/search/downward-1
-    strip --strip-all /planner/src/search/downward-2
-    strip --strip-all /planner/src/search/downward-4
-
-    ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove bison flex make g++
+    apt-get -y install --no-install-recommends python time gawk
+    apt-get clean
     rm -rf /var/lib/apt/lists/*
-
-    ## Keep binaries and scripts.
-    mkdir -p /compiled-planner/src/
-    cp -r /planner/src/translate /compiled-planner/src/
-    mkdir -p /compiled-planner/src/preprocess
-    cp /planner/src/preprocess/preprocess /compiled-planner/src/preprocess
-    mkdir -p /compiled-planner/src/search
-    cp /planner/src/search/downward* /compiled-planner/src/search/
-    cp /planner/src/search/unitcost /compiled-planner/src/search/
-    cp /planner/src/search/dispatch /compiled-planner/src/search/
-    cp /planner/plan /compiled-planner/
-    cp /planner/src/plan /compiled-planner/src/
-    cp /planner/src/plan-ipc /compiled-planner/src/
-
-    rm -rf /planner
-    mv /compiled-planner /planner
 
 %runscript
     DOMAINFILE=$1
@@ -45,5 +50,4 @@ From: ubuntu:18.04
     PLANFILE=$3
     CONFIG=$4
 
-    # /planner/plan $DOMAINFILE $PROBLEMFILE $PLANFILE
     /planner/src/plan-ipc seq-$CONFIG-mercury $DOMAINFILE $PROBLEMFILE $PLANFILE
