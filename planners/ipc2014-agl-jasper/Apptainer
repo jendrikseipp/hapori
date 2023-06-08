@@ -1,5 +1,6 @@
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
@@ -23,21 +24,21 @@ From: ubuntu:18.04
     apt-get -y autoremove bison flex make g++
     rm -rf /var/lib/apt/lists/*
 
-    ## Keep binaries and scripts.
-    mkdir -p /compiled-planner
-    cp -r /planner/translate /compiled-planner/
-    mkdir -p /compiled-planner/preprocess
-    cp /planner/preprocess/preprocess /compiled-planner/preprocess
-    mkdir -p /compiled-planner/search
-    cp /planner/search/downward* /compiled-planner/search/
-    cp /planner/search/unitcost /compiled-planner/search/
-    cp /planner/search/dispatch /compiled-planner/search/
-    cp /planner/plan /compiled-planner/
-    cp /planner/plan-ipc /compiled-planner/
-    cp -r /planner/one_plan_aras_bfmrw_codes /compiled-planner/
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
 
-    rm -rf /planner
-    mv /compiled-planner /planner
+%files from build
+
+    ## Keep binaries and scripts.
+    /planner/translate 
+    /planner/preprocess/preprocess 
+    /planner/search/downward* 
+    /planner/search/unitcost 
+    /planner/search/dispatch 
+    /planner/plan 
+    /planner/plan-ipc 
+    /planner/one_plan_aras_bfmrw_codes 
 
 %runscript
     DOMAINFILE=$1

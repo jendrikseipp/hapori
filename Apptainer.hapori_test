@@ -449,6 +449,54 @@ Stage: build-ipc2014-agl-madagascar
 
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build-ipc2014-agl-jasper
+
+%files
+    #planners/ipc2014-agl-jasper /planner/planners/ipc2014-agl-jasper
+
+
+%post
+    ## Install all dependencies.
+    #apt-get update
+    #apt-get -y install bison flex make g++ g++-multilib python gawk
+
+    ## Build the planner.
+    #cd /planner/planners/ipc2014-agl-jasper
+    #./build
+
+    ## Strip binary.
+    #strip --strip-all /planner/planners/ipc2014-agl-jasper/preprocess/preprocess
+    #strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-1
+    #strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-2
+    #strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-4
+
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2014-agl-probe
+
+
+%files
+    planners/ipc2014-agl-probe /planner/planners/ipc2014-agl-probe
+
+
+%post
+    ## Install all dependencies.
+    apt-get update
+    apt-get -y install bison flex make xutils-dev g++-multilib scons
+
+    ## Build the planner.
+    cd /planner/planners/ipc2014-agl-probe
+    ./build
+    ls -la
+    ls -la src/parser-ff
+
+    ## Strip binary.
+    strip --strip-all /planner/planners/ipc2014-agl-probe/probe
+
+  
+Bootstrap: docker
+From: ubuntu:18.04
 Stage: run
 
 %files from build-ipc2018-opt-scorpion
@@ -610,6 +658,21 @@ Stage: run
 %files from build-ipc2014-agl-madagascar
     /planner/planners/ipc2014-agl-madagascar/MpC
 
+%files from build-ipc2014-agl-jasper
+    #/planner/planners/ipc2014-agl-jasper/translate 
+    #/planner/planners/ipc2014-agl-jasper/preprocess/preprocess 
+    #/planner/planners/ipc2014-agl-jasper/search/downward* 
+    #/planner/planners/ipc2014-agl-jasper/search/unitcost 
+    #/planner/planners/ipc2014-agl-jasper/search/dispatch 
+    #/planner/planners/ipc2014-agl-jasper/plan 
+    #/planner/planners/ipc2014-agl-jasper/plan-ipc 
+    #/planner/planners/ipc2014-agl-jasper/one_plan_aras_bfmrw_codes 
+
+%files from build-ipc2014-agl-probe
+    /planner/planners/ipc2014-agl-probe/probe 
+    /planner/planners/ipc2014-agl-probe/src/parser-ff/libff.a 
+    /planner/planners/ipc2014-agl-probe/plan 
+
 %files
     configs /planner/configs
     new-plan.py /planner/new-plan.py
@@ -667,7 +730,12 @@ Stage: run
     # test ipc2018-opt-planning-pdbs
     #/planner/new-plan.py ipc2018-opt-planning-pdbs $DOMAINFILE $PROBLEMFILE $PLANFILE
     # test ipc2014-agl-madagascar
-    /planner/new-plan.py ipc2014-agl-madagascar $DOMAINFILE $PROBLEMFILE $PLANFILE
+    #/planner/new-plan.py ipc2014-agl-madagascar $DOMAINFILE $PROBLEMFILE $PLANFILE 
+    # test ipc2014-agl-jasper
+    #/planner/new-plan.py ipc2014-agl-jasper $DOMAINFILE $PROBLEMFILE $PLANFILE
+    # test ipc2014-agl-probe
+    /planner/new-plan.py ipc2014-agl-probe $DOMAINFILE $PROBLEMFILE $PLANFILE
+    
 
 %labels
 Name        Test

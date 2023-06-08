@@ -1,5 +1,6 @@
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
@@ -22,15 +23,16 @@ From: ubuntu:18.04
     apt-get -y autoremove bison flex make xutils-dev g++ scons
     rm -rf /var/lib/apt/lists/*
 
-    ## Keep binaries and scripts.
-    mkdir -p /compiled-planner/
-    cp /planner/probe /compiled-planner/
-    mkdir -p /compiled-planner/src/parser-ff/
-    cp /planner/src/parser-ff/libff.a /compiled-planner/src/parser-ff/
-    cp /planner/plan /compiled-planner/
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
 
-    rm -rf /planner
-    mv /compiled-planner /planner
+%files from build
+
+    ## Keep binaries and scripts.
+    /planner/probe 
+    /planner/src/parser-ff/libff.a 
+    /planner/plan 
 
 %runscript
     DOMAINFILE=$1

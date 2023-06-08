@@ -331,6 +331,12 @@ def main():
         elif image_nick == "ipc2014-agl-madagascar":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/MpC", args.domainfile, args.problemfile, "-o", args.planfile, "-Q"]
             run_image(args, cmd)
+        elif image_nick == "ipc2014-agl-jasper":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", args.domainfile, args.problemfile, args.planfile]
+            run_image(args, cmd)
+        elif image_nick == "ipc2014-agl-probe":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", args.domainfile, args.problemfile, args.planfile]
+            run_image(args, cmd)
         else:
             print(f"planner {image_nick} not handled!")
             sys.exit()
