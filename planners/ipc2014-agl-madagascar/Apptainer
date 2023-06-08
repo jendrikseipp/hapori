@@ -1,5 +1,6 @@
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
@@ -21,15 +22,12 @@ From: ubuntu:18.04
     ## Strip binary.
     strip --strip-all /planner/MpC
 
-    ## Remove packages unneeded for running the planner.
-    apt-get -y autoremove bison flex make g++
-    rm -rf /var/lib/apt/lists/*
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
 
-    ## Only keep binary.
-    mkdir -p /compiled-planner/
-    mv /planner/MpC /compiled-planner
-    rm -rf /planner
-    mv /compiled-planner /planner
+%files from build
+    /planner/MpC
 
 %runscript
     DOMAINFILE=$1
