@@ -370,20 +370,57 @@ From: ubuntu:18.04
 Stage: build-ipc2018-decstar
 
 %files
-    planners/ipc2018-decstar /planner/planners/ipc2018-decstar
+    #planners/ipc2018-decstar /planner/planners/ipc2018-decstar
+
+%post
+    ## Install all necessary dependencies.
+    #apt-get update
+    #apt-get -y install g++ make python
+
+    ## Build your planner
+    #cd /planner/planners/ipc2018-decstar/src
+    #./build_all -j4
+
+    ## Strip binaries.
+    #strip --strip-all /planner/planners/ipc2018-decstar/src/preprocess/preprocess
+    #strip --strip-all /planner/planners/ipc2018-decstar/src/search/downward-release
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-freelunch-madagascar
+
+%files
+    planners/ipc2018-agl-freelunch-madagascar /planner/planners/ipc2018-agl-freelunch-madagascar
 
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install g++ make python
+    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev ca-certificates git
+
+    ## Build the planner
+    cd /planner/planners/ipc2018-agl-freelunch-madagascar
+    make
+    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
+    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-planning-pdbs
+
+%files
+    planners/ipc2018-opt-planning-pdbs /planner/planners/ipc2018-opt-planning-pdbs
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
 
     ## Build your planner
-    cd /planner/planners/ipc2018-decstar/src
-    ./build_all -j4
+    cd /planner/planners/ipc2018-opt-planning-pdbs
+    ./build.py release64 -j6
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-decstar/src/preprocess/preprocess
-    strip --strip-all /planner/planners/ipc2018-decstar/src/search/downward-release
+    strip --strip-all /planner/planners/ipc2018-opt-planning-pdbs/builds/release64/bin/downward
 
 
 Bootstrap: docker
@@ -530,11 +567,21 @@ Stage: run
     #/usr/lib/x86_64-linux-gnu/libboost_python-py27.so.1.65.1
 
 %files from build-ipc2018-decstar
-    /planner/planners/ipc2018-decstar/src/driver
-    /planner/planners/ipc2018-decstar/src/fast-downward.py
-    /planner/planners/ipc2018-decstar/src/preprocess/preprocess
-    /planner/planners/ipc2018-decstar/src/translate
-    /planner/planners/ipc2018-decstar/src/search/downward-release
+    #/planner/planners/ipc2018-decstar/src/driver
+    #/planner/planners/ipc2018-decstar/src/fast-downward.py
+    #/planner/planners/ipc2018-decstar/src/preprocess/preprocess
+    #/planner/planners/ipc2018-decstar/src/translate
+    #/planner/planners/ipc2018-decstar/src/search/downward-release
+
+%files from build-ipc2018-agl-freelunch-madagascar
+    /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
+    /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
+    /planner/planners/ipc2018-agl-freelunch-madagascar/plan.sh
+
+%files from build-ipc2018-opt-planning-pdbs
+    /planner/planners/ipc2018-opt-planning-pdbs/fast-downward.py
+    /planner/planners/ipc2018-opt-planning-pdbs/driver
+    /planner/planners/ipc2018-opt-planning-pdbs/builds/release64/bin
 
 %files
     configs /planner/configs
@@ -587,7 +634,11 @@ Stage: run
     # test ipc2018-lapkt-bfws
     #/planner/new-plan.py ipc2018-lapkt-bfws $DOMAINFILE $PROBLEMFILE $PLANFILE --configs all
     # test ipc2018-decstar
-    /planner/new-plan.py ipc2018-decstar $DOMAINFILE $PROBLEMFILE $PLANFILE --configs all
+    #/planner/new-plan.py ipc2018-decstar $DOMAINFILE $PROBLEMFILE $PLANFILE --configs all
+    # test ipc2018-agl-freelunch-madagascar
+    /planner/new-plan.py ipc2018-agl-freelunch-madagascar $DOMAINFILE $PROBLEMFILE $PLANFILE
+    # test ipc2018-opt-planning-pdbs
+    /planner/new-plan.py ipc2018-opt-planning-pdbs $DOMAINFILE $PROBLEMFILE $PLANFILE
 
 %labels
 Name        Test

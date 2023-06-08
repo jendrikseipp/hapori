@@ -318,9 +318,19 @@ def main():
         elif image_nick == "ipc2018-lapkt-dfs-plus":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/LAPKT-public/planners/dfs_plus/dfs_plus.py", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
+        elif image_nick == "ipc2018-agl-freelunch-madagascar":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan.sh", args.domainfile, args.problemfile, args.planfile, f"{CONTAINER_PLANNER_DIR}/{image_nick}/MpC", f"{CONTAINER_PLANNER_DIR}/{image_nick}/incplan-lgl"]
+            run_image(args, cmd)
+        elif image_nick == "ipc2018-opt-planning-pdbs":
+            cmd = ["python", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward.py",
+            "--build=release64",
+            "--plan-file", args.planfile,
+            args.domainfile, args.problemfile,
+            "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=false,use_norm_dist=true)))"]
+            run_image(args, cmd)
         else:
-            run_image(args, [
-                image_path, args.domainfile, args.problemfile, args.planfile])
+            print(f"planner {image_nick} not handled!")
+            sys.exit()
 
 
 if __name__ == "__main__":
