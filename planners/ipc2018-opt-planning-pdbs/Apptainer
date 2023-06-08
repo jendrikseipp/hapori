@@ -1,17 +1,11 @@
 Bootstrap: docker
-From: ubuntu:xenial
+From: ubuntu:18.04
+Stage: build
 
 %files
     . /planner
 
 %post
-
-    ## The "%post"-part of this script is called after the container has
-    ## been created with the "%setup"-part above and runs "inside the
-    ## container". Most importantly, it is used to install dependencies
-    ## and build the planner. Add all commands that have to be executed
-    ## once before the planner runs in this part of the script.
-
     ## Install all necessary dependencies.
     apt-get update
     apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
@@ -23,16 +17,19 @@ From: ubuntu:xenial
     ## Strip binaries.
     strip --strip-all /planner/builds/release64/bin/downward
 
-    ## Remove packages unneeded for running the planner.
-    apt -y autoremove cmake g++ make autotools-dev automake gcc g++-multilib
-    rm -rf /var/lib/apt/lists/*
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
 
-    ## Only keep essential binaries.
-    mkdir -p /compiled-planner/builds/release64
-    mv /planner/driver /planner/fast-downward.py /compiled-planner
-    mv /planner/builds/release64/bin /compiled-planner/builds/release64
-    rm -rf /planner
-    mv /compiled-planner /planner
+%files from build
+    /planner/fast-downward.py
+    /planner/driver
+    /planner/builds/release64/bin
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
 
 %runscript
     ## The runscript is called whenever the container is used to solve
