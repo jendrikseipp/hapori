@@ -93,17 +93,6 @@ for image_nick in SINGLE_CONFIG_IMAGES:
     CONFIGS[image_nick] = ["default"]
 
 
-def check_consistency():
-    defined_images = set(CONFIGS)
-    existing_images = set(Path(path.name).stem for path in (DIR / "images").glob("*.img"))
-    missing_images = defined_images - existing_images
-    undefined_images = existing_images - defined_images
-    print("Defined images:", sorted(defined_images))
-    print("Existing images:", sorted(existing_images))
-    print("Missing images:", sorted(missing_images))
-    print("Undefined images:", sorted(undefined_images))
-
-
 def csv_list(s):
    return s.split(',')
 
@@ -114,7 +103,7 @@ def abs_path(arg):
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("image", type=Path, help="path to planner executable")
+    parser.add_argument("image", type=Path, help="planner name (as the dir name under planners/)")
     parser.add_argument("--configs", help=f"Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=["default"])
     parser.add_argument("domainfile", type=abs_path)
     parser.add_argument("problemfile", type=abs_path)
@@ -168,7 +157,6 @@ def run_image(args, cmd):
 
 def main():
     args = parse_args()
-    #check_consistency()
     if args.list_configs:
         for image_nick, configs in sorted(CONFIGS.items()):
             for config in sorted(configs):
@@ -176,7 +164,7 @@ def main():
         sys.exit()
 
     image_nick = str(args.image)
-    if image_nick not in SINGLE_CONFIG_IMAGES and image_nick not in CONFIGS.keys():
+    if image_nick not in CONFIGS:
         print(f"unknown planner {image_nick}")
         sys.exit()
 
@@ -184,17 +172,13 @@ def main():
     print(f"Image nick: {image_nick}")
     print(f"Configs: {configs}")
     print(f"Plan file: {args.planfile}")
-    if image_nick in CONFIGS:
-        if not configs:
-            sys.exit(f"Image {image_nick} needs at least one config from {list(CONFIGS[image_nick])}.")
-        for config in configs:
-            if config == "all":
-                configs = CONFIGS[image_nick]
-            elif config not in CONFIGS[image_nick]:
-                sys.exit(f"Image {image_nick} does not support config {config}.")
-    elif len(configs) == 1 and configs[0] in {"all", "default"}:
-        run_image(args, [image_path, args.domainfile, args.problemfile, args.planfile])
-        return
+    if not configs:
+        sys.exit(f"Image {image_nick} needs at least one config from {list(CONFIGS[image_nick])}.")
+    for config in configs:
+        if config == "all":
+            configs = CONFIGS[image_nick]
+        elif config not in CONFIGS[image_nick]:
+            sys.exit(f"Image {image_nick} does not support config {config}.")
 
     for config in configs:
         print(f"Run image config {config}")
