@@ -702,7 +702,7 @@ Stage: run
     learners/delfi/timers.py /planner/timers.py
     learners/delfi/translate /planner/translate
     learners/delfi/models/agile.json /planner/models/agile.json
-    learners/delfi/models/agile.h5 /planner/models/agile.h5
+    learners/delfi/models/agilemodel* /planner/models/
 
 %post
     apt-get update
@@ -722,6 +722,10 @@ Stage: run
     # clean up
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+
+    cd /planner/models
+    cat agilemodel* > agile.h5
+    rm agilemodel*
 
 %runscript
     #! /bin/bash

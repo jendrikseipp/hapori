@@ -702,7 +702,7 @@ Stage: run
     learners/delfi/timers.py /planner/timers.py
     learners/delfi/translate /planner/translate
     learners/delfi/models/optimal.json /planner/models/optimal.json
-    learners/delfi/models/optimal.h5 /planner/models/optimal.h5
+    learners/delfi/models/optimalmodel* /planner/models/
 
 %post
     apt-get update
@@ -722,6 +722,10 @@ Stage: run
     # clean up
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+
+    cd /planner/models
+    cat optimalmodel* > optimal.h5
+    rm optimalmodel*
 
 %runscript
     #! /bin/bash
