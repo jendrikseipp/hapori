@@ -77,9 +77,9 @@ CONFIGS = {
 
 SINGLE_CONFIG_IMAGES = [
     "ipc2014-agl-jasper",
-    "ipc2014-agl-madagascar",
+    "ipc2014-agl-mpc",
     "ipc2014-agl-probe",
-    "ipc2014-opt-symba",
+    "ipc2014-opt-symba1",
     "ipc2018-agl-freelunch-madagascar",
     "ipc2018-agl-olcff",
     "ipc2018-lapkt-dfs-plus",
@@ -293,7 +293,7 @@ def main():
         elif image_nick == "ipc2018-opt-complementary2":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, args.domainfile, args.problemfile, "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=true,use_norm_dist=true)))"]
             run_image(args, cmd)
-        elif image_nick == "ipc2014-opt-symba":
+        elif image_nick == "ipc2014-opt-symba1":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", "seq-opt-symba-1", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
         elif image_nick == "ipc2018-agl-merwin":
@@ -312,7 +312,7 @@ def main():
             args.domainfile, args.problemfile,
             "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=false,use_norm_dist=true)))"]
             run_image(args, cmd)
-        elif image_nick == "ipc2014-agl-madagascar":
+        elif image_nick == "ipc2014-agl-mpc":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/MpC", args.domainfile, args.problemfile, "-o", args.planfile, "-Q"]
             run_image(args, cmd)
         elif image_nick == "ipc2014-agl-jasper":
