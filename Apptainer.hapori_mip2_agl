@@ -1,20 +1,712 @@
 Bootstrap: docker
-From: ubuntu:22.04
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-scorpion
+
+%files
+    planners/ipc2018-opt-scorpion /planner/planners/ipc2018-opt-scorpion
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build planner.
+    cd /planner/planners/ipc2018-opt-scorpion
+    ./build.py release64
+
+    ## Build h2-mutexes preprocessor.
+    mkdir -p builds/h2-mutexes/
+    cd builds/h2-mutexes/
+    cmake ../../h2-mutexes/
+    make -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-opt-scorpion/builds/release64/bin/downward \
+        /planner/planners/ipc2018-opt-scorpion/builds/h2-mutexes/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-saarplan
+
+%files
+    planners/ipc2018-saarplan /planner/planners/ipc2018-saarplan
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install python cmake make libboost-dev clang
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-saarplan/fast-downward-conjunctions
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-complementary2
+
+%files
+    planners/ipc2018-opt-complementary2  /planner/planners/ipc2018-opt-complementary2
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
+
+    ## Build the planner
+    cd /planner/planners/ipc2018-opt-complementary2
+    ./build.py release64 -j8
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-opt-complementary2/builds/release64/bin/downward
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-delfi
+
+%files
+    planners/ipc2018-opt-delfi /planner/planners/ipc2018-opt-delfi
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends python cmake g++ make
+
+    ## Build planner.
+    cd /planner/planners/ipc2018-opt-delfi
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-opt-delfi/builds/release64/bin/downward \
+        /planner/planners/ipc2018-opt-delfi/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-symple1
+
+%files
+    planners/ipc2018-symple1 /planner/planners/ipc2018-symple1
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python automake autoconf libtool flex bison
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-symple1
+    ./build -j4
+
+    strip --strip-all /planner/planners/ipc2018-symple1/src/preprocess/preprocess \
+        /planner/planners/ipc2018-symple1/src/search/downward-1 \
+        /planner/planners/ipc2018-symple1/src/search/downward-2 \
+        /planner/planners/ipc2018-symple1/src/search/downward-4
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-symple2
+
+%files
+    planners/ipc2018-symple2 /planner/planners/ipc2018-symple2
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python-dev automake autoconf libtool flex bison unzip
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-symple2
+    ./build -j4
+
+    strip --strip-all /planner/planners/ipc2018-symple2/src/preprocess/preprocess \
+        /planner/planners/ipc2018-symple2/src/search/downward-1 \
+        /planner/planners/ipc2018-symple2/src/search/downward-2 \
+        /planner/planners/ipc2018-symple2/src/search/downward-4
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2014-opt-symba1
+
+%files
+    planners/ipc2014-opt-symba /planner/planners/ipc2014-opt-symba1
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends python cmake g++ g++-multilib make
+
+    ## Build planner.
+    cd /planner/planners/ipc2014-opt-symba1
+    ./build -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2014-opt-symba1/src/preprocess/preprocess \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-1 \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-2 \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-4
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-fd-2018
+
+%files
+    planners/ipc2018-agl-fdss-2018 /planner/planners/ipc2018-fd-2018
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build planner.
+    cd /planner/planners/ipc2018-fd-2018
+    ./build.py release64
+
+    ## Build h2-mutexes preprocessor.
+    mkdir -p builds/h2-mutexes/
+    cd builds/h2-mutexes/
+    cmake ../../h2-mutexes/
+    make -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-fd-2018/builds/release64/bin/downward \
+        /planner/planners/ipc2018-fd-2018/builds/h2-mutexes/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-merwin
+
+%files
+    planners/ipc2018-agl-merwin /planner/planners/ipc2018-agl-merwin
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
+
+    ## Build planner.
+    cd /planner/planners/ipc2018-agl-merwin
+    ./build DOWNWARD_BITWIDTH=64
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-agl-merwin/src/search/downward-1 \
+        /planner/planners/ipc2018-agl-merwin/src/search/downward-2 \
+        /planner/planners/ipc2018-agl-merwin/src/search/downward-4 \
+        /planner/planners/ipc2018-agl-merwin/src/preprocess/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-mercury2014
+
+%files
+    planners/ipc2018-agl-mercury2014 /planner/planners/ipc2018-agl-mercury2014
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install bison flex make g++-multilib python gawk
+    apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
+
+    ## Build planner.
+    cd /planner/planners/ipc2018-agl-mercury2014
+    ./build DOWNWARD_BITWIDTH=64
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-agl-mercury2014/src/search/downward-1 \
+        /planner/planners/ipc2018-agl-mercury2014/src/search/downward-2 \
+        /planner/planners/ipc2018-agl-mercury2014/src/search/downward-4 \
+        /planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-metis
+
+%files
+    planners/ipc2018-opt-metis /planner/planners/ipc2018-opt-metis
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-opt-metis
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-opt-metis/builds/release64/bin/downward \
+        /planner/planners/ipc2018-opt-metis/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-cerberus
+
+%files
+    planners/ipc2018-agl-cerberus /planner/planners/ipc2018-agl-cerberus
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ g++-multilib make python
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-agl-cerberus
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/downward \
+        /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-lapkt-dfs-plus
+
+%files
+    planners/ipc2018-agl-lapkt-dfs-plus /planner/planners/ipc2018-lapkt-dfs-plus
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get install --no-install-recommends -y \
+        cmake \
+        build-essential \
+        ca-certificates \
+        xutils-dev \
+        scons \
+        gcc-multilib \
+        flex \
+        bison \
+        python \
+        python-dev \
+        libboost-dev \
+        libjudy-dev \
+        libboost-python-dev \
+        libboost-program-options-dev \
+        g++-multilib \
+        g++ \
+        cython \
+        google-perftools \
+        libgoogle-perftools-dev
+
+    export LAPKT_PATH=/planner/planners/ipc2018-lapkt-dfs-plus/LAPKT-public
+
+    cd $LAPKT_PATH
+    cd external/libff
+    make clean
+    make depend
+    make
+
+    ## Build DFS+ planner
+    cd ../..
+    cd planners/dfs_plus-ffparser
+    scons -j4
+    cp dfs_plus /planner/planners/ipc2018-lapkt-dfs-plus/
+    strip --strip-all /planner/planners/ipc2018-lapkt-dfs-plus/dfs_plus
+    ## Build planner for FD-parser
+    cd ../dfs_plus
+    #./build.py
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-lapkt-bfws
+
+%files
+    planners/ipc2018-agl-lapkt-dual-bfws /planner/planners/ipc2018-lapkt-bfws
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get install --no-install-recommends -y \
+        cmake \
+        build-essential \
+        ca-certificates \
+        xutils-dev \
+        scons \
+        gcc-multilib \
+        flex \
+        bison \
+        python \
+        python-dev \
+        libboost-dev \
+        libjudy-dev \
+        libboost-python-dev \
+        libboost-program-options-dev \
+        g++-multilib \
+        g++
+
+    export LAPKT_PATH=/planner/planners/ipc2018-lapkt-bfws/LAPKT-public
+
+    cd $LAPKT_PATH
+    cd external/libff
+    make clean
+    make depend
+    make
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-lapkt-bfws/BFWS/ff-version
+    scons -j4
+    cd /planner/planners/ipc2018-lapkt-bfws/BFWS/fd-version
+    ./build.py
+
+    ## Build FD
+    cd /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2
+    ./build.py release64 -j4
+
+    ## Build h2-preprocessor
+    cd /planner/planners/ipc2018-lapkt-bfws/h2-fd-preprocessor
+    mkdir -p builds/release32
+    cd builds/release32
+    cmake ../../
+    make -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-lapkt-bfws/BFWS/ff-version/bfws \
+        /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2/builds/release64/bin/downward \
+        /planner/planners/ipc2018-lapkt-bfws/h2-fd-preprocessor/builds/release32/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-decstar
+
+%files
+    planners/ipc2018-decstar /planner/planners/ipc2018-decstar
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install g++ make python
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-decstar/src
+    ./build_all -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-decstar/src/preprocess/preprocess
+    strip --strip-all /planner/planners/ipc2018-decstar/src/search/downward-release
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-freelunch-madagascar
+
+%files
+    planners/ipc2018-agl-freelunch-madagascar /planner/planners/ipc2018-agl-freelunch-madagascar
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install cmake g++ gcc make bison flex zlib1g-dev ca-certificates git
+
+    ## Build the planner
+    cd /planner/planners/ipc2018-agl-freelunch-madagascar
+    make
+    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
+    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-opt-planning-pdbs
+
+%files
+    planners/ipc2018-opt-planning-pdbs /planner/planners/ipc2018-opt-planning-pdbs
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-opt-planning-pdbs
+    ./build.py release64 -j6
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-opt-planning-pdbs/builds/release64/bin/downward
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2014-agl-mpc
+
+%files
+    planners/ipc2014-agl-madagascar /planner/planners/ipc2014-agl-mpc
+
+%post
+    ## Install all dependencies.
+    apt update
+    apt -y install bison flex make g++-multilib
+
+    ## Build the planner.
+    cd /planner/planners/ipc2014-agl-mpc
+    # It is unclear why the following three lines are necessary, but
+    ## compilation sometimes fails without them.
+    ./makedate
+    bison -d parser.y
+    flex lexer.lex
+    make -j4
+
+    ## Strip binary.
+    strip --strip-all /planner/planners/ipc2014-agl-mpc/MpC
+
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2014-agl-jasper
+
+%files
+    planners/ipc2014-agl-jasper /planner/planners/ipc2014-agl-jasper
+
+%post
+    ## Install all dependencies.
+    apt-get update
+    apt-get -y install bison flex make g++ g++-multilib python gawk
+
+    ## Build the planner.
+    cd /planner/planners/ipc2014-agl-jasper
+    ./build
+
+    ## Strip binary.
+    strip --strip-all /planner/planners/ipc2014-agl-jasper/preprocess/preprocess
+    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-1
+    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-2
+    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-4
+
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2014-agl-probe
+
+%files
+    planners/ipc2014-agl-probe /planner/planners/ipc2014-agl-probe
+
+%post
+    ## Install all dependencies.
+    apt-get update
+    apt-get -y install bison flex make xutils-dev g++-multilib scons
+
+    ## Build the planner.
+    cd /planner/planners/ipc2014-agl-probe
+    ./build
+    ls -la
+    ls -la src/parser-ff
+
+    ## Strip binary.
+    strip --strip-all /planner/planners/ipc2014-agl-probe/probe
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-agl-olcff
+
+%files
+    planners/ipc2018-agl-olcff /planner/planners/ipc2018-agl-olcff
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install python cmake make libboost-dev clang
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions
+    ./build.py release64clangpgonative -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build-ipc2018-opt-scorpion
+    /planner/planners/ipc2018-opt-scorpion/driver
+    /planner/planners/ipc2018-opt-scorpion/fast-downward.py
+    /planner/planners/ipc2018-opt-scorpion/builds/release64/bin
+    /planner/planners/ipc2018-opt-scorpion/builds/h2-mutexes/bin/preprocess
+
+%files from build-ipc2018-saarplan
+    /planner/planners/ipc2018-saarplan/fast-downward.py
+    /planner/planners/ipc2018-saarplan/driver
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+
+%files from build-ipc2018-opt-complementary2
+    /planner/planners/ipc2018-opt-complementary2/driver
+    /planner/planners/ipc2018-opt-complementary2/fast-downward.py
+    /planner/planners/ipc2018-opt-complementary2/builds/release64/bin
+
+%files from build-ipc2018-opt-delfi
+    /planner/planners/ipc2018-opt-delfi/driver
+    /planner/planners/ipc2018-opt-delfi/fast-downward.py
+    /planner/planners/ipc2018-opt-delfi/builds/release64/bin
+
+%files from build-ipc2018-symple1
+    /planner/planners/ipc2018-symple1/plan
+    /planner/planners/ipc2018-symple1/src/plan
+    /planner/planners/ipc2018-symple1/src/plan-ipc-18
+    /planner/planners/ipc2018-symple1/src/translate
+    /planner/planners/ipc2018-symple1/src/preprocess/preprocess
+    /planner/planners/ipc2018-symple1/src/search/dispatch
+    /planner/planners/ipc2018-symple1/src/search/downward
+    /planner/planners/ipc2018-symple1/src/search/downward-1
+    /planner/planners/ipc2018-symple1/src/search/downward-2
+    /planner/planners/ipc2018-symple1/src/search/downward-4
+    /planner/planners/ipc2018-symple1/src/search/unitcost
+
+%files from build-ipc2018-symple2
+    /planner/planners/ipc2018-symple2/plan
+    /planner/planners/ipc2018-symple2/src/plan
+    /planner/planners/ipc2018-symple2/src/plan-ipc-18
+    /planner/planners/ipc2018-symple2/src/translate
+    /planner/planners/ipc2018-symple2/src/preprocess/preprocess
+    /planner/planners/ipc2018-symple2/src/search/dispatch
+    /planner/planners/ipc2018-symple2/src/search/downward
+    /planner/planners/ipc2018-symple2/src/search/downward-1
+    /planner/planners/ipc2018-symple2/src/search/downward-2
+    /planner/planners/ipc2018-symple2/src/search/downward-4
+    /planner/planners/ipc2018-symple2/src/search/unitcost
+
+%files from build-ipc2014-opt-symba1
+    /planner/planners/ipc2014-opt-symba1/plan
+    /planner/planners/ipc2014-opt-symba1/src/plan
+    /planner/planners/ipc2014-opt-symba1/src/plan-ipc
+    /planner/planners/ipc2014-opt-symba1/src/translate
+    /planner/planners/ipc2014-opt-symba1/src/preprocess/preprocess
+    /planner/planners/ipc2014-opt-symba1/src/search/downward
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-1
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-2
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-4
+    /planner/planners/ipc2014-opt-symba1/src/search/dispatch
+    /planner/planners/ipc2014-opt-symba1/src/search/unitcost
+
+%files from build-ipc2018-fd-2018
+    /planner/planners/ipc2018-fd-2018/driver
+    /planner/planners/ipc2018-fd-2018/fast-downward.py
+    /planner/planners/ipc2018-fd-2018/builds/release64/bin
+    /planner/planners/ipc2018-fd-2018/builds/h2-mutexes/bin/preprocess
+
+%files from build-ipc2018-agl-merwin
+    /planner/planners/ipc2018-agl-merwin/src/search/downward
+    /planner/planners/ipc2018-agl-merwin/src/search/downward-1
+    /planner/planners/ipc2018-agl-merwin/src/search/downward-2
+    /planner/planners/ipc2018-agl-merwin/src/search/downward-4
+    /planner/planners/ipc2018-agl-merwin/src/search/dispatch
+    /planner/planners/ipc2018-agl-merwin/src/search/unitcost
+    /planner/planners/ipc2018-agl-merwin/src/preprocess/
+    /planner/planners/ipc2018-agl-merwin/src/translate/
+    /planner/planners/ipc2018-agl-merwin/src/prepare
+    /planner/planners/ipc2018-agl-merwin/src/plan
+    /planner/planners/ipc2018-agl-merwin/src/plan-ipc
+    /planner/planners/ipc2018-agl-merwin/plan-agl
+    /planner/planners/ipc2018-agl-merwin/plan-sat
+
+%files from build-ipc2018-agl-mercury2014
+    /planner/planners/ipc2018-agl-mercury2014/src/search/downward
+    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-1
+    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-2
+    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-4
+    /planner/planners/ipc2018-agl-mercury2014/src/search/dispatch
+    /planner/planners/ipc2018-agl-mercury2014/src/search/unitcost
+    /planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
+    /planner/planners/ipc2018-agl-mercury2014/src/translate/
+    /planner/planners/ipc2018-agl-mercury2014/src/plan
+    /planner/planners/ipc2018-agl-mercury2014/src/plan-ipc
+    /planner/planners/ipc2018-agl-mercury2014/plan
+
+%files from build-ipc2018-opt-metis
+    /planner/planners/ipc2018-opt-metis/fast-downward.py
+    /planner/planners/ipc2018-opt-metis/builds/release64/bin/
+    /planner/planners/ipc2018-opt-metis/driver
+
+%files from build-ipc2018-agl-cerberus
+    /planner/planners/ipc2018-agl-cerberus/fast-downward.py
+    /planner/planners/ipc2018-agl-cerberus/plan.py
+    /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/
+    /planner/planners/ipc2018-agl-cerberus/driver
+
+%files from build-ipc2018-lapkt-dfs-plus
+    /planner/planners/ipc2018-lapkt-dfs-plus/dfs_plus
+    /planner/planners/ipc2018-lapkt-dfs-plus/LAPKT-public/external/libff/libff.a
+    /planner/planners/ipc2018-lapkt-dfs-plus/LAPKT-public/planners/dfs_plus
+
+    # To avoid installing the large python-dev and libboost-python-dev packages, we copy only the necessary shared libraries.
+    # (see https://arminschaeffer.de/dockerize-python-module-with-shared-object-dependencies-using-multi-stage-builds/)
+    /usr/lib/x86_64-linux-gnu/libpython2.7.so.1.0
+    /usr/lib/x86_64-linux-gnu/libboost_python-py27.so.1.65.1
+
+%files from build-ipc2018-lapkt-bfws
+    /planner/planners/ipc2018-lapkt-bfws/LAPKT-public/external/libff/libff.a
+    /planner/planners/ipc2018-lapkt-bfws/BFWS/ff-version
+    /planner/planners/ipc2018-lapkt-bfws/BFWS/fd-version
+    /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2/builds/release64/bin
+    /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2/driver
+    /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2/fast-downward.py
+    /planner/planners/ipc2018-lapkt-bfws/Fast-Downward-2018-2/fast-downward-singularity.py
+    /planner/planners/ipc2018-lapkt-bfws/h2-fd-preprocessor/builds/release32/bin
+
+    # To avoid installing the large python-dev and libboost-python-dev packages, we copy only the necessary shared libraries.
+    # (see https://arminschaeffer.de/dockerize-python-module-with-shared-object-dependencies-using-multi-stage-builds/)
+    /usr/lib/x86_64-linux-gnu/libpython2.7.so.1.0
+    /usr/lib/x86_64-linux-gnu/libboost_python-py27.so.1.65.1
+
+%files from build-ipc2018-decstar
+    /planner/planners/ipc2018-decstar/src/driver
+    /planner/planners/ipc2018-decstar/src/fast-downward.py
+    /planner/planners/ipc2018-decstar/src/preprocess/preprocess
+    /planner/planners/ipc2018-decstar/src/translate
+    /planner/planners/ipc2018-decstar/src/search/downward-release
+
+%files from build-ipc2018-agl-freelunch-madagascar
+    /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
+    /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
+    /planner/planners/ipc2018-agl-freelunch-madagascar/plan.sh
+
+%files from build-ipc2018-opt-planning-pdbs
+    /planner/planners/ipc2018-opt-planning-pdbs/fast-downward.py
+    /planner/planners/ipc2018-opt-planning-pdbs/driver
+    /planner/planners/ipc2018-opt-planning-pdbs/builds/release64/bin
+
+%files from build-ipc2014-agl-mpc
+    /planner/planners/ipc2014-agl-mpc/MpC
+
+%files from build-ipc2014-agl-jasper
+    /planner/planners/ipc2014-agl-jasper/translate
+    /planner/planners/ipc2014-agl-jasper/preprocess/preprocess
+    /planner/planners/ipc2014-agl-jasper/search/downward*
+    /planner/planners/ipc2014-agl-jasper/search/unitcost
+    /planner/planners/ipc2014-agl-jasper/search/dispatch
+    /planner/planners/ipc2014-agl-jasper/plan
+    /planner/planners/ipc2014-agl-jasper/plan-ipc
+    /planner/planners/ipc2014-agl-jasper/one_plan_aras_bfmrw_codes
+
+%files from build-ipc2014-agl-probe
+    /planner/planners/ipc2014-agl-probe/probe
+    /planner/planners/ipc2014-agl-probe/src/parser-ff/libff.a
+    /planner/planners/ipc2014-agl-probe/plan
+
+%files from build-ipc2018-agl-olcff
+    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/fast-downward.py
+    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin
 
 %files
     configs /planner/configs
-    images /planner/images
     plan.py /planner/plan.py
     run-portfolio.py /planner/run-portfolio.py
     portfolio_driver /planner/portfolio_driver
 
 %post
     apt-get update
-    apt-get -y install --no-install-recommends gpg-agent python3.11 software-properties-common
-    add-apt-repository -y ppa:apptainer/ppa
-    apt-get update
-    apt-get install -y apptainer
-    apt-get -y autoremove gpg-agent software-properties-common
+
+    # requirements of all component planners
+    apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
+    pip2 install -U wheel setuptools
+    pip2 install networkx
+
+    # requirements of delfi portfolio
+    apt-get -y install --no-install-recommends python3
+
+    # clean up
     apt-get clean
     rm -rf /var/lib/apt/lists/*
 
@@ -26,7 +718,7 @@ From: ubuntu:22.04
     PROBLEMFILE="$2"
     PLANFILE="$3"
 
-    python3.11 /planner/run-portfolio.py \
+    python3 /planner/run-portfolio.py \
         --alias hapori-miplan-all-data-random-agl \
         --overall-time-limit 5m \
         --plan-file "$PLANFILE" \
