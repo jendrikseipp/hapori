@@ -17,14 +17,11 @@ parser.add_argument("problem")
 parser.add_argument("plan")
 
 DIR_CURR_FILE = Path(__file__).parent
-DIR_REPO_BASE = DIR_CURR_FILE if (DIR_CURR_FILE / "images").exists() else DIR_CURR_FILE.parent.parent
+FILE_PLAN_PY = DIR_CURR_FILE / "plan.py" if (DIR_CURR_FILE / "plan.py").exists() else DIR_CURR_FILE.parent.parent
 FILE_FEATURE_EXTRACTOR = DIR_CURR_FILE / "feature_extractor" / "extract_planning_features.py"
 FILE_FEATURE_ORDER = DIR_CURR_FILE / "models" / "feature_order.json"
 FILE_PLANNER_ORDER_OPT = DIR_CURR_FILE / "models" / "opt_planners.json"
 FILE_PLANNER_ORDER_SAT = DIR_CURR_FILE / "models" / "sat_planners.json"
-
-FILE_PLAN_PY = DIR_REPO_BASE / "plan.py"
-DIR_IMAGES = DIR_REPO_BASE / "images"
 
 
 def generate_features(d, f_domain, f_problem):
@@ -82,10 +79,10 @@ def query_model(f_model, features):
 
 
 def execute_planner(d, f_domain, f_problem, f_plan, planner):
-    planner_image, planner_config = planner.rsplit(":", 1)
+    planner_name, planner_config = planner.rsplit(":", 1)
     subprocess.call([
         sys.executable, FILE_PLAN_PY,
-        os.path.join(DIR_IMAGES, f"{planner_image}.img"), "--configs", planner_config,
+        planner_name, "--configs", planner_config,
         f_domain, f_problem, f_plan
     ], cwd=d)
 

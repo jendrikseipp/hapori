@@ -1,0 +1,50 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install g++ make python
+
+    ## Build your planner
+    cd /planner/src
+    ./build_all -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/src/preprocess/preprocess
+    strip --strip-all /planner/src/search/downward-release
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/src/driver
+    /planner/src/fast-downward.py
+    /planner/src/preprocess/preprocess
+    /planner/src/translate
+    /planner/src/search/downward-release
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    /planner/src/fast-downward.py "$@"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        DecStar
+Description portfolio including decoupled search as a main component
+Authors     Daniel Gnad <gnad@cs.uni-saarland.de> and Alexander Shleyfman <shleyfman.alexander@gmail.com> and Joerg Hoffmann <hoffmann@cs.uni-saarland.de>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects yes

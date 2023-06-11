@@ -1,0 +1,58 @@
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python autotools-dev automake gcc g++-multilib
+
+    ## Build your planner
+    cd /planner
+    ./build.py release64 -j6
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/fast-downward.py
+    /planner/driver
+    /planner/builds/release64/bin
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+
+    ## Call your planner.
+    /planner/fast-downward.py \
+        --build=release64 \
+        --plan-file $PLANFILE \
+        $DOMAINFILE \
+        $PROBLEMFILE \
+        --search "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=false,use_norm_dist=true)))"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Planning-pdb-mcts
+Description Forward search with A* and the Complementary PDB Creation Heuristic
+Authors     Ionut Moraru <ionut.moraru@kcl.ac.uk> and Stefan Edelkamp <stefan.edelkamp@kcl.ac.uk>
+SupportsDerivedPredicates yes
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

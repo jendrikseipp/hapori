@@ -1,0 +1,67 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build your planner
+    cd /planner
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/release64/bin/preprocess
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+# Copy planner binary and required files from Stage 1.
+%files from build
+    /planner/fast-downward.py
+    /planner/builds/release64/bin/
+    /planner/driver
+
+%post
+    ## Install only dependencies for running the planner.
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    ## Remove unnecessary files to keep the image small.
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+    CONFIG=$4
+
+    ## Call your planner.
+    /planner/fast-downward.py \
+        --transform-task "/planner/builds/release64/bin/preprocess" \
+        --build 'release64' \
+        --search-memory-limit '7744M' \
+        --plan-file $PLANFILE \
+        $DOMAINFILE \
+        $PROBLEMFILE \
+        $CONFIG
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Metis1 and Metis2
+Description Metis1: A remake of Metis that participated in IPC2014. It uses partial order reduction (simple stubborn sets) with a safety belt that turns off pruning if not enough pruning happens and with support for conditional effects, symmetry-based pruning (OSS), the h2 preprocessor of Alcázar and Torralba, and the lmcut heuristic with support for conditional effects. Metis2: A variant of Metis1 with the following differences: it uses DKS for symmetry-based pruning rather than OSS, and the maximum over two heuristics, namely the lmcut heuristic with support for conditional effects like Metis1, but also the landmark heuristic using landmarks generated as described by Richter, Helmert, and Westphal (AAAI 2008) and h^m landmarks with m=1. Since the latter does not support conditional effects natively, we compile them away by multiplying out all operators with conditional effects.
+Authors     Silvan Sievers <silvan.sievers@unibas.ch> and Michael Katz <michael.katz1@ibm.com>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

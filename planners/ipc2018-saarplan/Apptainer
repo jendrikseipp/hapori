@@ -1,0 +1,63 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:bionic
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install python cmake make libboost-dev clang
+
+    ## Build your planner
+    cd /planner/fast-downward-conjunctions
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/fast-downward-conjunctions/builds/release64/bin/downward
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:bionic
+Stage: run
+
+%files from build
+    /planner/fast-downward.py
+    /planner/driver
+    /planner/fast-downward-conjunctions/driver
+    /planner/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/fast-downward-conjunctions/builds/release64/bin/downward
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    ## The runscript is called whenever the container is used to solve
+    ## an instance.
+
+    SEED=42
+
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+    CONFIG=$4
+
+    ## Call your planner.
+    /planner/fast-downward.py "$@"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Saarplan
+Description Grey Planning, Decoupled Search, Conjunctions -- Saarland's greatest planning techniques combined! NOTE: this planner only covers the conjunctions-based planner (the rest is covered by decstar already).
+Authors     Maximilian Fickert <fickert@cs.uni-saarland.de> and Daniel Gnad <gnad@cs.uni-saarland.de> and Patrick Speicher <speicher@cs.uni-saarland.de> and Jörg Hoffmann <hoffmann@cs.uni-saarland.de>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects yes

@@ -22,10 +22,8 @@ GRAPH_CREATION_TIME_LIMIT = 60 # seconds
 IMAGE_CREATION_TIME_LIMIT = 180 # seconds
 
 DIR_SCRIPT = os.path.dirname(os.path.abspath(__file__))
-
-DIR_REPO_BASE = DIR_SCRIPT if os.path.exists(os.path.join(DIR_SCRIPT, "images")) else os.path.join(DIR_SCRIPT, "..", "..")
-FILE_PLAN_PY = os.path.join(DIR_REPO_BASE, "plan.py")
-DIR_IMAGES = os.path.join(DIR_REPO_BASE, "images")
+FILE_PLAN_PY = os.path.join(DIR_SCRIPT, "plan.py") if os.path.exists(os.path.join(DIR_SCRIPT, "plan.py")) else os.path.join(DIR_SCRIPT, "..", "..", "plan.py")
+assert os.path.exists(FILE_PLAN_PY)
 
 
 def compute_graph_for_task(pwd, domain, problem):
@@ -118,10 +116,10 @@ def select_algorithm_from_model(json_model, h5_model, image, planner_names):
 
 
 def execute_planner(d, f_domain, f_problem, f_plan, planner):
-    planner_image, planner_config = planner.rsplit(":", 1)
+    planner_name, planner_config = planner.rsplit(":", 1)
     subprocess.call([
         "python3", FILE_PLAN_PY,
-        os.path.join(DIR_IMAGES, planner_image + ".img"), "--configs", planner_config,
+        planner_name, "--configs", planner_config,
         f_domain, f_problem, f_plan
     ], cwd=d)
 

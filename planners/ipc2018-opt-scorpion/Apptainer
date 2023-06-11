@@ -1,0 +1,66 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build planner.
+    cd /planner
+    ./build.py release64
+
+    ## Build h2-mutexes preprocessor.
+    mkdir -p builds/h2-mutexes/
+    cd builds/h2-mutexes/
+    cmake ../../h2-mutexes/
+    make -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/h2-mutexes/bin/preprocess
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+    /planner/builds/h2-mutexes/bin/preprocess /planner/preprocess
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+
+    /planner/fast-downward.py \
+        --build=release64 \
+        --plan-file $PLANFILE \
+        --transform-task /planner/preprocess \
+        --alias seq-opt-scorpion \
+        --overall-time-limit 30m \
+        $DOMAINFILE \
+        $PROBLEMFILE
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Scorpion
+Description Saturated cost partitioning over abstraction heuristics
+Authors     Jendrik Seipp <jendrik.seipp@unibas.ch>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

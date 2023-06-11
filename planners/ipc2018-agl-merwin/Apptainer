@@ -1,0 +1,66 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
+
+    ##git clone -b ipc-2018-seq-agl https://bitbucket.org/ipc2018-classical/team14.git /planner
+    ## Build planner.
+    cd /planner
+    ./build DOWNWARD_BITWIDTH=64
+
+    ## Strip binaries.
+    strip --strip-all /planner/src/search/downward-1 /planner/src/search/downward-2 /planner/src/search/downward-4 \
+        /planner/src/preprocess/preprocess 
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/src/search/downward 
+    /planner/src/search/downward-1 
+    /planner/src/search/downward-2 
+    /planner/src/search/downward-4 
+    /planner/src/search/dispatch 
+    /planner/src/search/unitcost 
+    /planner/src/preprocess/ 
+    /planner/src/translate/ 
+    /planner/src/prepare 
+    /planner/src/plan 
+    /planner/src/plan-ipc 
+    /planner/plan-agl 
+    /planner/plan-sat 
+    #/planner 
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python time gawk
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    DOMAINFILE=$1
+    PROBLEMFILE=$2
+    PLANFILE=$3
+    CONFIG=$4
+
+    ## Call your planner with sat or agl as the fourth input element
+    /planner/plan-$CONFIG $DOMAINFILE $PROBLEMFILE $PLANFILE
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        MERWIN
+Description GBFS with novelty heuristic with red-black planning heuristic (2014 variant) as a base, alternating with landmark based queues. Improving plan quality by weighted A*.
+Authors     Michael Katz <michael.katz1@ibm.com>, Nir Lipovetzky <nir.lipovetzky@unimelb.edu.au>, Dany Moshkovich <mdany@il.ibm.com>, Alexander Tuisov <alexandt@campus.technion.ac.il>
+SupportsDerivedPredicates no
+SupportsQuantifiedPreconditions no
+SupportsQuantifiedEffects no

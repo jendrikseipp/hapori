@@ -1,0 +1,55 @@
+# Stage 1: Compile the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%files
+    . /planner
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ make python
+
+    ## Build planner.
+    cd /planner
+    ./build.py release64
+
+    ## Build h2-mutexes preprocessor.
+    mkdir -p builds/h2-mutexes/
+    cd builds/h2-mutexes/
+    cmake ../../h2-mutexes/
+    make -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/builds/release64/bin/downward \
+        /planner/builds/h2-mutexes/bin/preprocess
+
+# Stage 2: Run the planner
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build
+    /planner/driver
+    /planner/fast-downward.py
+    /planner/builds/release64/bin
+    /planner/builds/h2-mutexes/bin/preprocess /planner/preprocess
+
+%post
+    apt-get update
+    apt-get -y install --no-install-recommends python
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    /planner/fast-downward.py "$@"
+
+## Update the following fields with meta data about your submission.
+## Please use the same field names and use only one line for each value.
+%labels
+Name        Fast Downward Stone Soup 2018
+Description portfolio of satisficing Fast Downward configurations. NOTE: this planner covers both FDSS and FD Remix!
+Authors     Jendrik Seipp <jendrik.seipp@unibas.ch> and Gabriele Röger <gabriele.roeger@unibas.ch>
+SupportsDerivedPredicates yes
+SupportsQuantifiedPreconditions yes
+SupportsQuantifiedEffects yes
