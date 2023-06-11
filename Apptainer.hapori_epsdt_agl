@@ -127,10 +127,10 @@ Stage: build-ipc2018-symple2
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2014-opt-symba
+Stage: build-ipc2014-opt-symba1
 
 %files
-    planners/ipc2014-opt-symba /planner/planners/ipc2014-opt-symba
+    planners/ipc2014-opt-symba1 /planner/planners/ipc2014-opt-symba1
 
 %post
     ## Install all necessary dependencies.
@@ -138,14 +138,14 @@ Stage: build-ipc2014-opt-symba
     apt-get -y install --no-install-recommends python cmake g++ g++-multilib make
 
     ## Build planner.
-    cd /planner/planners/ipc2014-opt-symba
+    cd /planner/planners/ipc2014-opt-symba1
     ./build -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2014-opt-symba/src/preprocess/preprocess \
-        /planner/planners/ipc2014-opt-symba/src/search/downward-1 \
-        /planner/planners/ipc2014-opt-symba/src/search/downward-2 \
-        /planner/planners/ipc2014-opt-symba/src/search/downward-4
+    strip --strip-all /planner/planners/ipc2014-opt-symba1/src/preprocess/preprocess \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-1 \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-2 \
+        /planner/planners/ipc2014-opt-symba1/src/search/downward-4
 
 Bootstrap: docker
 From: ubuntu:18.04
@@ -424,10 +424,10 @@ Stage: build-ipc2018-opt-planning-pdbs
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2014-agl-madagascar
+Stage: build-ipc2014-agl-mpc
 
 %files
-    planners/ipc2014-agl-madagascar /planner/planners/ipc2014-agl-madagascar
+    planners/ipc2014-agl-mpc /planner/planners/ipc2014-agl-mpc
 
 %post
     ## Install all dependencies.
@@ -435,7 +435,7 @@ Stage: build-ipc2014-agl-madagascar
     apt -y install bison flex make g++-multilib
 
     ## Build the planner.
-    cd /planner/planners/ipc2014-agl-madagascar
+    cd /planner/planners/ipc2014-agl-mpc
     # It is unclear why the following three lines are necessary, but
     ## compilation sometimes fails without them.
     ./makedate
@@ -444,7 +444,7 @@ Stage: build-ipc2014-agl-madagascar
     make -j4
 
     ## Strip binary.
-    strip --strip-all /planner/planners/ipc2014-agl-madagascar/MpC
+    strip --strip-all /planner/planners/ipc2014-agl-mpc/MpC
 
 
 Bootstrap: docker
@@ -566,18 +566,18 @@ Stage: run
     /planner/planners/ipc2018-symple2/src/search/downward-4
     /planner/planners/ipc2018-symple2/src/search/unitcost
 
-%files from build-ipc2014-opt-symba
-    /planner/planners/ipc2014-opt-symba/plan
-    /planner/planners/ipc2014-opt-symba/src/plan
-    /planner/planners/ipc2014-opt-symba/src/plan-ipc
-    /planner/planners/ipc2014-opt-symba/src/translate
-    /planner/planners/ipc2014-opt-symba/src/preprocess/preprocess
-    /planner/planners/ipc2014-opt-symba/src/search/downward
-    /planner/planners/ipc2014-opt-symba/src/search/downward-1
-    /planner/planners/ipc2014-opt-symba/src/search/downward-2
-    /planner/planners/ipc2014-opt-symba/src/search/downward-4
-    /planner/planners/ipc2014-opt-symba/src/search/dispatch
-    /planner/planners/ipc2014-opt-symba/src/search/unitcost
+%files from build-ipc2014-opt-symba1
+    /planner/planners/ipc2014-opt-symba1/plan
+    /planner/planners/ipc2014-opt-symba1/src/plan
+    /planner/planners/ipc2014-opt-symba1/src/plan-ipc
+    /planner/planners/ipc2014-opt-symba1/src/translate
+    /planner/planners/ipc2014-opt-symba1/src/preprocess/preprocess
+    /planner/planners/ipc2014-opt-symba1/src/search/downward
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-1
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-2
+    /planner/planners/ipc2014-opt-symba1/src/search/downward-4
+    /planner/planners/ipc2014-opt-symba1/src/search/dispatch
+    /planner/planners/ipc2014-opt-symba1/src/search/unitcost
 
 %files from build-ipc2018-fd-2018
     /planner/planners/ipc2018-fd-2018/driver
@@ -666,8 +666,8 @@ Stage: run
     /planner/planners/ipc2018-opt-planning-pdbs/driver
     /planner/planners/ipc2018-opt-planning-pdbs/builds/release64/bin
 
-%files from build-ipc2014-agl-madagascar
-    /planner/planners/ipc2014-agl-madagascar/MpC
+%files from build-ipc2014-agl-mpc
+    /planner/planners/ipc2014-agl-mpc/MpC
 
 %files from build-ipc2014-agl-jasper
     /planner/planners/ipc2014-agl-jasper/translate
