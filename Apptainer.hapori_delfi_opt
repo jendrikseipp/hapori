@@ -130,7 +130,7 @@ From: ubuntu:18.04
 Stage: build-ipc2014-opt-symba1
 
 %files
-    planners/ipc2014-opt-symba1 /planner/planners/ipc2014-opt-symba1
+    planners/ipc2014-opt-symba /planner/planners/ipc2014-opt-symba1
 
 %post
     ## Install all necessary dependencies.
@@ -427,7 +427,7 @@ From: ubuntu:18.04
 Stage: build-ipc2014-agl-mpc
 
 %files
-    planners/ipc2014-agl-mpc /planner/planners/ipc2014-agl-mpc
+    planners/ipc2014-agl-madagascar /planner/planners/ipc2014-agl-mpc
 
 %post
     ## Install all dependencies.
