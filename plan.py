@@ -165,8 +165,7 @@ def main():
 
     image_nick = str(args.image)
     if image_nick not in CONFIGS:
-        print(f"unknown planner {image_nick}")
-        sys.exit()
+        sys.exit(f"unknown planner {image_nick}")
 
     configs = args.configs
     print(f"Image nick: {image_nick}")
@@ -336,8 +335,7 @@ def main():
             "--preprocess-options", "--h2_time_limit", "30"]
             run_image(args, cmd)
         else:
-            print(f"planner {image_nick} not handled!")
-            sys.exit()
+            sys.exit(f"planner {image_nick} not handled!")
 
 
 if __name__ == "__main__":
