@@ -7,7 +7,6 @@ __email__ = "icenamor@inf.uc3m.es"
 import sys
 import string
 import os
-from head import Head
 
 Ntranlate=26
 Npreprocess=49
