@@ -1,11 +1,11 @@
 PLANNERS = [
     (261, ['ipc2018-fd-2018', 'config47']),
-	(147, ['ipc2018-decstar-agl', 'config01']),
+	(147, ['ipc2018-decstar', 'agl-config01']),
 	(145, ['ipc2018-lapkt-bfws', 'dual-bfws-agl']),
 	(127, ['ipc2014-agl-jasper', 'default']),
 	(80, ['ipc2014-agl-mpc', 'default']),
 	(57, ['ipc2014-opt-symba1', 'default']),
-	(54, ['ipc2018-agl-saarplan', 'default']),
+	(54, ['ipc2018-saarplan', 'agl-config01']),
 	(53, ['ipc2018-lapkt-bfws', 'bfws-pref-agl']),
 	(45, ['ipc2018-lapkt-dfs-plus', 'default']),
 	(42, ['ipc2018-agl-mercury2014', 'agl']),
