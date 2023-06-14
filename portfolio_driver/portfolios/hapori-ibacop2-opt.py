@@ -18,10 +18,10 @@ if os.path.exists(schedule_file):
     os.remove(schedule_file)
 
 PLANNERS = DEFAULT_PLANNERS
-model_file = "/planner/src/models/iba_model_data_rf_opt.pkl"
+model_file = "/planner/learners/ibacop2/src/models/iba_model_data_rf_opt.pkl"
 n_planners = "3"
 
-cpt_features_program = "/planner/learners/ibacop2/ibacop-features.img"
+cpt_features_program = "/planner/learners/ibacop2/ibacop-features.sh"
 cmd_args = [
     "-d", DOMAIN,
     "-p", PROBLEM,
