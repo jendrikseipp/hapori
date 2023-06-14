@@ -1,10 +1,5 @@
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-opt-scorpion
-
-
-Bootstrap: docker
-From: ubuntu:18.04
 Stage: build-ipc2018-saarplan
 
 %files
