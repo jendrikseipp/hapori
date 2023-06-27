@@ -1,9 +1,9 @@
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-saarplan
+Stage: build-ipc2018-agl-saarplan
 
 %files
-    planners/ipc2018-saarplan /planner/planners/ipc2018-saarplan
+    planners/ipc2018-saarplan /planner/planners/ipc2018-agl-saarplan
 
 %post
     ## Install all necessary dependencies.
@@ -11,12 +11,12 @@ Stage: build-ipc2018-saarplan
     apt-get -y install python cmake make libboost-dev clang
 
     ## Build your planner
-    cd /planner/planners/ipc2018-saarplan/fast-downward-conjunctions
+    cd /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 
 Bootstrap: docker
@@ -412,13 +412,13 @@ Bootstrap: docker
 From: ubuntu:18.04
 Stage: run
 
-%files from build-ipc2018-saarplan
-    /planner/planners/ipc2018-saarplan/fast-downward.py
-    /planner/planners/ipc2018-saarplan/driver
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/driver
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+%files from build-ipc2018-agl-saarplan
+    /planner/planners/ipc2018-agl-saarplan/fast-downward.py
+    /planner/planners/ipc2018-agl-saarplan/driver
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 %files from build-ipc2018-opt-delfi
     /planner/planners/ipc2018-opt-delfi/driver

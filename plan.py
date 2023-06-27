@@ -70,7 +70,7 @@ CONFIGS = {
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     "ipc2018-opt-metis": ["metis2"],  # Metis 1 is contained in the configurations of Delfi
-    "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
+    "ipc2018-agl-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
     "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
     "ipc2018-symple2": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
 }
@@ -236,7 +236,7 @@ def main():
                 "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
                 "--search-options"] + ds_config
             run_image(args, cmd)
-        elif image_nick == "ipc2018-saarplan":
+        elif image_nick == "ipc2018-agl-saarplan":
             track, temp = config.split('-')
             assert track in ['agl', 'sat'], track
             portfolio_path = DIR / "configs" / f"seq_{track}_saarplan.py"
