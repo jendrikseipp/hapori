@@ -7,7 +7,6 @@ import itertools
 from pathlib import Path
 import subprocess
 import sys
-import tempfile
 import traceback
 
 
@@ -142,8 +141,8 @@ def get_existing_plans(plan_prefix):
 
 
 def run_image(args, cmd):
-    with tempfile.TemporaryDirectory() as d:
-        subprocess.run(cmd, check=args.check, cwd=d)
+    print(f"Calling planner: {cmd}")
+    subprocess.run(cmd, check=args.check)
     plan_prefix = Path(args.planfile).resolve()
     existing_plan_files = [str(plan) for plan in get_existing_plans(plan_prefix)]
 
