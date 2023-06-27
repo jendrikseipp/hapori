@@ -1,9 +1,9 @@
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-saarplan
+Stage: build-ipc2018-agl-saarplan
 
 %files
-    planners/ipc2018-saarplan /planner/planners/ipc2018-saarplan
+    planners/ipc2018-saarplan /planner/planners/ipc2018-agl-saarplan
 
 %post
     ## Install all necessary dependencies.
@@ -11,12 +11,12 @@ Stage: build-ipc2018-saarplan
     apt-get -y install python cmake make libboost-dev clang
 
     ## Build your planner
-    cd /planner/planners/ipc2018-saarplan/fast-downward-conjunctions
+    cd /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 
 Bootstrap: docker
@@ -311,23 +311,23 @@ From: ubuntu:18.04
 Stage: build-learner-ibacop
 
 # Copy planner binary and required files from Stage 1.
-%files 
+%files
     learners/ibacop2 /planner/learners/ibacop2
-       
+
 %post
     ## Install only dependencies for running the planner.
     apt-get update
     apt-get install --no-install-recommends -y \
-    	cmake\
-     	make\
-     	gcc-multilib \
-     	flex \
-     	bison \
-     	g++-multilib \
-     	gawk \
-     	pypy\
-     	python-pandas\
-     	python-sklearn
+        cmake\
+        make\
+        gcc-multilib \
+        flex \
+        bison \
+        g++-multilib \
+        gawk \
+        pypy\
+        python-pandas\
+        python-sklearn
 
     ## Build the planner
     cd /planner/learners/ibacop2
@@ -346,13 +346,13 @@ Bootstrap: docker
 From: ubuntu:18.04
 Stage: run
 
-%files from build-ipc2018-saarplan
-    /planner/planners/ipc2018-saarplan/fast-downward.py
-    /planner/planners/ipc2018-saarplan/driver
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/driver
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+%files from build-ipc2018-agl-saarplan
+    /planner/planners/ipc2018-agl-saarplan/fast-downward.py
+    /planner/planners/ipc2018-agl-saarplan/driver
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 %files from build-ipc2018-symple1
     /planner/planners/ipc2018-symple1/plan
@@ -465,7 +465,7 @@ Stage: run
     apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     # requirements of ibacop-features
     apt-get -y install --no-install-recommends python-pandas python-sklearn
-    
+
     pip2 install -U wheel setuptools
     pip2 install networkx
 
