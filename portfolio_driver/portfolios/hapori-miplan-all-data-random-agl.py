@@ -15,7 +15,7 @@ PLANNERS =[
 	(4, ['ipc2018-fd-2018', 'config00']),
 	(4, ['ipc2018-fd-2018', 'config44']),
 	(16, ['ipc2014-agl-mpc', 'default']),
-	(41, ['ipc2018-saarplan', 'agl-config01']),
+	(41, ['ipc2018-agl-saarplan', 'agl-config01']),
 	(2, ['ipc2018-fd-2018', 'config26']),
 	(2, ['ipc2018-fd-2018', 'config55']),
 	(2, ['ipc2018-fd-2018', 'config01']),
