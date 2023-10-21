@@ -1,6 +1,8 @@
-import os
-import logging
+
 from collections import defaultdict
+from enum import Enum
+import logging
+import os
 
 import numpy
 
@@ -19,24 +21,6 @@ def get_score(portfolio_file):
     assert False, 'Score could not be read from %s' % portfolio_file
 
 
-def find_best_portfolios(path, n):
-    portfolios = [os.path.join(path, filename) for filename in os.listdir(path)
-                  if filename.endswith('.py')]
-    portfolios = [(get_score(p), p) for p in portfolios]
-    portfolios.sort(reverse=True)
-    best = defaultdict(list)
-    for score, portfolio in portfolios:
-        filename, ext = os.path.splitext(os.path.basename(portfolio))
-        parts = filename.split('-')
-        generator = parts[0]
-        if generator == 'fdss':
-            generator = parts[1]
-        if len(best[generator]) < n:
-            best[generator].append(portfolio)
-    assert len(best) == 7, best
-    return best
-
-
 def normalize_domain_name(name):
     removals = ['-', '_']
     removals += ['strips', 'adl', 'opt08', 'sat08']
@@ -49,27 +33,27 @@ def same_domain(name1, name2):
     return normalize_domain_name(name1) == normalize_domain_name(name2)
 
 
-class InvalidPortfolio(Exception):
-    pass
+class Track(Enum):
+    AGL = 1
+    SAT = 2
+    OPT = 3
 
 
 class Portfolio(PlanningReport):
-    def __init__(self, optimal=True, absolute_quality=False, plantime=TIMEOUT, **kwargs):
+    def __init__(self, track, absolute_quality=False, plantime=TIMEOUT, **kwargs):
+        self.track = track
         self.plantime = plantime
-        self.optimal = optimal
         PlanningReport.__init__(self, **kwargs)
         # Use absolute qualities instead of qualities normalized by the number
         # of problems per domain.
         self.absolute_quality = absolute_quality
         # Evaluates performance on a set of "num" training variations
         self.num_variations = None
-        # Standard derivation of variations of total_time
+        # Standard derivation of variations of runtime
         self.variations_stddev = kwargs.get('variations-stddev', 30)
 
         # for output information - this should be redefined by the subclasses
         self.portfolio_name = 'Fastr Portfolio'
-
-        self.final_config = None
 
         # for the portfolio file - additional information can be added in the
         # subclasses
@@ -85,6 +69,9 @@ class Portfolio(PlanningReport):
         # for the portfolio report - this should be redefined by the subclasses
         self.report_descr = ('A portfolio for Fast Downward.')
 
+    def compute_portfolio(self):
+        raise NotImplementedError
+
     def write(self):
         if self.outfile.endswith('.html'):
             self.portfolio_file = self.outfile.replace('.html', '.py')
@@ -98,7 +85,7 @@ class Portfolio(PlanningReport):
         PlanningReport._scan_data(self)
 
         self.commandline_configs = []
-        self.total_times = [] # total_time for each problem-config pair
+        self.runtimes = [] # runtime for each problem-config pair
         self.costs = [] # cost for each problem-config pair
         self.qualities = [] # quality (ipc score) for each problem-config pair
          # True if the specific config was trained on the domain (resp. problem)
@@ -108,19 +95,19 @@ class Portfolio(PlanningReport):
 
         # Save a mapping from domain names to indices in self.problems
         self.domain_to_problem_indices = defaultdict(list)
-        for prob_id, (domain, problem) in enumerate(self.problems):
+        for prob_id, (domain, problem) in enumerate(sorted(self.problem_runs.keys())):
             self.domain_to_problem_indices[domain].append(prob_id)
 
         # transform data matrices to numpy matrices for easier handling
-        self.total_times = numpy.array(self.total_times)
+        self.runtimes = numpy.array(self.runtimes)
         self.orig_qualities = numpy.array(self.qualities)
         self.trained = numpy.array(self.trained)
         # filter qualities of trained domains
         self.qualities = numpy.where(self.trained, 0, self.orig_qualities)
 
         # replace missing times with infty for the evaluator
-        times = numpy.where(numpy.equal(self.total_times, None), numpy.inf,
-                            self.total_times).astype('float')
+        times = numpy.where(numpy.equal(self.runtimes, None), numpy.inf,
+                            self.runtimes).astype('float')
         # define the evaluator
         if self.num_variations:
             self.evaluator = get_norm_average_evaluator(
@@ -137,37 +124,65 @@ class Portfolio(PlanningReport):
 
     def _retrieve_information(self):
         """Parse the passed report."""
+
+        best_costs = {}
+        for (domain, problem, algo), run in self.runs.items():
+            if run["coverage"]:
+                cost = run["cost"]
+                assert cost is not None
+                if problem not in best_costs:
+                    best_costs[(domain, problem)] = cost
+                else:
+                    best_costs[(domain, problem)] = min(best_costs[(domain, problem)], cost)
+
         solved_problems_per_domain = defaultdict(set)
-        commandline_configs_map = {}
         data = defaultdict(dict)
         for (domain, problem, config), run in self.runs.items():
-            quality = run.get('quality')
+            score = 0.
+            runtime = run.get("cpu_time")
+            if runtime is not None:
+                if self.track == Track.AGL:
+                    raise NotImplementedError
+                elif self.track == Track.SAT:
+                    cost = run["cost"]
+                    best_cost = best_costs[(domain, problem)]
+                    assert best_cost <= cost
+                    if cost == 0:
+                        assert best_cost == 0
+                        score = 1.
+                    else:
+                        score = float(best_cost) / cost
+                elif self.track == Track.OPT:
+                    cost = run["cost"]
+                    assert cost == best_costs[(domain, problem)], (problem, config)
+                    score = 1.
+                else:
+                    assert False, self.track
+
             coverage = run.get('coverage')
             if coverage:
-                total_time = run.get('total_time')
+                runtime = run.get('cpu_time')
                 cost = run.get('cost')
                 # solved problems shouldn't miss these attributes otherwise
                 # unsolved problems have to be masked differently
-                assert total_time is not None
+                assert runtime is not None, run
                 # add problem only if it has been solved
                 solved_problems_per_domain[domain].add(problem)
             else: # mask unsolved problems missing
-                total_time = None
+                runtime = None
                 cost = None
-            # Backwards compatibility.
-            commandline_config = run.get('component_options') or run.get('commandline_config')
-            commandline_configs_map[config] = commandline_config
-            data[(domain, problem)][config] = (total_time, cost, quality)
+            data[(domain, problem)][config] = (runtime, cost, score)
+            print(domain, problem, config, runtime, cost, score)
 
-        for domain, problem in self.problems:
-            self.total_times.append([])
+        for domain, problem in sorted(self.problem_runs.keys()):
+            self.runtimes.append([])
             self.costs.append([])
             self.qualities.append([])
             self.trained.append([])
             num_problems = len(solved_problems_per_domain[domain])
-            for config in self.configs:
-                total_time, cost, quality = data[(domain, problem)][config]
-                self.total_times[-1].append(total_time)
+            for config in self.algorithms:
+                runtime, cost, quality = data[(domain, problem)][config]
+                self.runtimes[-1].append(runtime)
                 self.costs[-1].append(cost)
                 if self.absolute_quality:
                     self.qualities[-1].append(quality)
@@ -180,21 +195,6 @@ class Portfolio(PlanningReport):
                     self.qualities[-1].append(normalized_quality)
                 # True if the config was trained on the domain otherwise False
                 self.trained[-1].append(same_domain(domain, config))
-        for config in self.configs:
-            self.commandline_configs.append(self._format_commandline_config(
-                commandline_configs_map[config]))
-
-    def _format_commandline_config(self, commandline_config):
-        commandline_config = [i.strip() for i in commandline_config]
-        # Don't use bounds for optimal planning.
-        if self.optimal:
-            return commandline_config
-
-        for i, entry in enumerate(commandline_config):
-            if entry == "--search":
-                commandline_config[i+1] = (commandline_config[i+1][:-1] +
-                                           ",bound=BOUND)")
-        return commandline_config
 
     def get_domain_score(self, domain, runtimes):
         problem_numbers = self.domain_to_problem_indices[domain]
@@ -211,13 +211,13 @@ class Portfolio(PlanningReport):
 
     def sorted_runtimes(self):
         """
-        Return the runtimes in the order of their configs in self.configs. The
+        Return the runtimes in the order of their configs in self.algorithms. The
         runtime is 0 for configs not included in the schedule.
         """
-        configs_to_times = dict(zip(self.schedule_config_ids,
-                                    self.schedule_runtimes))
+        configs_to_times = dict(list(zip(self.schedule_config_ids,
+                                    self.schedule_runtimes)))
         return (numpy.array([configs_to_times.get(config_id, 0) for config_id in
-                range(len(self.configs))]))
+                range(len(self.algorithms))]))
 
     def reduce_score_based(self, runtimes, granularity=1):
         """
@@ -235,7 +235,7 @@ class Portfolio(PlanningReport):
     def print_portfolio(self):
         """Print the generated portfolio."""
         domain_quotas = []
-        for domain_id, domain in enumerate(self.domains.keys()):
+        for domain in self.domains.keys():
             domain_score = self.get_domain_score(domain, self.sorted_runtimes())
             max_domain_score = self.get_max_domain_score(domain)
             if max_domain_score == 0:
@@ -267,85 +267,23 @@ class Portfolio(PlanningReport):
         params = []
         schedule = self.schedule()
         for config_id, runtime in schedule:
-            config = self.configs[config_id]
-            cmdline_config = self.commandline_configs[config_id]
+            config = self.algorithms[config_id]
             params.append("    # " + config)
-            params.append("    (" + str(int(runtime)) + ", " +
-                          str(cmdline_config) + "), ")
+            params.append(f"    ({int(runtime)}), ")
         rows.append("\n".join(params)[:-2])
         rows.append("]\n")
 
-        if not self.optimal and self.final_config:
-            rows.append("FINAL_CONFIG = [%s]\n" % self.final_config)
-
-        # TODO: Add final config if it is set
         rows.append("portfolio.run(configs=CONFIGS, optimal=%s, timeout=%d)" %
-                    (self.optimal, self.plantime))
+                    (self.track == Track.OPT, self.plantime))
 
         with open(self.portfolio_file, "w") as file_handler:
             file_handler.write("\n".join(rows))
         # Make file executable
-        os.chmod(self.portfolio_file, 0755)
-
-    def parse_portfolio(self, filename):
-        """ Parse portfolio. returns runtimes list.
-        Fails if portfolio was not generated on the same eval directory
-        """
-        def parse_array(fd):
-            open_brakets = 1
-            config_names = []
-            configs_str = '['
-            for line in fd:
-                open_brakets += line.count('[')
-                open_brakets -= line.count(']')
-                configs_str += line
-                line = line.strip()
-                if line.startswith('#'):
-                    config_names.append(line[1:].strip())
-                if not open_brakets:
-                        # end of list
-                        try:
-                            configs = eval(configs_str)
-                        except SyntaxError:
-                            raise InvalidPortfolio()
-                        return config_names, configs
-
-        configs = []
-        config_names = []
-        with open(filename) as fd:
-            for line in fd:
-                if line.startswith('CONFIGS = ['):
-                    names, conf = parse_array(fd)
-                    config_names += names
-                    configs += conf
-                elif line.startswith('FINAL_CONFIG = ['):
-                    names, conf = parse_array(fd)
-                    config_names += names
-
-        if not configs:
-            logging.error('Could not parse portfolio %s' % filename)
-            raise InvalidPortfolio()
-        times = [time for time, _ in configs]
-        # append final time
-        times.append(self.plantime - sum(times))
-        missing_configs = set(config_names) - set(self.configs)
-        if missing_configs:
-            logging.error(
-                "The following configs appear in portfolio but "
-                "NOT in eval directory. Portfolio is INVALID:"
-                "\n%s" % missing_configs)
-            raise InvalidPortfolio()
-
-        configs_to_times = dict(zip(config_names, times))
-        runtimes = [configs_to_times.get(conf, 0) for conf in self.configs]
-        logging.info("parsed runtimes from %s are: %s" %
-                     (filename.split("/")[-1], runtimes))
-        logging.info("total runtime is %d" % sum(runtimes))
-        return numpy.array(runtimes)
+        os.chmod(self.portfolio_file, 0o755)
 
     def get_markup(self):
-        sorted_runtimes = self.sorted_runtimes()
-        total_runtime = sum(sorted_runtimes)
+        sorted_time_limits = self.sorted_runtimes()
+        total_runtime = sum(sorted_time_limits)
 
         rows = []
         rows.append('= %s =' % self.portfolio_name)
@@ -358,19 +296,22 @@ class Portfolio(PlanningReport):
         rows.append('== Results ==')
         rows.append('The results on the training set "%s".' % self.eval_dir)
         rows.append('|| Score |')
-        rows.append('| %.2f / %.2f |' % (self.evaluator.score(sorted_runtimes),
+        rows.append('| %.2f / %.2f |' % (self.evaluator.score(sorted_time_limits),
                                          self.evaluator.max_score()))
 
         rows.append('== Schedule ==')
         rows.append('|| Id | Config | Runtime | Score | Coverage |')
-        solved_problems = ((self.total_times < (sorted_runtimes + EPSILON)) *
-                           (numpy.not_equal(self.total_times, None)))
+        print(self.runtimes)
+        print(sorted_time_limits)
+        print()
+        solved_problems = ((self.runtimes < (sorted_time_limits + EPSILON)) *
+                           (numpy.not_equal(self.runtimes, None)))
         num_solved_by_config = numpy.sum(solved_problems, axis=0)
         for config_id, runtime in zip(self.schedule_config_ids,
                                       self.schedule_runtimes):
             rows.append('| %i | %s | %i | %.2f | %i |' % (config_id,
-                self.configs[config_id], runtime,
-                self.evaluator.configs_scores(sorted_runtimes)[config_id],
+                self.algorithms[config_id], runtime,
+                self.evaluator.configs_scores(sorted_time_limits)[config_id],
                 num_solved_by_config[config_id]))
         rows.append('|  | TOTAL | %i |  | %i |' % (total_runtime,
                 numpy.sum(numpy.max(solved_problems, axis=1))))
@@ -379,7 +320,7 @@ class Portfolio(PlanningReport):
         rows.append('|| Id | Domain | Score |')
         domain_quotas = []
         for domain_id, domain in enumerate(self.domains.keys()):
-            domain_score = self.get_domain_score(domain, sorted_runtimes)
+            domain_score = self.get_domain_score(domain, sorted_time_limits)
             max_domain_score = self.get_max_domain_score(domain)
             if max_domain_score == 0:
                 domain_quotas.append(0)
@@ -396,31 +337,31 @@ class Portfolio(PlanningReport):
         rows.append('== Training data ==')
         rows.append('General training data information.')
         rows.append('|| Number of Problems | Number of Solved Problems |')
-        solved_problems = numpy.not_equal(self.total_times, None)
+        solved_problems = numpy.not_equal(self.runtimes, None)
         solved_by_any_config = numpy.sum(solved_problems, axis=1) > 0
         num_solved_in_training_data = numpy.sum(solved_by_any_config)
-        rows.append('| %i | %i |' % (len(self.problems),
+        rows.append('| %i | %i |' % (len(self.problem_runs),
                                      num_solved_in_training_data))
 
         rows.append('=== List of Problems ===')
         rows.append('The bolded qualities and times indicate problems that can '
                     'be solved by this portfolio in the training set.')
         rows.append('|| Domain | Problem | %s |' %
-                    ' | '.join(str(i) for i in range(len(self.configs))))
-        for problem_id, (domain, problem) in enumerate(self.problems):
+                    ' | '.join(str(i) for i in range(len(self.algorithms))))
+        for problem_id, (domain, problem) in enumerate(sorted(self.problem_runs.keys())):
             columns = []
             columns.append(domain)
             columns.append(problem)
-            for config_id, config in enumerate(self.configs):
-                total_time = self.total_times[problem_id][config_id]
-                if total_time is None:
+            for config_id, config in enumerate(self.algorithms):
+                runtime = self.runtimes[problem_id][config_id]
+                if runtime is None:
                     columns.append("")
                 else:
-                    runtime = sorted_runtimes[config_id]
-                    if total_time <= runtime:
-                        columns.append("**%.2f**" % (total_time))
+                    time_limit = sorted_time_limits[config_id]
+                    if runtime <= time_limit:
+                        columns.append("**%.2f**" % (runtime))
                     else:
-                        columns.append("%.2f" % (total_time))
+                        columns.append("%.2f" % (runtime))
             rows.append('| %s |' % ' | '.join(columns))
 
         return '\n'.join(rows)
@@ -497,7 +438,7 @@ class PortfolioAverageEvaluator(object):
 
 def norm_time_variation_generator(times, stddev=1.0, num=100):
     """
-    Genrates 'num' normally distributed variations of total_time. Times have to
+    Genrates 'num' normally distributed variations of runtime. Times have to
     be pure numerical. You are responsible for replacing missing values with
     appropriate numerical ones.
     """

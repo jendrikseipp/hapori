@@ -35,7 +35,7 @@ class PortfolioSimulator(PlanningReport):
         props = Properties()
         runtimes = self.get_runtimes()
         # Iterate over problems
-        for (domain, problem), problem_runs in self.problem_runs.items():
+        for (domain, problem), problem_runs in list(self.problem_runs.items()):
             ext_config = 'WORK-simulate-%d-%s' % (self.time_limit, self.portfolio_name)
             run_id = '-'.join([ext_config, domain, problem])
             cost = None

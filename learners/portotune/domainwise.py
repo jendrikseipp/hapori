@@ -63,17 +63,17 @@ class DomainwisePortfolio(Portfolio):
         all_times = np.where(self.total_times is None, np.inf,
                              self.total_times).astype('float')
 
-        self.schedule_runtimes = [0 for config in self.configs]
-        self.schedule_config_ids = range(len(self.configs))
+        self.schedule_runtimes = [0 for config in self.algorithms]
+        self.schedule_config_ids = list(range(len(self.algorithms)))
 
-        print self.configs
-        print all_times
-        print self.qualities
-        print self.domains.keys()
+        print(self.algorithms)
+        print(all_times)
+        print(self.qualities)
+        print(list(self.domains.keys()))
 
         self.values = defaultdict(dict)
         for domain_number, domain in enumerate(self.domains.keys()):
-            for config_number, config in enumerate(self.configs):
+            for config_number, config in enumerate(self.algorithms):
                 rows = self.domain_to_problem_indices[domain]
                 times = all_times[rows, config_number]
                 qualities = self.qualities[rows, config_number]
@@ -83,53 +83,53 @@ class DomainwisePortfolio(Portfolio):
         remaining_domains = set(self.domains.keys())
         while remaining_domains:
             domain, gap = self.get_next_domain(sorted(remaining_domains))
-            print 'NEXT DOMAIN', domain, gap
+            print('NEXT DOMAIN', domain, gap)
             improved = self.improve_domain(domain)
             if not improved:
                 remaining_domains.remove(domain)
 
-        print 'Possible improvement:', self.get_possible_improvement()
+        print('Possible improvement:', self.get_possible_improvement())
 
         # Round to next integers at the very end.
         self.schedule_runtimes = [int(time + 1 - EPSILON)
                                   for time in self.schedule_runtimes]
 
     def improve_domain(self, domain):
-        print 'SEARCHING CONFIG FOR', domain
+        print('SEARCHING CONFIG FOR', domain)
 
         config_id, max_improvement, min_time = self.get_fastest_config(domain)
         if config_id is None:
-            print 'No config could be found for', domain
+            print('No config could be found for', domain)
             return False
 
         if sum(self.schedule_runtimes) + min_time > self.plantime:
-            print 'Schedule already uses all available plan time:',
-            print '%s + %s > %s' % (sum(self.schedule_runtimes), min_time,
-                                    self.plantime)
+            print('Schedule already uses all available plan time:', end=' ')
+            print('%s + %s > %s' % (sum(self.schedule_runtimes), min_time,
+                                    self.plantime))
             return False
 
-        fastest_config = self.configs[config_id]
-        print 'FASTEST CONFIG', fastest_config, min_time
+        fastest_config = self.algorithms[config_id]
+        print('FASTEST CONFIG', fastest_config, min_time)
 
         self.schedule_runtimes[config_id] += min_time
         self.update_solved_problems(fastest_config, config_id)
         return True
 
     def update_solved_problems(self, fastest_config, config_id):
-        for domain in self.domains.keys():
+        for domain in list(self.domains.keys()):
             solved_problems = self.values[domain][fastest_config].set_runtime(
                                     self.schedule_runtimes[config_id])
-            for config in self.configs:
+            for config in self.algorithms:
                 self.values[domain][config].set_problems_solved(solved_problems)
 
     def get_fastest_config(self, domain):
-        min_time = sys.maxint
+        min_time = sys.maxsize
         fastest_config_id = None
         max_improvement = None
-        for config_id, config in enumerate(self.configs):
+        for config_id, config in enumerate(self.algorithms):
             values = self.values[domain][config]
             improvement, time, solved_probs = values.get_tradeoff()
-            print values, improvement, time, solved_probs
+            print(values, improvement, time, solved_probs)
             # Change if planner is faster or is equally fast and better
             if improvement > 0 and (time < min_time or (
                         time == min_time and improvement > max_improvement)):
@@ -141,9 +141,9 @@ class DomainwisePortfolio(Portfolio):
 
     def get_possible_improvement(self):
         improvement = 0
-        for domain, configs in self.values.items():
+        for domain, configs in list(self.values.items()):
             improvement += sum(values.get_possible_improvement()
-                               for values in configs.values())
+                               for values in list(configs.values()))
         return improvement
 
     def get_gap(self, domain):
@@ -156,9 +156,9 @@ class DomainwisePortfolio(Portfolio):
         """
         score_max = self.get_max_domain_score(domain)
         score_now = self.get_domain_score(domain, self.schedule_runtimes)
-        print 'GAP', domain, score_max, score_now, score_max - score_now
+        print('GAP', domain, score_max, score_now, score_max - score_now)
         return score_max - score_now
 
     def get_next_domain(self, remaining_domains):
         gaps = [(domain, self.get_gap(domain)) for domain in remaining_domains]
-        return max(gaps, key=lambda (domain, gap): gap)
+        return max(gaps, key=lambda domain_gap: domain_gap[1])

@@ -50,9 +50,9 @@ def dump_portfolio(track, configs, timeouts, results, **kwargs):
 class Results(object):
     def __init__(self, props, track, timeout):
         self.config_to_options, self.problems, data = self._parse_entries(props, track, timeout)
-        self.configs = sorted(self.config_to_options.keys())
-        assert len(data) == len(self.configs) * len(self.problems)
-        self.runtimes, self.scores = self._get_arrays(self.configs, self.problems, data)
+        self.algorithms = sorted(self.config_to_options.keys())
+        assert len(data) == len(self.algorithms) * len(self.problems)
+        self.runtimes, self.scores = self._get_arrays(self.algorithms, self.problems, data)
 
     def _parse_entries(self, runs, track, timeout):
         configs = {}
@@ -137,7 +137,7 @@ class Results(object):
         runtimes = np.zeros((len(problems), len(configs)))
         scores = np.zeros((len(problems), len(configs)))
         for p, problem in enumerate(self.problems):
-            for c, config in enumerate(self.configs):
+            for c, config in enumerate(self.algorithms):
                 time, score = data[config, problem]
                 if time is None:
                     assert score == 0.
@@ -157,7 +157,7 @@ class Results(object):
 
     def solution_times(self, problem_id):
         result = {}
-        for c, config in enumerate(self.configs):
+        for c, config in enumerate(self.algorithms):
             time = self.runtimes[problem_id][c]
             if time != np.inf:
                 result[config] = time
@@ -168,16 +168,16 @@ class Results(object):
 
     def dump_statistics(self):
         print(len(self.problems), "problems")
-        print(len(self.configs), "configs")
-        print(len(self.configs) * len(self.problems), "results")
+        print(len(self.algorithms), "configs")
+        print(len(self.algorithms) * len(self.problems), "results")
         print(self._total_solved(), "problems solved by someone")
         max_num_solved = -1
         max_score = -1
-        for c, config in enumerate(self.configs):
+        for c, config in enumerate(self.algorithms):
             num_solved = np.sum(self.runtimes[:,c] != np.inf)
             print(num_solved, "problems solved by", config)
             max_num_solved = max(max_num_solved, num_solved)
-        for c, config in enumerate(self.configs):
+        for c, config in enumerate(self.algorithms):
             score = np.sum(self.scores[:,c])
             print("%.2f" % score, "score by", config)
             max_score = max(max_score, score)
@@ -189,8 +189,8 @@ class Portfolio(object):
     def __init__(self, results, timeouts):
         self.results = results
         self.timeouts = timeouts
-        self.configs = sorted(self.timeouts.keys())
-        self.timeouts_array = np.array([self.timeouts[config] for config in self.configs])
+        self.algorithms = sorted(self.timeouts.keys())
+        self.timeouts_array = np.array([self.timeouts[config] for config in self.algorithms])
 
     def solves_problem(self, problem_id):
         solution_times = self.results.solution_times(problem_id)
@@ -215,7 +215,7 @@ class Portfolio(object):
         return np.sum(maxima)
 
     def successors(self, granularity):
-        for config in self.configs:
+        for config in self.algorithms:
             succ_timeouts = self.timeouts.copy()
             succ_timeouts[config] += granularity
             yield Portfolio(self.results, succ_timeouts)
@@ -224,14 +224,14 @@ class Portfolio(object):
         used_time = self.total_timeout()
         unused_time = timeout - used_time
         for additional_time in range(granularity, unused_time + 1, granularity):
-            for config in self.configs:
+            for config in self.algorithms:
                 succ_timeouts = self.timeouts.copy()
                 succ_timeouts[config] += additional_time
                 yield Portfolio(self.results, succ_timeouts)
 
     def reduce_score_based(self, granularity):
         score = self.ipc_score()
-        for c, config in enumerate(self.configs):
+        for c, config in enumerate(self.algorithms):
             # Reduce timeout for this config until we hit zero or lose
             # a problem.
             while self.timeouts[config] > granularity + EPSILON:
@@ -247,7 +247,7 @@ class Portfolio(object):
         print("Marginal contributions:")
         num_solved = self.num_solved()
         score = self.ipc_score()
-        for config in self.configs:
+        for config in self.algorithms:
             if self.timeouts[config] > EPSILON:
                 succ_timeouts = self.timeouts.copy()
                 succ_timeouts[config] = 0
@@ -260,7 +260,7 @@ class Portfolio(object):
     def dump(self):
         print("portfolio for %.2f seconds solves %d problems with score %.2f:" % (
             self.total_timeout(), self.num_solved(), self.ipc_score()))
-        for config in self.configs:
+        for config in self.algorithms:
             print("   %7.2f seconds for %s" % (self.timeouts[config], config))
 
     def dump_unsolved(self):

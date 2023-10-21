@@ -33,7 +33,7 @@ class IncreasingTimelimitPortfolio(Portfolio):
         while overall_runtime < self.plantime and unsolved_problems:
             # try to retrieve the qualities for each config in the current
             # timeslot interval
-            runtimes = [current_timeslot for _ in range(len(self.configs))]
+            runtimes = [current_timeslot for _ in range(len(self.algorithms))]
             configs_scores = self.evaluator.configs_scores(
                 runtimes, list(unsolved_problems))
             if not numpy.sum(configs_scores).astype(bool):

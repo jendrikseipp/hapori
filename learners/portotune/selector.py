@@ -43,7 +43,7 @@ class SelectorPortfolio(Portfolio):
                 runtime, subset = self.select_configs_coverage(subset_size)
             self.settings.append('Subset size: %i' % subset_size)
         else:
-            raise StandardError('Subset can only be a number or auto')
+            raise Exception('Subset can only be a number or auto')
         self.schedule_config_ids = numpy.array(subset)
         # uniform schedule
         self.schedule_runtimes = numpy.array(
@@ -77,7 +77,7 @@ class SelectorPortfolio(Portfolio):
     def _auto_subset_sizes(self):
         """ Returns iterable of all posible subset sizes
         """
-        return range(1, self.total_times.shape[1])
+        return list(range(1, self.total_times.shape[1]))
 
     def filter_unsolved_problems(self, times, plantime_single):
         """ Returns times as numpy array with all missing values or
@@ -133,5 +133,5 @@ class UniformPortfolio(SelectorPortfolio):
                              'planning system. ' % self.plantime)
 
     def compute_portfolio(self):
-        self.subset_size = len(self.configs)
+        self.subset_size = len(self.algorithms)
         SelectorPortfolio.compute_portfolio(self)

@@ -3,64 +3,25 @@ import random
 
 import numpy
 
-from portfolio import Portfolio, EPSILON, InvalidPortfolio
+from portfolio import Portfolio, EPSILON
 
 
 class RanitSearchPortfolio(Portfolio):
     def __init__(self, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
-        self.portfolios = kwargs.get('portfolios', [])
-        self.max_tries = kwargs.get('max_tries', 20000)
-        self.use_reduce = kwargs.get('use_reduce', False)
-
-        self.settings.append('Maximum number of tries: %i' % self.max_tries)
-        portfolios = []
-        if self.portfolios:
-            for portfolio in self.portfolios:
-                portfolios.append(portfolio.split("/")[-1])
-        else:
-            portfolios.append('Stupid uniform')
-        self.settings.append('Used portfolios: {%s}' % ",".join(portfolios))
-
-        self.portfolio_name = 'Fastr Ranitbest Portfolio'
-        self.report_descr = (('A portfolio of **%i seconds** for'
-                              'the FD planning '
-                              'algorithm. Generation based on the successive '
-                              'improvement of a set of given portfolio '
-                              'schedules.') % self.plantime, )
+        self.max_tries = 20000
+        self.use_reduce = False
 
     def compute_portfolio(self):
-        """ implementation of compute_portfolio method as it is implemented in
+        """Implementation of compute_portfolio method as it is implemented in
         IncreasingTimeslotPortfolio.
         """
-        self.schedule_runtimes = numpy.zeros(len(self.configs))
-        self.schedule_config_ids = range(len(self.configs))
-        best_score = -1
-        best_runtimes = None
-        if self.portfolios:
-            for filename in self.portfolios:
-                logging.info(
-                    "using portfolio %s as initialization" % filename)
-                try:
-                    runtimes = self.parse_portfolio(filename)
-                except InvalidPortfolio:
-                    logging.info("Skipping this file")
-                else:
-                    score, runtimes = self.improve_portfolio(runtimes)
-                    if score > best_score:
-                        logging.info(
-                            'The portfolio derived from %s is the new best. '
-                            'Score: %s' % (filename, score))
-                        best_score = score
-                        best_runtimes = runtimes
-        else:
-            logging.warn("No initial portfolios given, using stupid uniform "
-              "initialization")
-            num_configs = len(self.configs)
-            runtimes = numpy.ones(num_configs,
-                          dtype=int) * self.plantime / num_configs
-            score, best_runtimes = self.improve_portfolio(runtimes)
-        logging.info("DONE computing portfolio, final score: %s" % best_score)
+        self.schedule_runtimes = numpy.zeros(len(self.algorithms))
+        self.schedule_config_ids = list(range(len(self.algorithms)))
+        num_configs = len(self.algorithms)
+        runtimes = numpy.ones(num_configs, dtype=int) * self.plantime / num_configs
+        score, best_runtimes = self.improve_portfolio(runtimes)
+        logging.info("DONE computing portfolio, final score: %s" % score)
         self.schedule_runtimes = best_runtimes
 
     def successors(self, runtimes):
@@ -72,7 +33,7 @@ class RanitSearchPortfolio(Portfolio):
             """
             while True:
                 # sample to ids without replacement
-                id1, id2 = random.sample(xrange(num_configs), 2)
+                id1, id2 = random.sample(range(num_configs), 2)
                 # choose a random granularity
                 # would it make sense to sample from a non-unifrom distribution
                 # eg prefering small values?
