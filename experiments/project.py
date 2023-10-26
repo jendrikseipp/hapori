@@ -63,6 +63,8 @@ SUITE_STRIPS = ['agricola-strips', 'airport-strips', 'barman-strips', 'blockswor
 # IMPORTANT: the fsc-*-strips tasks actually contain conditional effects. We keep the old names for data integrity.
 SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-blocks-strips', 'fsc-grid-a-strips', 'fsc-grid-r-strips', 'fsc-hall-strips', 'fsc-visualmarker-strips', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adder-adl', 't0-coins-adl', 't0-comm-adl', 't0-grid-dispose-adl', 't0-grid-push-adl', 't0-grid-trash-adl', 't0-sortnet-adl', 't0-sortnet-alt-adl', 't0-uts-adl', 'trucks-adl']
 
+SUITE_IPC23 = ["folding-opt23-adl", "folding-sat23-adl", "labyrinth-opt23-adl", "labyrinth-sat23-adl", "quantum-layout-opt23-strips", "quantum-layout-sat23-strips", "recharging-robots-opt23-adl", "recharging-robots-sat23-adl", "ricochet-robots-opt23-adl", "ricochet-robots-sat23-adl", "rubiks-cube-opt23-adl", "rubiks-cube-sat23-adl", "slitherlink-opt23-adl", "slitherlink-sat23-adl"]
+
 SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
 # fmt: on
 
