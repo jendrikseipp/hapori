@@ -12,6 +12,9 @@ from . import cleanup
 from . import run_components
 
 
+DIR_CURR_FILE = os.path.abspath(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(DIR_CURR_FILE)))
+
 def main():
     args = arguments.parse_args()
     logging.basicConfig(level=getattr(logging, args.log_level.upper()),
@@ -34,7 +37,7 @@ def main():
             if component == "translate":
                 run_components.run_translate(args)
                 #do h2 preprocessing
-                os.system("/planner/h2-fd-preprocessor/builds/release32/bin/preprocess < output.sas")
+                os.system(os.path.join(BASE_DIR, "h2-fd-preprocessor/builds/release32/bin/preprocess") + " < output.sas")
             elif component == "search":
                 exitcode = run_components.run_search(args)
             elif component == "validate":

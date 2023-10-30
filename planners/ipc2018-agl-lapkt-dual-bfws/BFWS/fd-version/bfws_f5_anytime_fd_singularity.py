@@ -8,6 +8,8 @@ from libbfws import BFWS
 
 ALIASES = {}
 
+DIR_CURR_FILE = os.path.abspath(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(DIR_CURR_FILE)))
 
 def main( domain_file, problem_file, output ) :
 	task = BFWS( )
@@ -56,7 +58,7 @@ def main( domain_file, problem_file, output ) :
         #NIR: call FD implementation of Restarting WAstar
 
 
-        fd_cmd =  "/planner/Fast-Downward-2018-2/fast-downward.py --build release64 --alias lazy-rwastar --plan-file {} --external-bound {} {} {}".format(output, int(task.plan_cost),domain_file, problem_file)
+        fd_cmd =  os.path.join(BASE_DIR, "Fast-Downward-2018-2/fast-downward-singularity.py") + " --build release64 --alias lazy-rwastar --plan-file {} --external-bound {} {} {}".format(output, int(task.plan_cost),domain_file, problem_file)
         os.system(fd_cmd)
 
 def debug() :
