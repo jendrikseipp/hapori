@@ -220,7 +220,7 @@ Stage: build-ipc2018-lapkt-dfs-plus
     strip --strip-all /planner/planners/ipc2018-lapkt-dfs-plus/dfs_plus
     ## Build planner for FD-parser
     cd ../dfs_plus
-    #./build.py
+    ./build.py
 
 Bootstrap: docker
 From: ubuntu:18.04
