@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """
 Example experiment for running Singularity/Apptainer planner images.
@@ -66,25 +66,22 @@ assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
 MEMORY_LIMIT = 3500  # MiB
 if RUNNING_ON_CLUSTER:
-    # SUITE = project.SUITE_IPC23
-    SUITE = ["miconic-strips:0-p01.pddl"]
+    SUITE = project.SUITE_IPC23
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
         memory_per_cpu="4028M",
         cpus_per_task=1,
         export=["PATH"],
-        # Until recently, we had to load the Singularity module here
-        # by adding "module load Singularity/2.6.1 2> /dev/null".
     )
-    OPT_TIME_LIMIT = 300
+    OPT_TIME_LIMIT = 1800
     SAT_TIME_LIMIT = 300
 else:
     # SUITE = ["labyrinth-opt23-adl:p01.pddl", "recharging-robots-opt23-adl:p01.pddl"]
     SUITE = ["miconic-strips:0-p01.pddl"]
-    ENVIRONMENT = LocalEnvironment(processes=2)
-    OPT_TIME_LIMIT = 5
-    SAT_TIME_LIMIT = 5
+    ENVIRONMENT = LocalEnvironment(processes=4)
+    OPT_TIME_LIMIT = 1
+    SAT_TIME_LIMIT = 1
 
 ATTRIBUTES = [
     "cost",
@@ -97,8 +94,8 @@ ATTRIBUTES = [
     "used_memory",
     "resident_memory",
     "virtual_memory",
+    "invalid_plan",
 ]
-
 
 
 def get_image_name(file_name):
@@ -113,7 +110,7 @@ def get_image_name(file_name):
 def is_opt_config(image_name, config_name):
     image_name = image_name.lower()
     config_name = config_name.lower()
-    for k , v in [("opt", True), ("sat", False), ("agl", False)]:
+    for k, v in [("opt", True), ("sat", False), ("agl", False)]:
         if config_name.startswith(k) or config_name.endswith(k):
             return v
     if image_name == "ipc2018-fd-2018":
@@ -129,8 +126,6 @@ def is_opt_config(image_name, config_name):
 
 
 def get_configs(name):
-    if name in plan.SINGLE_CONFIG_IMAGES:
-        yield "default", name
     configs = plan.CONFIGS.get(name)
     assert configs is not None
     for config_name in configs:
@@ -152,9 +147,9 @@ def main(image_name):
     exp.add_resource("run_plan", DIR.parent / "plan.py")
     exp.add_resource("fd_2018_configs", DIR.parent / "configs/fd_2018_configs.py")
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
+    exp.add_resource("run_validate", "run-validate.sh")
 
-# list(plan.CONFIGS.keys()) +
-    for planner_nick in plan.SINGLE_CONFIG_IMAGES:
+    for planner_nick in list(plan.CONFIGS.keys()):
         for config_name, planner_name in get_configs(planner_nick):
             time_limit = OPT_TIME_LIMIT if is_opt_config(planner_nick, config_name) else SAT_TIME_LIMIT
             for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
@@ -185,7 +180,7 @@ def main(image_name):
                         config_name
                     ],
                 )
-                run.add_command("validate", ["validate", "{domain}", "{problem}", "sas_plan"])
+                run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
                 # Remove temporary files from old Fast Downward versions.
                 run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
                 run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
@@ -197,7 +192,6 @@ def main(image_name):
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
-    # exp.add_parse_again_step()
     exp.run_steps()
 
 if __name__ == "__main__":
