@@ -505,11 +505,11 @@ Stage: build-ipc2018-agl-olcff
 
     ## Build your planner
     cd /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions
-    ./build.py release64clangpgonative -j4
+    ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin/preprocess
-    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin/downward
+    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin/downward
 
 
 Bootstrap: docker
@@ -687,22 +687,11 @@ Stage: run
 %files from build-ipc2018-agl-olcff
     /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/driver
     /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/fast-downward.py
-    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64clangpgonative/bin
+    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin
 
 %files
     configs /planner/configs
     plan.py /planner/plan.py
-    run-portfolio.py /planner/run-portfolio.py
-    portfolio_driver /planner/portfolio_driver
-    learners/delfi/create-image-from-graph.py /planner/create-image-from-graph.py
-    learners/delfi/opt_planners.json /planner/opt_planners.json
-    learners/delfi/plan-ipc.py /planner/plan-ipc.py
-    learners/delfi/requirements.txt /planner/requirements.txt
-    learners/delfi/sat_planners.json /planner/sat_planners.json
-    learners/delfi/timers.py /planner/timers.py
-    learners/delfi/translate /planner/translate
-    learners/delfi/models/optimal.json /planner/models/optimal.json
-    learners/delfi/models/optimalmodel* /planner/models/
 
 %post
     apt-get update

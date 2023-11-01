@@ -332,7 +332,7 @@ def main():
             run_image(args, cmd)
         elif image_nick == "ipc2018-agl-olcff":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward-conjunctions/fast-downward.py",
-            "--build=release64clangpgonative",
+            "--build=release64",
             "--plan-file", args.planfile,
             args.domainfile, args.problemfile,
             "--search-options",
