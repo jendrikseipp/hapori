@@ -7,6 +7,10 @@ from lab.parser import Parser
 
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
+    props["claimed_coverage"] = int("Solution found." in props)
+    if props["coverage"] != props["claimed_coverage"]:
+        print(f"unexpected error: {props}", file=sys.stderr)
+        props["error"] = "unexpected-error"
 
 def invalid_plan(content, props):
     props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1

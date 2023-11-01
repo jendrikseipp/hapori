@@ -70,7 +70,11 @@ if RUNNING_ON_CLUSTER:
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
-        memory_per_cpu="4028M",
+        # The limit of 3947 MiB is a virtual memory size limit set
+        # externally (by slurm?). This can be observed using
+        # resource.getrlimit(resource.RLIMIT_AS). So it seems
+        # reasonable to use this as a default limit.
+        memory_per_cpu="3947M",
         cpus_per_task=1,
         # paths obtained via:
         # $ module purge
