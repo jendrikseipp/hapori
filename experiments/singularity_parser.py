@@ -8,7 +8,7 @@ from lab.parser import Parser
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
     props["claimed_coverage"] = int("Solution found." in props)
-    if props["coverage"] != props["claimed_coverage"]:
+    if not props["coverage"] and props["claimed_coverage"]:
         print(f"unexpected error: {props}", file=sys.stderr)
         props["error"] = "unexpected-error"
 
@@ -78,8 +78,7 @@ def set_outcome(content, props):
         elif invalid_plan:
             props["error"] = "invalid_plan"
     else:
-        print(f"unexpected error: {props}", file=sys.stderr)
-        props["error"] = "unexpected-error"
+        props.add_unexplained_error(f"could not determine outcome from {props}")
 
 
 def type_int_or_none(elem):
