@@ -66,8 +66,22 @@ assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
 MEMORY_LIMIT = 3500  # MiB
 if RUNNING_ON_CLUSTER:
-    #SUITE = project.SUITE_IPC23
-    SUITE = ["miconic-strips:0-p01.pddl"]
+    SUITE = [
+        "folding-opt23-adl:p01.pddl",
+        # "folding-sat23-adl:p01.pddl",
+        "labyrinth-opt23-adl:p01.pddl",
+        # "labyrinth-sat23-adl:p01.pddl",
+        "quantum-layout-opt23-strips:p01.pddl",
+        # "quantum-layout-sat23-strips:p01.pddl",
+        "recharging-robots-opt23-adl:p01.pddl",
+        # "recharging-robots-sat23-adl:p01.pddl",
+        "ricochet-robots-opt23-adl:p01.pddl",
+        # "ricochet-robots-sat23-adl:p01.pddl",
+        "rubiks-cube-opt23-adl:p01.pddl",
+        # "rubiks-cube-sat23-adl:p01.pddl",
+        "slitherlink-opt23-adl:p01.pddl",
+        # "slitherlink-sat23-adl",
+    ]
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
@@ -89,7 +103,7 @@ if RUNNING_ON_CLUSTER:
     SAT_TIME_LIMIT = 60
 else:
     # SUITE = ["labyrinth-opt23-adl:p01.pddl", "recharging-robots-opt23-adl:p01.pddl"]
-    SUITE = ["miconic-strips:0-p01.pddl"]
+    SUITE = ["folding-opt23-adl:p01.pddl"]
     ENVIRONMENT = LocalEnvironment(processes=4)
     OPT_TIME_LIMIT = 1
     SAT_TIME_LIMIT = 1
