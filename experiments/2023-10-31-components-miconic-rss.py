@@ -66,7 +66,8 @@ assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
 MEMORY_LIMIT = 3500  # MiB
 if RUNNING_ON_CLUSTER:
-    SUITE = project.SUITE_IPC23
+    #SUITE = project.SUITE_IPC23
+    SUITE = ["miconic-strips:0-p01.pddl"]
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
