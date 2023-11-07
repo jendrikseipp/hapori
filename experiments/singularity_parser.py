@@ -79,6 +79,7 @@ def set_outcome(content, props):
             props["error"] = "invalid_plan"
     else:
         props.add_unexplained_error(f"could not determine outcome from {props}")
+        props["error"] = "unknown-outcome"
 
 
 def type_int_or_none(elem):
