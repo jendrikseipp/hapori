@@ -28,7 +28,7 @@ class Track(Enum):
 
 
 class Portfolio(PlanningReport):
-    def __init__(self, track, absolute_score=False, plantime=TIMEOUT, **kwargs):
+    def __init__(self, track, absolute_score=True, plantime=TIMEOUT, **kwargs):
         self.track = track
         self.plantime = plantime
         PlanningReport.__init__(self, **kwargs)
@@ -161,7 +161,7 @@ class Portfolio(PlanningReport):
                 runtime = None
                 cost = None
             data[(domain, problem)][config] = (runtime, cost, score)
-            print(domain, problem, config, runtime, cost, score)
+            #print(domain, problem, config, runtime, cost, score)
 
         for domain, problem in sorted(self.problem_runs.keys()):
             self.runtimes.append([])
