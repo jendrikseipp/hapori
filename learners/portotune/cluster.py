@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 from collections import defaultdict
 
 from scipy.cluster.vq import kmeans, vq

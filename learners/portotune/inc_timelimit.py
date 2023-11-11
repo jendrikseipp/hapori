@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import numpy as np
 
 from portfolio import EPSILON, Portfolio

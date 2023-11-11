@@ -298,8 +298,7 @@ class Portfolio(PlanningReport):
         rows = []
         rows.append("= %s =" % self.portfolio_name)
         rows.append("%s" % self.report_descr)
-        for setting in self.settings:
-            rows.append("- %s" % setting)
+        rows.extend("- %s" % setting for setting in self.settings)
         rows.append("")
         rows.append("")
 
@@ -422,7 +421,7 @@ class PortfolioEvaluator:
         best_quality_per_config = np.max(solved_problems_quality, axis=1)
         return np.sum(best_quality_per_config)
 
-    def max_score(self, problems_id_list=None):
+    def max_score(self):
         return self.score(np.infty)
 
     def configs_scores(self, runtimes, problems_id_list=None):
@@ -446,7 +445,7 @@ class PortfolioAverageEvaluator:
         # create evaluators for time variations
         self.evaluators = [PortfolioEvaluator(t, qualities) for t in times_variations]
 
-    def max_score(self, problems_id_list=None):
+    def max_score(self):
         return self.score(np.infty)
 
     def score(self, runtimes, problems_id_list=None):
