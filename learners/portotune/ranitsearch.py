@@ -29,8 +29,7 @@ class RanitSearchPortfolio(Portfolio):
         max_runtime = self.plantime / 2
 
         def rand_swap(succ_runtimes):
-            """ swap a random runtime proportion between to random configs ==
-            """
+            """swap a random runtime proportion between to random configs =="""
             while True:
                 # sample to ids without replacement
                 id1, id2 = random.sample(range(num_configs), 2)
@@ -47,12 +46,11 @@ class RanitSearchPortfolio(Portfolio):
                 return succ_runtimes
 
         def rand_all(succ_runtimes):
-            """ takes a small time proportion from all configs
+            """takes a small time proportion from all configs
             and assign it to a random config
             """
             delta = int(random.random() * self.plantime)
-            num_active = numpy.sum(
-                numpy.where(succ_runtimes > EPSILON))
+            num_active = numpy.sum(numpy.where(succ_runtimes > EPSILON))
             single_delta = int(delta / num_active)
             profiteer = random.randint(0, num_configs - 1)
 
@@ -67,9 +65,9 @@ class RanitSearchPortfolio(Portfolio):
             loosers[profiteer] = False
             succ_runtimes[loosers] -= single_delta
             # total_loss += numpy.sum(loosers) * single_delta
-            succ_runtimes[profiteer] += (self.plantime -
-                numpy.sum(succ_runtimes))
+            succ_runtimes[profiteer] += self.plantime - numpy.sum(succ_runtimes)
             return succ_runtimes
+
         while True:
             # swap random
             yield rand_swap(runtimes.copy())
@@ -87,17 +85,18 @@ class RanitSearchPortfolio(Portfolio):
         logging.info("initialized with portfolio with score %s" % best_score)
         while True:
             tries = 0
-            #reduced = False
+            # reduced = False
             for succ_runtimes in self.successors(best_runtimes):
                 tries += 1
                 succ_score = self.evaluator.score(succ_runtimes)
                 if succ_score > best_score:
-                    logging.info("found a better portfolio after %d tries, "
-                                 "score: %s" % (tries, succ_score))
+                    logging.info(
+                        "found a better portfolio after %d tries, "
+                        "score: %s" % (tries, succ_score)
+                    )
                     logging.info("runtimes: %s" % succ_runtimes)
                     # logging.info("total time: %s" % numpy.sum(succ_runtimes))
-                    logging.info(
-                        "runtime delta %s" % (succ_runtimes - best_runtimes))
+                    logging.info("runtime delta %s" % (succ_runtimes - best_runtimes))
                     best_score = succ_score
                     best_runtimes = succ_runtimes
                     if self.use_reduce:
@@ -108,9 +107,9 @@ class RanitSearchPortfolio(Portfolio):
                     # todo: implement some timeout, random restart etc
                 if not tries % 1000:
                     logging.info("Try %d, trying harder..." % tries)
-                #if not tries % 500 and not reduced:
+                # if not tries % 500 and not reduced:
 
-                 #   reduced = True
+                #   reduced = True
                 if tries > self.max_tries:
                     logging.info("reached max_tries, giving up improving")
                     return best_score, best_runtimes

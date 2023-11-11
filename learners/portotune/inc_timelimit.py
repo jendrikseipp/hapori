@@ -10,12 +10,13 @@ class IncreasingTimelimitPortfolio(Portfolio):
         Portfolio.__init__(self, *args, **kwargs)
         self.stepsize = stepsize
 
-        self.settings.append('Timeslot size: %i' % self.stepsize)
+        self.settings.append("Timeslot size: %i" % self.stepsize)
 
-        self.portfolio_name = 'Increasing Timeslots Portfolio'
-        self.report_descr = (('A portfolio of **%i seconds**. Generation based on '
-                              'increasing timeslots of **%i seconds**.') %
-                              (self.plantime, self.stepsize))
+        self.portfolio_name = "Increasing Timeslots Portfolio"
+        self.report_descr = (
+            "A portfolio of **%i seconds**. Generation based on "
+            "increasing timeslots of **%i seconds**."
+        ) % (self.plantime, self.stepsize)
 
     def compute_portfolio(self):
         schedule_runtimes = []
@@ -34,7 +35,8 @@ class IncreasingTimelimitPortfolio(Portfolio):
             # timeslot interval
             runtimes = [current_timeslot for _ in range(len(self.algorithms))]
             configs_scores = self.evaluator.configs_scores(
-                runtimes, list(unsolved_problems))
+                runtimes, list(unsolved_problems)
+            )
             if not numpy.sum(configs_scores).astype(bool):
                 # continue if there were no problems solved in this timeslot
                 current_timeslot += self.stepsize
@@ -44,30 +46,35 @@ class IncreasingTimelimitPortfolio(Portfolio):
             # retreive all the problems ids for the best config;
             # problems_within_timeslot is always a 1d array
             problems_within_timeslot = numpy.where(
-                (times[:, best_config] < current_timeslot + EPSILON) *
-                (numpy.not_equal(times[:, best_config], None)))[0]
+                (times[:, best_config] < current_timeslot + EPSILON)
+                * (numpy.not_equal(times[:, best_config], None))
+            )[0]
             # retreive all the problems solved in this timeslot
             solved_within_timeslot = unsolved_problems.intersection(
-                problems_within_timeslot)
+                problems_within_timeslot
+            )
             # retreive the max runtime of the solved problems in this timeslot
-            max_runtime = numpy.max(times[list(solved_within_timeslot),
-                                          best_config])
+            max_runtime = numpy.max(times[list(solved_within_timeslot), best_config])
             max_runtime = int(max_runtime + 1)
 
             # include the runtime into the schedule
             if best_config in used_configs:
                 # best config has already been added to the schedule
                 overall_runtime -= schedule_runtimes[used_configs[best_config]]
-                max_runtime = (max_runtime
+                max_runtime = (
+                    max_runtime
                     if (overall_runtime + max_runtime) <= self.plantime
-                    else (self.plantime - overall_runtime))
+                    else (self.plantime - overall_runtime)
+                )
                 schedule_configs[used_configs[best_config]] = best_config
                 schedule_runtimes[used_configs[best_config]] = max_runtime
             else:
                 # best config id is new in the schedule
-                max_runtime = (max_runtime
+                max_runtime = (
+                    max_runtime
                     if (overall_runtime + max_runtime) <= self.plantime
-                    else (self.plantime - overall_runtime))
+                    else (self.plantime - overall_runtime)
+                )
                 schedule_configs.append(best_config)
                 schedule_runtimes.append(max_runtime)
                 used_configs[best_config] = len(schedule_configs) - 1

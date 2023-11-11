@@ -25,21 +25,27 @@ ATTRIBUTES = [
     "cpu_time",
 ]
 
-TRACK=Track.OPT
+TRACK = Track.OPT
 DATA = "../../experiments/data/01-opt-planners-eval/properties-hardest.json.xz"
 
 exp = Experiment()
-exp.add_step("remove-combined-properties", project.remove_properties, Path(exp.eval_dir))
+exp.add_step(
+    "remove-combined-properties", project.remove_properties, Path(exp.eval_dir)
+)
 
 
 exp.add_fetcher(src=DATA)
 
-project.add_absolute_report(exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full")
+project.add_absolute_report(
+    exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full"
+)
 
 exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-opt")
 exp.add_report(SelectorPortfolio(track=TRACK), name=f"selector-opt")
 
 # TODO: run this n times and choose portfolio with highest score.
-exp.add_report(RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-opt")
+exp.add_report(
+    RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-opt"
+)
 
 exp.run_steps()

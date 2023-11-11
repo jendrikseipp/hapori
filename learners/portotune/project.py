@@ -58,13 +58,14 @@ EVALUATIONS_PER_TIME = Attribute(
 )
 
 # fmt: off
-SUITE_STRIPS = ['agricola-strips', 'airport-strips', 'barman-strips', 'blocksworld-strips', 'childsnack-strips', 'data-network-strips', 'depots-strips', 'driverlog-strips', 'elevators-strips', 'ferry-strips', 'floortile-strips', 'freecell-strips', 'ged-strips', 'goldminer-strips', 'grid-strips', 'gripper-strips', 'hanoi-strips', 'hiking-strips', 'logistics-strips', 'miconic-strips', 'movie-strips', 'mprime-strips', 'mystery-strips', 'no-mprime-strips', 'no-mystery-strips', 'nomystery-strips', 'npuzzle-strips', 'openstacks-strips', 'organic-synthesis-split-strips', 'organic-synthesis-strips', 'parcprinter-strips', 'parking-strips', 'pathways-strips', 'pegsol-strips', 'petri-net-alignment-strips', 'pipesworld-notankage-strips', 'pipesworld-tankage-strips', 'psr-small-strips', 'rovers-strips', 'satellite-strips', 'scanalyzer-strips', 'snake-strips', 'sokoban-strips', 'spanner-strips', 'spider-strips', 'storage-strips', 'termes-strips', 'tetris-strips', 'thoughtful-strips', 'tidybot-strips', 'tpp-strips', 'transport-strips', 'trucks-strips', 'visitall-strips', 'woodworking-strips', 'zenotravel-strips']
+SUITE_STRIPS = ["agricola-strips", "airport-strips", "barman-strips", "blocksworld-strips", "childsnack-strips", "data-network-strips", "depots-strips", "driverlog-strips", "elevators-strips", "ferry-strips", "floortile-strips", "freecell-strips", "ged-strips", "goldminer-strips", "grid-strips", "gripper-strips", "hanoi-strips", "hiking-strips", "logistics-strips", "miconic-strips", "movie-strips", "mprime-strips", "mystery-strips", "no-mprime-strips", "no-mystery-strips", "nomystery-strips", "npuzzle-strips", "openstacks-strips", "organic-synthesis-split-strips", "organic-synthesis-strips", "parcprinter-strips", "parking-strips", "pathways-strips", "pegsol-strips", "petri-net-alignment-strips", "pipesworld-notankage-strips", "pipesworld-tankage-strips", "psr-small-strips", "rovers-strips", "satellite-strips", "scanalyzer-strips", "snake-strips", "sokoban-strips", "spanner-strips", "spider-strips", "storage-strips", "termes-strips", "tetris-strips", "thoughtful-strips", "tidybot-strips", "tpp-strips", "transport-strips", "trucks-strips", "visitall-strips", "woodworking-strips", "zenotravel-strips"]
 
 # IMPORTANT: the fsc-*-strips tasks actually contain conditional effects. We keep the old names for data integrity.
-SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-blocks-strips', 'fsc-grid-a-strips', 'fsc-grid-r-strips', 'fsc-hall-strips', 'fsc-visualmarker-strips', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adder-adl', 't0-coins-adl', 't0-comm-adl', 't0-grid-dispose-adl', 't0-grid-push-adl', 't0-grid-trash-adl', 't0-sortnet-adl', 't0-sortnet-alt-adl', 't0-uts-adl', 'trucks-adl']
+SUITE_ADL = ["airport-adl", "assembly-adl", "briefcaseworld-adl", "caldera-adl", "caldera-split-adl", "cavediving-adl", "citycar-adl", "flashfill-adl", "fsc-blocks-strips", "fsc-grid-a-strips", "fsc-grid-r-strips", "fsc-hall-strips", "fsc-visualmarker-strips", "gedp-ds2ndp-adl", "maintenance-adl", "miconic-fulladl-adl", "miconic-simpleadl-adl", "nurikabe-adl", "openstacks-adl", "optical-telegraphs-adl", "pathways-noneg-adl", "philosophers-adl", "psr-large-adl", "psr-middle-adl", "schedule-adl", "settlers-adl", "t0-adder-adl", "t0-coins-adl", "t0-comm-adl", "t0-grid-dispose-adl", "t0-grid-push-adl", "t0-grid-trash-adl", "t0-sortnet-adl", "t0-sortnet-alt-adl", "t0-uts-adl", "trucks-adl"]
 
 SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
 # fmt: on
+
 
 def get_portfolio_attributes(portfolio):
     attributes = {}
@@ -77,7 +78,8 @@ def get_portfolio_attributes(portfolio):
             raise ImportError(
                 "The portfolio %s could not be loaded. Maybe it still "
                 "uses the old portfolio syntax? See the FDSS portfolios "
-                "for examples using the new syntax." % portfolio)
+                "for examples using the new syntax." % portfolio
+            )
     if "CONFIGS" not in attributes:
         raise ValueError("portfolios must define CONFIGS")
     if "OPTIMAL" not in attributes:
@@ -172,7 +174,7 @@ def fetch_algorithm(exp, expname, algo, *, new_algo=None):
     def rename_and_filter(run):
         if run["algorithm"] == algo:
             run["algorithm"] = new_algo
-            #run["id"][0] = new_algo
+            # run["id"][0] = new_algo
             return run
         return False
 
@@ -192,8 +194,10 @@ def fetch_algorithms(exp, expname, *, algos=None, name=None, filters=None):
     algos = set(algos or [])
     filters = filters or []
     if algos:
+
         def algo_filter(run):
             return run["algorithm"] in algos
+
         filters.append(algo_filter)
 
     exp.add_fetcher(
@@ -220,19 +224,21 @@ def add_absolute_report(exp, *, name=None, outfile=None, **kwargs):
     exp.add_report(report, name=name, outfile=outfile)
     if not REMOTE:
         exp.add_step(f"open-{name}", subprocess.call, ["xdg-open", outfile])
-    #exp.add_step(f"publish-{name}", subprocess.call, ["publish", outfile])
+    # exp.add_step(f"publish-{name}", subprocess.call, ["publish", outfile])
 
 
 def add_scatter_plot_reports(exp, algorithm_pairs, attributes, *, filter=None):
     for algo1, algo2 in algorithm_pairs:
         for attribute in attributes:
-            exp.add_report(ScatterPlotReport(
+            exp.add_report(
+                ScatterPlotReport(
                     relative=RELATIVE,
                     get_category=None if TEX else lambda run1, run2: run1["domain"],
                     attributes=[attribute],
                     filter_algorithm=[algo1, algo2],
-                    filter=[add_evaluations_per_time, group_domains] + tools.make_list(filter),
+                    filter=[add_evaluations_per_time, group_domains]
+                    + tools.make_list(filter),
                     format="tex" if TEX else "png",
                 ),
-                name=f"{exp.name}-{algo1}-{algo2}-{attribute}{'-relative' if RELATIVE else ''}")
-
+                name=f"{exp.name}-{algo1}-{algo2}-{attribute}{'-relative' if RELATIVE else ''}",
+            )

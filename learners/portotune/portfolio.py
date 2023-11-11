@@ -1,4 +1,3 @@
-
 from collections import defaultdict
 from enum import auto, Enum
 import os
@@ -15,16 +14,16 @@ EPSILON = 0.0001
 def get_score(portfolio_file):
     with open(portfolio_file) as f:
         for line in f:
-            if line.startswith('Score:'):
-                return float(line.split(':')[1])
-    assert False, 'Score could not be read from %s' % portfolio_file
+            if line.startswith("Score:"):
+                return float(line.split(":")[1])
+    assert False, "Score could not be read from %s" % portfolio_file
 
 
 def normalize_domain_name(name):
-    removals = ['-', '_']
-    removals += ['strips', 'adl', 'opt08', 'sat08']
+    removals = ["-", "_"]
+    removals += ["strips", "adl", "opt08", "sat08"]
     for item in removals:
-        name = name.replace(item, '')
+        name = name.replace(item, "")
     return name
 
 
@@ -49,33 +48,33 @@ class Portfolio(PlanningReport):
         # Evaluates performance on a set of "num" training variations
         self.num_variations = None
         # Standard derivation of variations of runtime
-        self.variations_stddev = kwargs.get('variations-stddev', 30)
+        self.variations_stddev = kwargs.get("variations-stddev", 30)
 
         # for output information - this should be redefined by the subclasses
-        self.portfolio_name = 'Portfolio'
+        self.portfolio_name = "Portfolio"
 
         # for the portfolio file - additional information can be added in the
         # subclasses
         self.settings = []
-        self.settings.append('Maximum plantime: %i' % self.plantime)
-        self.settings.append('Absolute quality: %s' % self.absolute_quality)
+        self.settings.append("Maximum plantime: %i" % self.plantime)
+        self.settings.append("Absolute quality: %s" % self.absolute_quality)
         if self.num_variations:
-            self.settings.append('Number of variations: %i' %
-                                 self.num_variations)
-            self.settings.append('Standard deviation of the variations: %f' %
-                                 self.variations_stddev)
+            self.settings.append("Number of variations: %i" % self.num_variations)
+            self.settings.append(
+                "Standard deviation of the variations: %f" % self.variations_stddev
+            )
 
         # for the portfolio report - this should be redefined by the subclasses
-        self.report_descr = ('A portfolio for Fast Downward.')
+        self.report_descr = "A portfolio for Fast Downward."
 
     def compute_portfolio(self):
         raise NotImplementedError
 
     def write(self):
-        if self.outfile.endswith('.html'):
-            self.portfolio_file = self.outfile.replace('.html', '.py')
+        if self.outfile.endswith(".html"):
+            self.portfolio_file = self.outfile.replace(".html", ".py")
         else:
-            self.portfolio_file = self.outfile + '.html'
+            self.portfolio_file = self.outfile + ".html"
         self.compute_portfolio()
         PlanningReport.write(self)
         self.print_portfolio()
@@ -84,10 +83,10 @@ class Portfolio(PlanningReport):
         PlanningReport._scan_data(self)
 
         self.commandline_configs = []
-        self.runtimes = [] # runtime for each problem-config pair
-        self.costs = [] # cost for each problem-config pair
-        self.qualities = [] # quality (ipc score) for each problem-config pair
-         # True if the specific config was trained on the domain (resp. problem)
+        self.runtimes = []  # runtime for each problem-config pair
+        self.costs = []  # cost for each problem-config pair
+        self.qualities = []  # quality (ipc score) for each problem-config pair
+        # True if the specific config was trained on the domain (resp. problem)
         self.trained = []
 
         self._retrieve_information()
@@ -105,15 +104,17 @@ class Portfolio(PlanningReport):
         self.qualities = np.where(self.trained, 0, self.orig_qualities)
 
         # replace missing times with infty for the evaluator
-        times = np.where(np.equal(self.runtimes, None), np.inf,
-                            self.runtimes).astype('float')
+        times = np.where(np.equal(self.runtimes, None), np.inf, self.runtimes).astype(
+            "float"
+        )
         # define the evaluator
         if self.num_variations:
             self.evaluator = get_norm_average_evaluator(
                 times=times,
                 qualities=self.qualities,
                 num=self.num_variations,
-                stddev=self.variations_stddev)
+                stddev=self.variations_stddev,
+            )
         else:
             self.evaluator = PortfolioEvaluator(times=times, qualities=self.qualities)
 
@@ -132,12 +133,14 @@ class Portfolio(PlanningReport):
                 if problem not in best_costs:
                     best_costs[(domain, problem)] = cost
                 else:
-                    best_costs[(domain, problem)] = min(best_costs[(domain, problem)], cost)
+                    best_costs[(domain, problem)] = min(
+                        best_costs[(domain, problem)], cost
+                    )
 
         solved_problems_per_domain = defaultdict(set)
         data = defaultdict(dict)
         for (domain, problem, config), run in self.runs.items():
-            score = 0.
+            score = 0.0
             runtime = run.get("cpu_time")
             if runtime is not None:
                 if self.track == Track.AGL:
@@ -148,26 +151,26 @@ class Portfolio(PlanningReport):
                     assert best_cost <= cost
                     if cost == 0:
                         assert best_cost == 0
-                        score = 1.
+                        score = 1.0
                     else:
                         score = float(best_cost) / cost
                 elif self.track == Track.OPT:
                     cost = run["cost"]
                     assert cost == best_costs[(domain, problem)], (problem, config)
-                    score = 1.
+                    score = 1.0
                 else:
                     assert False, self.track
 
-            coverage = run.get('coverage')
+            coverage = run.get("coverage")
             if coverage:
-                runtime = run.get('cpu_time')
-                cost = run.get('cost')
+                runtime = run.get("cpu_time")
+                cost = run.get("cost")
                 # solved problems shouldn't miss these attributes otherwise
                 # unsolved problems have to be masked differently
                 assert runtime is not None, run
                 # add problem only if it has been solved
                 solved_problems_per_domain[domain].add(problem)
-            else: # mask unsolved problems missing
+            else:  # mask unsolved problems missing
                 runtime = None
                 cost = None
             data[(domain, problem)][config] = (runtime, cost, score)
@@ -204,19 +207,28 @@ class Portfolio(PlanningReport):
 
     def schedule(self):
         """The portfolio's schedule is always created on-the-fly"""
-        return [(config_id, runtime) for runtime, config_id in
-                zip(self.schedule_runtimes, self.schedule_config_ids)
-                if runtime > 0]
+        return [
+            (config_id, runtime)
+            for runtime, config_id in zip(
+                self.schedule_runtimes, self.schedule_config_ids
+            )
+            if runtime > 0
+        ]
 
     def sorted_runtimes(self):
         """
         Return the runtimes in the order of their configs in self.algorithms. The
         runtime is 0 for configs not included in the schedule.
         """
-        configs_to_times = dict(list(zip(self.schedule_config_ids,
-                                    self.schedule_runtimes)))
-        return (np.array([configs_to_times.get(config_id, 0) for config_id in
-                range(len(self.algorithms))]))
+        configs_to_times = dict(
+            list(zip(self.schedule_config_ids, self.schedule_runtimes))
+        )
+        return np.array(
+            [
+                configs_to_times.get(config_id, 0)
+                for config_id in range(len(self.algorithms))
+            ]
+        )
 
     def reduce_score_based(self, runtimes, granularity=1):
         """
@@ -250,13 +262,15 @@ class Portfolio(PlanningReport):
 
         rows.append('"""')
         rows.append("Portfolio generator: %s\n" % self.portfolio_name)
-        rows.append("Score: %.4f" % self.evaluator.score(
-            self.sorted_runtimes()))
-        rows.append('Average score quota: %.2f' %
-                    np.mean(domain_quotas, dtype=np.float64))
-        rows.append('Standard deviation of score quota: %.2f' %
-                    np.std(domain_quotas, dtype=np.float64))
-        rows.append('Training set: %s' % self.eval_dir.split("/")[-1])
+        rows.append("Score: %.4f" % self.evaluator.score(self.sorted_runtimes()))
+        rows.append(
+            "Average score quota: %.2f" % np.mean(domain_quotas, dtype=np.float64)
+        )
+        rows.append(
+            "Standard deviation of score quota: %.2f"
+            % np.std(domain_quotas, dtype=np.float64)
+        )
+        rows.append("Training set: %s" % self.eval_dir.split("/")[-1])
         rows.append("\nSettings:")
         for setting in self.settings:
             rows.append("   %s" % setting)
@@ -272,8 +286,10 @@ class Portfolio(PlanningReport):
         rows.append("\n".join(params)[:-2])
         rows.append("]\n")
 
-        rows.append("portfolio.run(configs=CONFIGS, optimal=%s, timeout=%d)" %
-                    (self.track == Track.OPT, self.plantime))
+        rows.append(
+            "portfolio.run(configs=CONFIGS, optimal=%s, timeout=%d)"
+            % (self.track == Track.OPT, self.plantime)
+        )
 
         with open(self.portfolio_file, "w") as file_handler:
             file_handler.write("\n".join(rows))
@@ -285,35 +301,44 @@ class Portfolio(PlanningReport):
         total_runtime = sum(sorted_time_limits)
 
         rows = []
-        rows.append('= %s =' % self.portfolio_name)
-        rows.append('%s' % self.report_descr)
+        rows.append("= %s =" % self.portfolio_name)
+        rows.append("%s" % self.report_descr)
         for setting in self.settings:
-            rows.append('- %s' % setting)
-        rows.append('')
-        rows.append('')
+            rows.append("- %s" % setting)
+        rows.append("")
+        rows.append("")
 
-        rows.append('== Results ==')
+        rows.append("== Results ==")
         rows.append('The results on the training set "%s".' % self.eval_dir)
-        rows.append('|| Score |')
-        rows.append('| %.2f / %.2f |' % (self.evaluator.score(sorted_time_limits),
-                                         self.evaluator.max_score()))
+        rows.append("|| Score |")
+        rows.append(
+            "| %.2f / %.2f |"
+            % (self.evaluator.score(sorted_time_limits), self.evaluator.max_score())
+        )
 
-        rows.append('== Schedule ==')
-        rows.append('|| Id | Config | Time Limit | Score | Coverage |')
+        rows.append("== Schedule ==")
+        rows.append("|| Id | Config | Time Limit | Score | Coverage |")
         float_runtimes = np.where(self.runtimes == None, np.inf, self.runtimes)
         solved_problems = float_runtimes < (sorted_time_limits + EPSILON)
         num_solved_by_config = np.sum(solved_problems, axis=0)
-        for config_id, runtime in zip(self.schedule_config_ids,
-                                      self.schedule_runtimes):
-            rows.append('| %i | %s | %i | %.2f | %i |' % (config_id,
-                self.algorithms[config_id], runtime,
-                self.evaluator.configs_scores(sorted_time_limits)[config_id],
-                num_solved_by_config[config_id]))
-        rows.append('|  | TOTAL | %i |  | %i |' % (total_runtime,
-                np.sum(np.max(solved_problems, axis=1))))
+        for config_id, runtime in zip(self.schedule_config_ids, self.schedule_runtimes):
+            rows.append(
+                "| %i | %s | %i | %.2f | %i |"
+                % (
+                    config_id,
+                    self.algorithms[config_id],
+                    runtime,
+                    self.evaluator.configs_scores(sorted_time_limits)[config_id],
+                    num_solved_by_config[config_id],
+                )
+            )
+        rows.append(
+            "|  | TOTAL | %i |  | %i |"
+            % (total_runtime, np.sum(np.max(solved_problems, axis=1)))
+        )
 
-        rows.append('== Domains ==')
-        rows.append('|| Id | Domain | Score |')
+        rows.append("== Domains ==")
+        rows.append("|| Id | Domain | Score |")
         domain_quotas = []
         for domain_id, domain in enumerate(self.domains.keys()):
             domain_score = self.get_domain_score(domain, sorted_time_limits)
@@ -322,29 +347,41 @@ class Portfolio(PlanningReport):
                 domain_quotas.append(0)
             else:
                 domain_quotas.append(float(domain_score) / max_domain_score)
-            rows.append('| %i | %s | %.2f / %.2f | ' %
-                        (domain_id, domain, domain_score, max_domain_score))
+            rows.append(
+                "| %i | %s | %.2f / %.2f | "
+                % (domain_id, domain, domain_score, max_domain_score)
+            )
         domain_quotas = np.array(domain_quotas)
-        rows.append('**Average score quota**: %.2f\n' %
-                    np.mean(domain_quotas, dtype=np.float64))
-        rows.append('**Standard deviation of score quota**: %.2f' %
-                    np.std(domain_quotas, dtype=np.float64))
+        rows.append(
+            "**Average score quota**: %.2f\n" % np.mean(domain_quotas, dtype=np.float64)
+        )
+        rows.append(
+            "**Standard deviation of score quota**: %.2f"
+            % np.std(domain_quotas, dtype=np.float64)
+        )
 
-        rows.append('== Training data ==')
-        rows.append('General training data information.')
-        rows.append('|| Number of Problems | Number of Solved Problems |')
+        rows.append("== Training data ==")
+        rows.append("General training data information.")
+        rows.append("|| Number of Problems | Number of Solved Problems |")
         solved_problems = np.not_equal(self.runtimes, None)
         solved_by_any_config = np.sum(solved_problems, axis=1) > 0
         num_solved_in_training_data = np.sum(solved_by_any_config)
-        rows.append('| %i | %i |' % (len(self.problem_runs),
-                                     num_solved_in_training_data))
+        rows.append(
+            "| %i | %i |" % (len(self.problem_runs), num_solved_in_training_data)
+        )
 
-        rows.append('=== List of Problems ===')
-        rows.append('The bolded qualities and times indicate problems that can '
-                    'be solved by this portfolio in the training set.')
-        rows.append('|| Domain | Problem | %s |' %
-                    ' | '.join(str(i) for i in range(len(self.algorithms))))
-        for problem_id, (domain, problem) in enumerate(sorted(self.problem_runs.keys())):
+        rows.append("=== List of Problems ===")
+        rows.append(
+            "The bolded qualities and times indicate problems that can "
+            "be solved by this portfolio in the training set."
+        )
+        rows.append(
+            "|| Domain | Problem | %s |"
+            % " | ".join(str(i) for i in range(len(self.algorithms)))
+        )
+        for problem_id, (domain, problem) in enumerate(
+            sorted(self.problem_runs.keys())
+        ):
             columns = []
             columns.append(domain)
             columns.append(problem)
@@ -358,9 +395,9 @@ class Portfolio(PlanningReport):
                         columns.append("**%.2f**" % (runtime))
                     else:
                         columns.append("%.2f" % (runtime))
-            rows.append('| %s |' % ' | '.join(columns))
+            rows.append("| %s |" % " | ".join(columns))
 
-        return '\n'.join(rows)
+        return "\n".join(rows)
 
 
 class PortfolioEvaluator(object):
@@ -369,6 +406,7 @@ class PortfolioEvaluator(object):
     benchmark is given as the an array of times and qualities of all configs on
     all problems.
     """
+
     def __init__(self, times, qualities):
         """
         times, qualities: np 2d arrays of equal size
@@ -389,7 +427,8 @@ class PortfolioEvaluator(object):
         solved_problems_quality = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
             self.qualities[problems_id_list, :],
-            0)
+            0,
+        )
         best_quality_per_config = np.max(solved_problems_quality, axis=1)
         return np.sum(best_quality_per_config)
 
@@ -404,7 +443,8 @@ class PortfolioEvaluator(object):
         solved_problems_quality = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
             self.qualities[problems_id_list, :],
-            0)
+            0,
+        )
         return np.sum(solved_problems_quality, axis=0)
 
 
@@ -412,23 +452,25 @@ class PortfolioAverageEvaluator(object):
     """
     Evaluates average score on a variation of times.
     """
+
     def __init__(self, times_variations, qualities):
-        """ times_variations has to be an iterable over times arrays. """
+        """times_variations has to be an iterable over times arrays."""
         # create evaluators for time variations
-        self.evaluators = [PortfolioEvaluator(t, qualities)
-                           for t in times_variations]
+        self.evaluators = [PortfolioEvaluator(t, qualities) for t in times_variations]
 
     def max_score(self, problems_id_list=None):
         return self.score(np.infty)
 
     def score(self, runtimes, problems_id_list=None):
-        """ Average score on all variations. """
-        return (sum(e.score(runtimes, problems_id_list)
-                for e in self.evaluators) / len(self.evaluators))
+        """Average score on all variations."""
+        return sum(e.score(runtimes, problems_id_list) for e in self.evaluators) / len(
+            self.evaluators
+        )
 
     def configs_scores(self, runtimes, problems_id_list=None):
-        configs_scores_vars = np.array([e.configs_scores(
-            runtimes, problems_id_list) for e in self.evaluators])
+        configs_scores_vars = np.array(
+            [e.configs_scores(runtimes, problems_id_list) for e in self.evaluators]
+        )
         return np.sum(configs_scores_vars, axis=0) / len(self.evaluators)
 
 
@@ -442,7 +484,7 @@ def norm_time_variation_generator(times, stddev=1.0, num=100):
 
 
 def _times_variation(times, stddev=1.0):
-    """ Returns times with normally distributed noise added. """
+    """Returns times with normally distributed noise added."""
     var_time = times + np.random.normal(scale=stddev, size=times.shape)
     return np.round(np.maximum(var_time, 0))
 
