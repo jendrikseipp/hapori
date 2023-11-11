@@ -55,13 +55,13 @@ class DomainwisePortfolio(Portfolio):
     def __init__(self, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
 
-        self.portfolio_name = 'Fastr domain wise portfolio'
-        self.report_descr = 'A domainwise portfolio for Fast Downward.'
+        self.portfolio_name = 'Domain-wise portfolio'
+        self.report_descr = 'A per-domain portfolio.'
 
     def compute_portfolio(self):
         # replace missing times with infinity for the evaluator
-        all_times = np.where(self.total_times is None, np.inf,
-                             self.total_times).astype('float')
+        all_times = np.where(self.runtimes is None, np.inf,
+                             self.runtimes).astype('float')
 
         self.schedule_runtimes = [0 for config in self.algorithms]
         self.schedule_config_ids = list(range(len(self.algorithms)))

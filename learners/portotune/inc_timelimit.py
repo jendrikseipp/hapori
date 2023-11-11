@@ -12,9 +12,8 @@ class IncreasingTimelimitPortfolio(Portfolio):
 
         self.settings.append('Timeslot size: %i' % self.stepsize)
 
-        self.portfolio_name = 'Fastr Increasing Timeslots Portfolio'
-        self.report_descr = (('A portfolio of **%i seconds** for the FD '
-                              'planning algorithm. Generation based on '
+        self.portfolio_name = 'Increasing Timeslots Portfolio'
+        self.report_descr = (('A portfolio of **%i seconds**. Generation based on '
                               'increasing timeslots of **%i seconds**.') %
                               (self.plantime, self.stepsize))
 
@@ -26,7 +25,7 @@ class IncreasingTimelimitPortfolio(Portfolio):
         current_timeslot = self.stepsize
 
         # retrieve total_times incl. missing values
-        times = self.total_times
+        times = self.runtimes
         # at the beginning all problems are unsolved by the empty schedule
         unsolved_problems = set(range(len(self.problems)))
         # iterate while there's still time left or until all problems are solved

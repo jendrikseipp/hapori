@@ -1,6 +1,6 @@
 
 from collections import defaultdict
-from enum import Enum
+from enum import auto, Enum
 import os
 
 import numpy as np
@@ -33,9 +33,9 @@ def same_domain(name1, name2):
 
 
 class Track(Enum):
-    AGL = 1
-    SAT = 2
-    OPT = 3
+    OPT = auto()
+    SAT = auto()
+    AGL = auto()
 
 
 class Portfolio(PlanningReport):
@@ -52,7 +52,7 @@ class Portfolio(PlanningReport):
         self.variations_stddev = kwargs.get('variations-stddev', 30)
 
         # for output information - this should be redefined by the subclasses
-        self.portfolio_name = 'Fastr Portfolio'
+        self.portfolio_name = 'Portfolio'
 
         # for the portfolio file - additional information can be added in the
         # subclasses

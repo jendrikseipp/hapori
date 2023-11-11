@@ -16,18 +16,15 @@ class SelectorPortfolio(Portfolio):
         # Objective can be quality or runtime
         self.objective = 'quality'
 
-        self.portfolio_name = 'Fastr Selector Portfolio'
-        self.report_descr = (('A portfolio of **%i seconds** for the FD'
-                              'planning algorithm. '
+        self.portfolio_name = 'Selector Portfolio'
+        self.report_descr = (('A portfolio of **%i seconds**. '
                               'Generation based on finding the best '
-                              'subset of configurations.') % self.plantime)
+                              'subset of algorithms.') % self.plantime)
 
     def compute_portfolio(self):
         """ implementation of compute_portfolio method as it is implemented in
         IncreasingTimeslotPortfolio.
         """
-        # this is still a bit hacky
-        # TODO(Manuel): Can we make it less hacky?
         if self.subset_size == 'auto':
             if self.objective == 'quality':
                 quality, subset = self.auto_configs_quality()
@@ -77,7 +74,7 @@ class SelectorPortfolio(Portfolio):
     def _auto_subset_sizes(self):
         """ Returns iterable of all posible subset sizes
         """
-        return list(range(1, self.total_times.shape[1]))
+        return list(range(1, self.runtimes.shape[1]))
 
     def filter_unsolved_problems(self, times, plantime_single):
         """ Returns times as numpy array with all missing values or
@@ -86,12 +83,12 @@ class SelectorPortfolio(Portfolio):
         This effectively punishes not solving a problem, giving it more weight
         than anything else in the optimization.
         """
-        max_time = numpy.where(numpy.equal(times, None), 0, times).max()
+        max_time = numpy.where(times == None, 0, times).max()
         unsolved_value = max_time * times.shape[0] + 1
+        # filter unsolved problems
+        times = numpy.where(times == None, unsolved_value, times)
         # filter times according to the uniform plan time for each config
         times = numpy.where(times > plantime_single, unsolved_value, times)
-        # filter unsolved problems
-        times = numpy.where(numpy.equal(times, None), unsolved_value, times)
         return times
 
     def select_configs_coverage(self, subset_size):
@@ -102,7 +99,7 @@ class SelectorPortfolio(Portfolio):
         Returns a tuple (accumulated runtime, subset indices)
         """
         plantime_single = self.plantime / subset_size
-        times = self.filter_unsolved_problems(self.total_times,
+        times = self.filter_unsolved_problems(self.runtimes,
                                               plantime_single)
         logging.info("Calculating subset of configurations.")
         # calculate best subset w.r.t quality
@@ -115,7 +112,7 @@ class SelectorPortfolio(Portfolio):
         Returns a tuple (accumulated quality, subset indices)
         """
         plantime_single = self.plantime / subset_size
-        times = self.filter_unsolved_problems(self.total_times,
+        times = self.filter_unsolved_problems(self.runtimes,
                                               plantime_single)
         # filter qualities of problems that haven't been solved within time
         qualities = numpy.where(times > plantime_single, 0, self.qualities)
@@ -129,8 +126,7 @@ class UniformPortfolio(SelectorPortfolio):
         SelectorPortfolio.__init__(self, *args, **kwargs)
 
         self.portfolio_name = 'Uniform Portfolio'
-        self.report_descr = ('A portfolio of **%i seconds** for the FD'
-                             'planning system. ' % self.plantime)
+        self.report_descr = ('A portfolio of **%i seconds**. ' % self.plantime)
 
     def compute_portfolio(self):
         self.subset_size = len(self.algorithms)

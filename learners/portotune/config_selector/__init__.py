@@ -1,12 +1,14 @@
 import numpy
 
+import imp
 try:
-    import libselector
-except ImportError:
+    libselector = imp.load_dynamic('libselector', 'config_selector/libselector.so')
+except ImportError as err:
     import os
     import sys
-    sys.exit('Error: Please follow the instructions in %s/README to compile '
-             'the Selector' % os.path.dirname(os.path.abspath(__file__)))
+    sys.exit(f'Error: {err}. Please follow the instructions in '
+             f'{os.path.dirname(os.path.abspath(__file__))}/README to compile '
+             f'the Selector')
 
 
 def max_subset(timetable, subset_size):
@@ -18,7 +20,7 @@ def max_subset(timetable, subset_size):
         timetable = numpy.array(timetable)
     # subset_size greater than number of configs
     if subset_size > timetable.shape[1]:
-        raise StandardError("subset_size greater than number of configs")
+        raise ValueError("subset_size greater than number of configs")
 
     return libselector.choose_max_subset(timetable, subset_size)
 
@@ -44,7 +46,7 @@ def min_subset(timetable, subset_size, slow=False):
         timetable = numpy.array(timetable)
     # subset_size greater than number of configs
     if subset_size > timetable.shape[1]:
-        raise StandardError("subset_size greater than number of configs")
+        raise ValueError("subset_size greater than number of configs")
     if slow:
         # use pure python implementation
         import slow

@@ -12,8 +12,8 @@ class ClusterPortfolio(Portfolio):
         Portfolio.__init__(self, *args, **kwargs)
         self.clusters = clusters
 
-        self.portfolio_name = 'Fastr cluster portfolio'
-        self.report_descr = 'A cluster portfolio for Fast Downward.'
+        self.portfolio_name = 'Cluster portfolio'
+        self.report_descr = 'A cluster portfolio.'
         self.settings.append('Clusters: %i' % self.clusters)
 
     def compute_portfolio(self):
