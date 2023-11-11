@@ -91,7 +91,7 @@ class Portfolio(PlanningReport):
 
         # Save a mapping from domain names to indices in self.problems
         self.domain_to_problem_indices = defaultdict(list)
-        for prob_id, (domain, problem) in enumerate(sorted(self.problem_runs.keys())):
+        for prob_id, (domain, _problem) in enumerate(sorted(self.problem_runs.keys())):
             self.domain_to_problem_indices[domain].append(prob_id)
 
         # transform data matrices to np matrices for easier handling
@@ -123,7 +123,7 @@ class Portfolio(PlanningReport):
     def _retrieve_information(self):
         """Parse the passed report."""
         best_costs = {}
-        for (domain, problem, algo), run in self.runs.items():
+        for (domain, problem, _algo), run in self.runs.items():
             if run["coverage"]:
                 cost = run["cost"]
                 assert cost is not None
@@ -203,7 +203,7 @@ class Portfolio(PlanningReport):
         return self.get_domain_score(domain, np.infty)
 
     def schedule(self):
-        """The portfolio's schedule is always created on-the-fly"""
+        """The portfolio's schedule is always created on-the-fly."""
         return [
             (config_id, runtime)
             for runtime, config_id in zip(
@@ -241,7 +241,7 @@ class Portfolio(PlanningReport):
     def print_portfolio(self):
         """Print the generated portfolio."""
         domain_quotas = []
-        for domain in self.domains.keys():
+        for domain in self.domains:
             domain_score = self.get_domain_score(domain, self.sorted_runtimes())
             max_domain_score = self.get_max_domain_score(domain)
             if max_domain_score == 0:
@@ -307,8 +307,7 @@ class Portfolio(PlanningReport):
         rows.append('The results on the training set "%s".' % self.eval_dir)
         rows.append("|| Score |")
         rows.append(
-            "| %.2f / %.2f |"
-            % (self.evaluator.score(sorted_time_limits), self.evaluator.max_score())
+            f"| {self.evaluator.score(sorted_time_limits):.2f} / {self.evaluator.max_score():.2f} |"
         )
 
         rows.append("== Schedule ==")
@@ -380,7 +379,7 @@ class Portfolio(PlanningReport):
             columns = []
             columns.append(domain)
             columns.append(problem)
-            for config_id, config in enumerate(self.algorithms):
+            for config_id, _config in enumerate(self.algorithms):
                 runtime = self.runtimes[problem_id][config_id]
                 if runtime is None:
                     columns.append("")
@@ -402,8 +401,7 @@ class PortfolioEvaluator:
     """
 
     def __init__(self, times, qualities):
-        """times, qualities: np 2d arrays of equal size
-        """
+        """times, qualities: np 2d arrays of equal size."""
         self.times = times
         self.qualities = qualities
 
@@ -441,8 +439,7 @@ class PortfolioEvaluator:
 
 
 class PortfolioAverageEvaluator:
-    """Evaluates average score on a variation of times.
-    """
+    """Evaluates average score on a variation of times."""
 
     def __init__(self, times_variations, qualities):
         """times_variations has to be an iterable over times arrays."""

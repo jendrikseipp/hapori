@@ -2,7 +2,7 @@
 
 import logging
 
-import numpy
+import numpy as np
 
 import config_selector
 from portfolio import Portfolio, Track
@@ -43,15 +43,15 @@ class SelectorPortfolio(Portfolio):
             self.settings.append("Subset size: %i" % subset_size)
         else:
             raise ValueError('subset_size can only be a number or "auto"')
-        self.schedule_config_ids = numpy.array(subset)
+        self.schedule_config_ids = np.array(subset)
         # uniform schedule
-        self.schedule_runtimes = numpy.array(
+        self.schedule_runtimes = np.array(
             [self.plantime / len(subset)] * len(subset)
         )
 
     def auto_configs_coverage(self):
         """Tries all possible subset sizes and returns the subset for
-        the best one
+        the best one.
         """
 
         def configs_iter():
@@ -63,7 +63,7 @@ class SelectorPortfolio(Portfolio):
 
     def auto_configs_quality(self):
         """Tries all possible subset sizes and returns the subset for
-        the best one
+        the best one.
         """
 
         def configs_iter():
@@ -84,20 +84,19 @@ class SelectorPortfolio(Portfolio):
         This effectively punishes not solving a problem, giving it more weight
         than anything else in the optimization.
         """
-        max_time = numpy.where(times == None, 0, times).max()
+        max_time = np.where(times == None, 0, times).max()
         unsolved_value = max_time * times.shape[0] + 1
         # filter unsolved problems
-        times = numpy.where(times == None, unsolved_value, times)
+        times = np.where(times == None, unsolved_value, times)
         # filter times according to the uniform plan time for each config
-        times = numpy.where(times > plantime_single, unsolved_value, times)
-        return times
+        return np.where(times > plantime_single, unsolved_value, times)
 
     def select_configs_coverage(self, subset_size):
         """Chooses a subset of size subset_size that minimizes runtime as
         described in config_selector.min_subset. This way the coverage is
         maximized. Problems that would not be solved in plantime_single will
         be treated as unsolved.
-        Returns a tuple (accumulated runtime, subset indices)
+        Returns a tuple (accumulated runtime, subset indices).
         """
         plantime_single = self.plantime / subset_size
         times = self.filter_unsolved_problems(self.runtimes, plantime_single)
@@ -108,12 +107,12 @@ class SelectorPortfolio(Portfolio):
         """Chooses a subset of size subset_size  that maximizes quality as
         described in config_selector.max_subset. Problems that would not be
         solved in plantime_single will be treated as unsolved.
-        Returns a tuple (accumulated quality, subset indices)
+        Returns a tuple (accumulated quality, subset indices).
         """
         plantime_single = self.plantime / subset_size
         times = self.filter_unsolved_problems(self.runtimes, plantime_single)
         # filter qualities of problems that haven't been solved within time
-        qualities = numpy.where(times > plantime_single, 0, self.qualities)
+        qualities = np.where(times > plantime_single, 0, self.qualities)
         logging.info("Calculating subset of configurations.")
         return config_selector.max_subset(qualities, subset_size)
 

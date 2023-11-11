@@ -1,3 +1,4 @@
+import contextlib
 import platform
 import re
 import subprocess
@@ -19,14 +20,12 @@ from lab.experiment import ARGPARSER
 from lab.reports import Attribute, geometric_mean
 
 # Silence import-unused messages. Experiment scripts may use these imports.
-assert (
-    BaselSlurmEnvironment
-    and FastDownwardExperiment
-    and LocalEnvironment
-    and ScatterPlotReport
-    and TaskwiseReport
-    and TetralithEnvironment
-)
+assert BaselSlurmEnvironment
+assert FastDownwardExperiment
+assert LocalEnvironment
+assert ScatterPlotReport
+assert TaskwiseReport
+assert TetralithEnvironment
 
 
 DIR = Path(__file__).resolve().parent
@@ -114,18 +113,14 @@ def get_repo_base() -> Path:
 
 
 def remove_file(path: Path):
-    try:
+    with contextlib.suppress(FileNotFoundError):
         path.unlink()
-    except FileNotFoundError:
-        pass
 
 
 def remove_properties(eval_dir: Path):
     for name in ["properties", "properties.xz"]:
-        try:
+        with contextlib.suppress(FileNotFoundError):
             (eval_dir / name).unlink()
-        except FileNotFoundError:
-            pass
 
 
 def compress(path: Path):
@@ -184,8 +179,7 @@ def fetch_algorithm(exp, expname, algo, *, new_algo=None):
 
 
 def fetch_algorithms(exp, expname, *, algos=None, name=None, filters=None):
-    """Fetch multiple or all algorithms.
-    """
+    """Fetch multiple or all algorithms."""
     assert not expname.rstrip("/").endswith("-eval")
     algos = set(algos or [])
     filters = filters or []
@@ -232,8 +226,7 @@ def add_scatter_plot_reports(exp, algorithm_pairs, attributes, *, filter=None):
                     get_category=None if TEX else lambda run1, run2: run1["domain"],
                     attributes=[attribute],
                     filter_algorithm=[algo1, algo2],
-                    filter=[add_evaluations_per_time, group_domains]
-                    + tools.make_list(filter),
+                    filter=[add_evaluations_per_time, group_domains, *tools.make_list(filter)],
                     format="tex" if TEX else "png",
                 ),
                 name=f"{exp.name}-{algo1}-{algo2}-{attribute}{'-relative' if RELATIVE else ''}",

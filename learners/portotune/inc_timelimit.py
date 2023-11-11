@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import numpy
+import numpy as np
 
 from portfolio import EPSILON, Portfolio
 
@@ -37,24 +37,24 @@ class IncreasingTimelimitPortfolio(Portfolio):
             configs_scores = self.evaluator.configs_scores(
                 runtimes, list(unsolved_problems)
             )
-            if not numpy.sum(configs_scores).astype(bool):
+            if not np.sum(configs_scores).astype(bool):
                 # continue if there were no problems solved in this timeslot
                 current_timeslot += self.stepsize
                 continue
-            best_config = numpy.argmax(configs_scores)
+            best_config = np.argmax(configs_scores)
 
             # retreive all the problems ids for the best config;
             # problems_within_timeslot is always a 1d array
-            problems_within_timeslot = numpy.where(
+            problems_within_timeslot = np.where(
                 (times[:, best_config] < current_timeslot + EPSILON)
-                * (numpy.not_equal(times[:, best_config], None))
+                * (np.not_equal(times[:, best_config], None))
             )[0]
             # retreive all the problems solved in this timeslot
             solved_within_timeslot = unsolved_problems.intersection(
                 problems_within_timeslot
             )
             # retreive the max runtime of the solved problems in this timeslot
-            max_runtime = numpy.max(times[list(solved_within_timeslot), best_config])
+            max_runtime = np.max(times[list(solved_within_timeslot), best_config])
             max_runtime = int(max_runtime + 1)
 
             # include the runtime into the schedule
@@ -87,5 +87,5 @@ class IncreasingTimelimitPortfolio(Portfolio):
             if len(unsolved_problems) == 0:
                 unsolved_problems = None
 
-        self.schedule_config_ids = numpy.array(schedule_configs)
-        self.schedule_runtimes = numpy.array(schedule_runtimes, int)
+        self.schedule_config_ids = np.array(schedule_configs)
+        self.schedule_runtimes = np.array(schedule_runtimes, int)

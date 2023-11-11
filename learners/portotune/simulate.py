@@ -39,7 +39,7 @@ class PortfolioSimulator(PlanningReport):
         # Iterate over problems
         for (domain, problem), problem_runs in list(self.problem_runs.items()):
             ext_config = "WORK-simulate-%d-%s" % (self.time_limit, self.portfolio_name)
-            run_id = "-".join([ext_config, domain, problem])
+            run_id = f"{ext_config}-{domain}-{problem}"
             cost = None
             # problem_runs contains solutions of all tuned configs
             for run in problem_runs:
@@ -57,10 +57,7 @@ class PortfolioSimulator(PlanningReport):
                 if run["coverage"] == 1 and run_total_time <= timeout:
                     run_cost = run.get("cost")
                     assert run_cost is not None
-                    if cost is None:
-                        cost = run_cost
-                    else:
-                        cost = min(cost, run_cost)
+                    cost = run_cost if cost is None else min(cost, run_cost)
             props[run_id] = {
                 "cost": cost,
                 "coverage": cost is not None,

@@ -24,8 +24,7 @@ class DomainConfigValues:
     def set_runtime(self, time):
         self.qualities[self.times <= time + EPSILON] = 0
         # np.nonzero returns a tuple of arrays, one for each dimension
-        solved_probs = np.nonzero(self.times <= time + EPSILON)[0]
-        return solved_probs
+        return np.nonzero(self.times <= time + EPSILON)[0]
 
     def get_tradeoff(self):
         # The values may have changed and have to be recalculated each time
@@ -72,7 +71,7 @@ class DomainwisePortfolio(Portfolio):
         print(list(self.domains.keys()))
 
         self.values = defaultdict(dict)
-        for domain_number, domain in enumerate(self.domains.keys()):
+        for _domain_number, domain in enumerate(self.domains.keys()):
             for config_number, config in enumerate(self.algorithms):
                 rows = self.domain_to_problem_indices[domain]
                 times = all_times[rows, config_number]
@@ -107,7 +106,7 @@ class DomainwisePortfolio(Portfolio):
         if sum(self.schedule_runtimes) + min_time > self.plantime:
             print("Schedule already uses all available plan time:", end=" ")
             print(
-                "%s + %s > %s" % (sum(self.schedule_runtimes), min_time, self.plantime)
+                f"{sum(self.schedule_runtimes)} + {min_time} > {self.plantime}"
             )
             return False
 
@@ -146,7 +145,7 @@ class DomainwisePortfolio(Portfolio):
 
     def get_possible_improvement(self):
         improvement = 0
-        for domain, configs in list(self.values.items()):
+        for _domain, configs in list(self.values.items()):
             improvement += sum(
                 values.get_possible_improvement() for values in list(configs.values())
             )

@@ -1,7 +1,7 @@
 import logging
 import random
 
-import numpy
+import numpy as np
 
 from portfolio import EPSILON, Portfolio
 
@@ -16,10 +16,10 @@ class RanitSearchPortfolio(Portfolio):
         """Implementation of compute_portfolio method as it is implemented in
         IncreasingTimeslotPortfolio.
         """
-        self.schedule_runtimes = numpy.zeros(len(self.algorithms))
+        self.schedule_runtimes = np.zeros(len(self.algorithms))
         self.schedule_config_ids = list(range(len(self.algorithms)))
         num_configs = len(self.algorithms)
-        runtimes = numpy.ones(num_configs, dtype=int) * self.plantime / num_configs
+        runtimes = np.ones(num_configs, dtype=int) * self.plantime / num_configs
         score, best_runtimes = self.improve_portfolio(runtimes)
         logging.info("DONE computing portfolio, final score: %s" % score)
         self.schedule_runtimes = best_runtimes
@@ -29,7 +29,7 @@ class RanitSearchPortfolio(Portfolio):
         max_runtime = self.plantime / 2
 
         def rand_swap(succ_runtimes):
-            """Swap a random runtime proportion between to random configs =="""
+            """Swap a random runtime proportion between to random configs ==."""
             while True:
                 # sample to ids without replacement
                 id1, id2 = random.sample(range(num_configs), 2)
@@ -42,15 +42,15 @@ class RanitSearchPortfolio(Portfolio):
                     continue
 
                 succ_runtimes[id1] -= delta
-                succ_runtimes[id2] += self.plantime - numpy.sum(succ_runtimes)
+                succ_runtimes[id2] += self.plantime - np.sum(succ_runtimes)
                 return succ_runtimes
 
         def rand_all(succ_runtimes):
             """Takes a small time proportion from all configs
-            and assign it to a random config
+            and assign it to a random config.
             """
             delta = int(random.random() * self.plantime)
-            num_active = numpy.sum(numpy.where(succ_runtimes > EPSILON))
+            num_active = np.sum(np.where(succ_runtimes > EPSILON))
             single_delta = int(delta / num_active)
             profiteer = random.randint(0, num_configs - 1)
 
@@ -61,11 +61,11 @@ class RanitSearchPortfolio(Portfolio):
             # set their runtime to zero
             succ_runtimes[total_loosers] = 0
             # loosers of single_delta
-            loosers = numpy.invert(total_loosers)
+            loosers = np.invert(total_loosers)
             loosers[profiteer] = False
             succ_runtimes[loosers] -= single_delta
             # total_loss += numpy.sum(loosers) * single_delta
-            succ_runtimes[profiteer] += self.plantime - numpy.sum(succ_runtimes)
+            succ_runtimes[profiteer] += self.plantime - np.sum(succ_runtimes)
             return succ_runtimes
 
         while True:
