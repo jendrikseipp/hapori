@@ -7,34 +7,34 @@ from portfolio import EPSILON, Portfolio
 
 
 class DomainConfigValues:
-    def __init__(self, domain, config, times, qualities):
+    def __init__(self, domain, config, times, scores):
         self.domain = domain
         self.config = config
         self.times = times
-        self.qualities = qualities
+        self.scores = scores
 
         self.sorting = np.argsort(times, axis=0)
         self.sorted_times = times[self.sorting]
 
     def set_problems_solved(self, solved_probs):
-        self.qualities[solved_probs] = 0
+        self.scores[solved_probs] = 0
 
     def set_runtime(self, time):
-        self.qualities[self.times <= time + EPSILON] = 0
+        self.scores[self.times <= time + EPSILON] = 0
         # np.nonzero returns a tuple of arrays, one for each dimension
         return np.nonzero(self.times <= time + EPSILON)[0]
 
     def get_tradeoff(self):
         # The values may have changed and have to be recalculated each time
-        cum_qualities = np.cumsum(self.qualities[self.sorting])
+        cum_scores = np.cumsum(self.scores[self.sorting])
         # np.nonzero returns a tuple of arrays, one for each dimension
-        indices = np.nonzero(cum_qualities >= EPSILON)[0]
+        indices = np.nonzero(cum_scores >= EPSILON)[0]
         if indices.size == 0:
             return 0, 0, []
         index = np.min(indices)
         time = self.sorted_times[index]
         # improvement may be zero
-        improvement = np.sum(self.qualities[(self.times <= time + EPSILON)])
+        improvement = np.sum(self.scores[(self.times <= time + EPSILON)])
         solved_probs = np.nonzero(self.times <= time)[0]
         return improvement, time, solved_probs
 
@@ -43,7 +43,7 @@ class DomainConfigValues:
         return improvement
 
     def __str__(self):
-        parts = [self.domain, self.config, self.times, self.qualities]
+        parts = [self.domain, self.config, self.times, self.scores]
         return " ".join(str(part) for part in parts)
 
 
@@ -65,7 +65,7 @@ class DomainwisePortfolio(Portfolio):
 
         print(self.algorithms)
         print(all_times)
-        print(self.qualities)
+        print(self.scores)
         print(list(self.domains.keys()))
 
         self.values = defaultdict(dict)
@@ -73,9 +73,9 @@ class DomainwisePortfolio(Portfolio):
             for config_number, config in enumerate(self.algorithms):
                 rows = self.domain_to_problem_indices[domain]
                 times = all_times[rows, config_number]
-                qualities = self.qualities[rows, config_number]
+                scores = self.scores[rows, config_number]
                 self.values[domain][config] = DomainConfigValues(
-                    domain, config, times, qualities
+                    domain, config, times, scores
                 )
 
         remaining_domains = set(self.domains.keys())

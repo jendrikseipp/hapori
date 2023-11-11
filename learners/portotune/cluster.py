@@ -19,7 +19,7 @@ class ClusterPortfolio(Portfolio):
         self.schedule_config_ids = list(range(len(self.algorithms)))
 
         print(self.algorithms)
-        obs = self.qualities.transpose()
+        obs = self.scores.transpose()
         print(obs)
         res = kmeans(obs, self.clusters)
         code_book, distance = res

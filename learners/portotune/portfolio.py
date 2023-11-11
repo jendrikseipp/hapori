@@ -32,7 +32,7 @@ class Portfolio(PlanningReport):
         self.track = track
         self.plantime = plantime
         PlanningReport.__init__(self, **kwargs)
-        # Use absolute qualities instead of qualities normalized by the number
+        # Use absolute scores instead of scores normalized by the number
         # of problems per domain.
         self.absolute_quality = absolute_quality
         # Evaluates performance on a set of "num" training variations
@@ -73,8 +73,7 @@ class Portfolio(PlanningReport):
         PlanningReport._scan_data(self)
 
         self.runtimes = []  # runtime for each problem-config pair
-        self.costs = []  # cost for each problem-config pair
-        self.qualities = []  # quality (ipc score) for each problem-config pair
+        self.scores = []  # score (coverage, quality or agile score) for each problem-config pair
         # True if the specific config was trained on the domain (resp. problem)
         self.trained = []
 
@@ -87,10 +86,10 @@ class Portfolio(PlanningReport):
 
         # transform data matrices to np matrices for easier handling
         self.runtimes = np.array(self.runtimes)
-        self.orig_qualities = np.array(self.qualities)
+        self.orig_scores = np.array(self.scores)
         self.trained = np.array(self.trained)
-        # filter qualities of trained domains
-        self.qualities = np.where(self.trained, 0, self.orig_qualities)
+        # filter scores of trained domains
+        self.scores = np.where(self.trained, 0, self.orig_scores)
 
         # replace missing times with infty for the evaluator
         times = np.where(np.equal(self.runtimes, None), np.inf, self.runtimes).astype(
@@ -100,12 +99,12 @@ class Portfolio(PlanningReport):
         if self.num_variations:
             self.evaluator = get_norm_average_evaluator(
                 times=times,
-                qualities=self.qualities,
+                scores=self.scores,
                 num=self.num_variations,
                 stddev=self.variations_stddev,
             )
         else:
-            self.evaluator = PortfolioEvaluator(times=times, qualities=self.qualities)
+            self.evaluator = PortfolioEvaluator(times=times, scores=self.scores)
 
         # the underlying schedule represented by its configs and max runtimes
         self.schedule_config_ids = []
@@ -166,23 +165,21 @@ class Portfolio(PlanningReport):
 
         for domain, problem in sorted(self.problem_runs.keys()):
             self.runtimes.append([])
-            self.costs.append([])
-            self.qualities.append([])
+            self.scores.append([])
             self.trained.append([])
             num_problems = len(solved_problems_per_domain[domain])
             for config in self.algorithms:
                 runtime, cost, quality = data[(domain, problem)][config]
                 self.runtimes[-1].append(runtime)
-                self.costs[-1].append(cost)
                 if self.absolute_quality:
-                    self.qualities[-1].append(quality)
+                    self.scores[-1].append(quality)
                 else:
                     # normalize each quality by the number of solved tasks
                     if num_problems == 0:
                         normalized_quality = 0
                     else:
                         normalized_quality = float(quality) / num_problems
-                    self.qualities[-1].append(normalized_quality)
+                    self.scores[-1].append(normalized_quality)
                 # True if the config was trained on the domain otherwise False
                 self.trained[-1].append(same_domain(domain, config))
 
@@ -356,7 +353,7 @@ class Portfolio(PlanningReport):
 
         rows.append("=== List of Problems ===")
         rows.append(
-            "The bolded qualities and times indicate problems that can "
+            "The bolded scores and times indicate problems that can "
             "be solved by this portfolio in the training set."
         )
         rows.append(
@@ -386,14 +383,14 @@ class Portfolio(PlanningReport):
 
 class PortfolioEvaluator:
     """Calculates the performance of an portfolio on a given benchmark. The
-    benchmark is given as the an array of times and qualities of all configs on
+    benchmark is given as the an array of times and scores of all configs on
     all problems.
     """
 
-    def __init__(self, times, qualities):
-        """times, qualities: np 2d arrays of equal size."""
+    def __init__(self, times, scores):
+        """times, scores: np 2d arrays of equal size."""
         self.times = times
-        self.qualities = qualities
+        self.scores = scores
 
     def score(self, runtimes, problems_id_list=None):
         """Returns score for given config runtimes. Runtimes for all configs must
@@ -406,7 +403,7 @@ class PortfolioEvaluator:
             problems_id_list = slice(None)
         solved_problems_quality = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
-            self.qualities[problems_id_list, :],
+            self.scores[problems_id_list, :],
             0,
         )
         best_quality_per_config = np.max(solved_problems_quality, axis=1)
@@ -422,7 +419,7 @@ class PortfolioEvaluator:
             problems_id_list = slice(None)
         solved_problems_quality = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
-            self.qualities[problems_id_list, :],
+            self.scores[problems_id_list, :],
             0,
         )
         return np.sum(solved_problems_quality, axis=0)
@@ -431,10 +428,10 @@ class PortfolioEvaluator:
 class PortfolioAverageEvaluator:
     """Evaluates average score on a variation of times."""
 
-    def __init__(self, times_variations, qualities):
+    def __init__(self, times_variations, scores):
         """times_variations has to be an iterable over times arrays."""
         # create evaluators for time variations
-        self.evaluators = [PortfolioEvaluator(t, qualities) for t in times_variations]
+        self.evaluators = [PortfolioEvaluator(t, scores) for t in times_variations]
 
     def max_score(self):
         return self.score(np.infty)
@@ -466,9 +463,9 @@ def _times_variation(times, stddev=1.0):
     return np.round(np.maximum(var_time, 0))
 
 
-def get_norm_average_evaluator(times, qualities, num=100, stddev=1):
+def get_norm_average_evaluator(times, scores, num=100, stddev=1):
     """Factory method for PortfolioAverageEvaluator with normal distributed
     variations.
     """
     variations = norm_time_variation_generator(times, stddev=stddev, num=num)
-    return PortfolioAverageEvaluator(variations, qualities)
+    return PortfolioAverageEvaluator(variations, scores)

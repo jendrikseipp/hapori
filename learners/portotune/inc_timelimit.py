@@ -29,7 +29,7 @@ class IncreasingTimelimitPortfolio(Portfolio):
         unsolved_problems = set(range(len(self.problems)))
         # iterate while there's still time left or until all problems are solved
         while overall_runtime < self.plantime and unsolved_problems:
-            # try to retrieve the qualities for each config in the current
+            # try to retrieve the scores for each config in the current
             # timeslot interval
             runtimes = [current_timeslot for _ in range(len(self.algorithms))]
             configs_scores = self.evaluator.configs_scores(

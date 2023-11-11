@@ -109,10 +109,10 @@ class SelectorPortfolio(Portfolio):
         """
         plantime_single = self.plantime / subset_size
         times = self.filter_unsolved_problems(self.runtimes, plantime_single)
-        # filter qualities of problems that haven't been solved within time
-        qualities = np.where(times > plantime_single, 0, self.qualities)
+        # filter scores of problems that haven't been solved within time
+        scores = np.where(times > plantime_single, 0, self.scores)
         logging.info("Calculating subset of configurations.")
-        return config_selector.max_subset(qualities, subset_size)
+        return config_selector.max_subset(scores, subset_size)
 
 
 class UniformPortfolio(SelectorPortfolio):
