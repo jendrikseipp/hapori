@@ -8,6 +8,7 @@ import project
 
 from portfolio import Track
 from ranitsearch import RanitSearchPortfolio
+from selector import SelectorPortfolio, UniformPortfolio
 
 
 DIR = Path(__file__).resolve().parent
@@ -34,6 +35,9 @@ exp.add_step("remove-combined-properties", project.remove_properties, Path(exp.e
 exp.add_fetcher(src=DATA)
 
 project.add_absolute_report(exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full")
+
+exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-opt")
+exp.add_report(SelectorPortfolio(track=TRACK), name=f"selector-opt")
 
 # TODO: run this n times and choose portfolio with highest score.
 exp.add_report(RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-opt")

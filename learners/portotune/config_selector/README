@@ -1,0 +1,5 @@
+Compilation instructions:
+
+$ sudo apt-get install cmake libblitz0-dev libboost-python-dev
+$ cmake .
+$ make
