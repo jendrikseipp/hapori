@@ -50,7 +50,6 @@ def min_subset(timetable, subset_size, slow=False):
     if slow:
         # use pure python implementation
         import slow
-        slow.best_subset(timetable, subset_size)
-        return
+        return slow.best_subset(timetable, subset_size)
     else:
         return libselector.choose_min_subset(timetable, subset_size)

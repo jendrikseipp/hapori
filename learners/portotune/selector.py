@@ -4,7 +4,7 @@ import logging
 
 import numpy
 
-from portfolio import Portfolio
+from portfolio import Portfolio, Track
 import config_selector
 
 
@@ -12,9 +12,6 @@ class SelectorPortfolio(Portfolio):
     def __init__(self, *args, **kwargs):
         self.subset_size = kwargs.pop('subset_size', 'auto')
         Portfolio.__init__(self, *args, **kwargs)
-
-        # Objective can be quality or runtime
-        self.objective = 'quality'
 
         self.portfolio_name = 'Selector Portfolio'
         self.report_descr = (('A portfolio of **%i seconds**. '
@@ -26,21 +23,25 @@ class SelectorPortfolio(Portfolio):
         IncreasingTimeslotPortfolio.
         """
         if self.subset_size == 'auto':
-            if self.objective == 'quality':
+            if self.track == Track.SAT:
                 quality, subset = self.auto_configs_quality()
-            elif self.objective == 'coverage':
+            elif self.track == Track.OPT:
                 runtime, subset = self.auto_configs_coverage()
+            else:
+                raise ValueError(f"Unknown track {self.track}")
             self.settings.append(
                 'Subset size: "auto" (best: %i)' % len(subset))
         elif str(self.subset_size).isdigit():
             subset_size = int(self.subset_size)
-            if self.objective == 'quality':
+            if self.track == Track.SAT:
                 quality, subset = self.select_configs_quality(subset_size)
-            elif self.objective == 'coverage':
+            elif self.track == Track.OPT:
                 runtime, subset = self.select_configs_coverage(subset_size)
+            else:
+                raise ValueError(f"Unknown track {self.track}")
             self.settings.append('Subset size: %i' % subset_size)
         else:
-            raise Exception('Subset can only be a number or auto')
+            raise ValueError('subset_size can only be a number or "auto"')
         self.schedule_config_ids = numpy.array(subset)
         # uniform schedule
         self.schedule_runtimes = numpy.array(
@@ -72,8 +73,7 @@ class SelectorPortfolio(Portfolio):
         return max(configs_iter(), key=lambda candidate: candidate[0])
 
     def _auto_subset_sizes(self):
-        """ Returns iterable of all posible subset sizes
-        """
+        """Return iterable over all posible subset sizes."""
         return list(range(1, self.runtimes.shape[1]))
 
     def filter_unsolved_problems(self, times, plantime_single):
@@ -92,17 +92,15 @@ class SelectorPortfolio(Portfolio):
         return times
 
     def select_configs_coverage(self, subset_size):
-        """ Chooses a subset of size subset_size  that minimizes quality as
+        """ Chooses a subset of size subset_size that minimizes runtime as
         described in config_selector.min_subset. This way the coverage is
         maximized. Problems that would not be solved in plantime_single will
         be treated as unsolved.
         Returns a tuple (accumulated runtime, subset indices)
         """
         plantime_single = self.plantime / subset_size
-        times = self.filter_unsolved_problems(self.runtimes,
-                                              plantime_single)
+        times = self.filter_unsolved_problems(self.runtimes, plantime_single)
         logging.info("Calculating subset of configurations.")
-        # calculate best subset w.r.t quality
         return config_selector.min_subset(times, subset_size)
 
     def select_configs_quality(self, subset_size):
@@ -112,19 +110,16 @@ class SelectorPortfolio(Portfolio):
         Returns a tuple (accumulated quality, subset indices)
         """
         plantime_single = self.plantime / subset_size
-        times = self.filter_unsolved_problems(self.runtimes,
-                                              plantime_single)
+        times = self.filter_unsolved_problems(self.runtimes, plantime_single)
         # filter qualities of problems that haven't been solved within time
         qualities = numpy.where(times > plantime_single, 0, self.qualities)
         logging.info("Calculating subset of configurations.")
-        # calculate best subset w.r.t quality
         return config_selector.max_subset(qualities, subset_size)
 
 
 class UniformPortfolio(SelectorPortfolio):
     def __init__(self, *args, **kwargs):
         SelectorPortfolio.__init__(self, *args, **kwargs)
-
         self.portfolio_name = 'Uniform Portfolio'
         self.report_descr = ('A portfolio of **%i seconds**. ' % self.plantime)
 
