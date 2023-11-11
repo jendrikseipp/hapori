@@ -9,14 +9,6 @@ TIMEOUT = 1800
 EPSILON = 0.0001
 
 
-def get_score(portfolio_file):
-    with open(portfolio_file) as f:
-        for line in f:
-            if line.startswith("Score:"):
-                return float(line.split(":")[1])
-    assert False, "Score could not be read from %s" % portfolio_file
-
-
 def normalize_domain_name(name):
     removals = ["-", "_"]
     removals += ["strips", "adl", "opt08", "sat08"]
@@ -80,7 +72,6 @@ class Portfolio(PlanningReport):
     def _scan_data(self):
         PlanningReport._scan_data(self)
 
-        self.commandline_configs = []
         self.runtimes = []  # runtime for each problem-config pair
         self.costs = []  # cost for each problem-config pair
         self.qualities = []  # quality (ipc score) for each problem-config pair
