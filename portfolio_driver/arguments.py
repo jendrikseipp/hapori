@@ -162,6 +162,10 @@ def parse_args():
             ("--alias", args.alias is not None),
             ("--portfolio", args.portfolio is not None)])
 
+    if args.alias is None and args.portfolio is None:
+        print_usage_and_exit_with_driver_input_error(
+            parser, "pass exactly one of --alias and --portfolio.")
+
     _convert_limits_to_ints(parser, args)
 
     if args.alias:
