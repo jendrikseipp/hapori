@@ -59,6 +59,7 @@ Stage: run
 %files from build
     ## Only keep essential binaries.
     /planner/dfs_plus
+    /planner/LAPKT-public/external/fd
     /planner/LAPKT-public/external/libff/libff.a
     /planner/LAPKT-public/planners/dfs_plus
 

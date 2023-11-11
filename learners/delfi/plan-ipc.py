@@ -151,7 +151,8 @@ def main(args):
     sys.stdout.flush()
 
     if image_file is None:
-        planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:default'
+        # TODO: why these defaults? Verify that these are the best planners from the training set
+        planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:agl-config01'
     else:
         json_model = os.path.join(DIR_SCRIPT, 'models', args.model_name + ".json")
         h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")

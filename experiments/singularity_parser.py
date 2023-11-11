@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import os
 import re
 import sys
@@ -7,23 +5,12 @@ import sys
 from lab.parser import Parser
 
 
-def fix_costs(content, props):
-    if "plan_length" in props:
-        if props["cost"] is None:
-            props["cost"] = props["plan_length"]
-        else:
-            # HACK: At one point validate seems to have change the order in its
-            # output.
-            # Assume all actions have cost at least 1!
-            cost, length = props["cost"], props["plan_length"]
-            props["plan_length"] = min(cost, length)
-            props["cost"] = max(cost, length)
-    elif "cost" in props:
-        del props["cost"]
-
-
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
+    props["claimed_coverage"] = int("Solution found." in props)
+    if not props["coverage"] and props["claimed_coverage"]:
+        print(f"unexpected error: {props}", file=sys.stderr)
+        props["error"] = "unexpected-error"
 
 def invalid_plan(content, props):
     props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1
@@ -76,7 +63,7 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    print(solved, unsolvable, out_of_time, out_of_memory, unsupported, invalid_plan)
+    # print(solved, unsolvable, out_of_time, out_of_memory, unsupported, invalid_plan)
     if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
@@ -91,16 +78,15 @@ def set_outcome(content, props):
         elif invalid_plan:
             props["error"] = "invalid_plan"
     else:
-        print(f"unexpected error: {props}", file=sys.stderr)
-        props["error"] = "unexpected-error"
+        props.add_unexplained_error(f"could not determine outcome from {props}")
+        props["error"] = "unknown-outcome"
 
 
 def type_int_or_none(elem):
     return None if elem is None else int(elem)
 
 
-def main():
-    print("Running singularity parser")
+def get_parser():
     parser = Parser()
     parser.add_pattern(
         "planner_exit_code",
@@ -147,18 +133,11 @@ def main():
     )
 
     # parser.add_pattern("plan_length", r"\nFinal value: (\S+)(?: \S+)?\n", type=int)
-    parser.add_pattern("plan_length", r"\nFinal value: (.+?) (?:.+)?\n", type=int)
-    parser.add_pattern("cost", r"\nFinal value: .+? (.+)?\n", type=type_int_or_none)
-    parser.add_function(fix_costs)
+    # parser.add_pattern("plan_length", r"\nFinal value: (.+?) (?:.+)?\n", type=int)
+    parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
-    if os.path.exists("run.log"):
-        parser.add_function(unsupported, file="run.log")
-    if os.path.exists("run.err"):
-        parser.add_function(unsupported, file="run.err")
+    parser.add_function(unsupported)
+    parser.add_function(unsupported, file="run.err")
     parser.add_function(set_outcome, file="values.log")
-    parser.parse()
-
-
-if __name__ == "__main__":
-    main()
+    return parser

@@ -20,7 +20,7 @@
 import os
 import sys
 from subprocess import Popen, PIPE
-import tempfile
+import uuid
 
 class FeatureExtractor(object):
     '''
@@ -56,8 +56,9 @@ class FeatureExtractor(object):
     '''
     def execute_command_with_runsolver(self, command, temporary_directory=None, stdin_file=None, runtime_limit=None):
         try:
-            if temporary_directory == None:
-                temporary_directory = tempfile.mkdtemp(prefix='pfeat.',suffix='.tmp')
+            if temporary_directory is None:
+                dirname = str(uuid.uuid4())
+                temporary_directory = os.path.mkdir('pfeat.' + dirname + '.tmp')
 
             runsolver_stdout = "%s/runsolver.stdout" % (temporary_directory)
             cmd_stdout = "%s/cmd.stdout" % (temporary_directory)

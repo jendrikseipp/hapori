@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import tempfile
 
 import joblib
 import numpy as np
@@ -17,7 +16,7 @@ parser.add_argument("problem")
 parser.add_argument("plan")
 
 DIR_CURR_FILE = Path(__file__).parent
-FILE_PLAN_PY = DIR_CURR_FILE / "plan.py" if (DIR_CURR_FILE / "plan.py").exists() else DIR_CURR_FILE.parent.parent
+FILE_PLAN_PY = DIR_CURR_FILE / "plan.py" if (DIR_CURR_FILE / "plan.py").exists() else DIR_CURR_FILE.resolve().parent.parent / "plan.py"
 FILE_FEATURE_EXTRACTOR = DIR_CURR_FILE / "feature_extractor" / "extract_planning_features.py"
 FILE_FEATURE_ORDER = DIR_CURR_FILE / "models" / "feature_order.json"
 FILE_PLANNER_ORDER_OPT = DIR_CURR_FILE / "models" / "opt_planners.json"
@@ -25,7 +24,7 @@ FILE_PLANNER_ORDER_SAT = DIR_CURR_FILE / "models" / "sat_planners.json"
 
 
 def generate_features(d, f_domain, f_problem):
-    f_features = os.path.join(d, "tmp_features")
+    f_features = d / "tmp_features"
     try:
         subprocess.call([
             sys.executable, FILE_FEATURE_EXTRACTOR,
@@ -34,13 +33,14 @@ def generate_features(d, f_domain, f_problem):
             "--json-output-file", f_features,
             "--no-extract-sas", "--no-extract-lpg-probing",
             "--no-extract-fd-probing", "--no-extract-sat", "--no-extract-torchlight",
-        ], cwd=d, stdout=subprocess.DEVNULL)
+        ], cwd=d)
     except subprocess.SubprocessError:
         return None
 
     if os.path.exists(f_features):
         with open(f_features) as f:
             features = json.load(f)
+        f_features.unlink()
         tmp = list(features["instance_features"].values())
         assert len(tmp) == 1
         features = tmp[0]
@@ -97,11 +97,11 @@ def main(args):
     args.model = os.path.abspath(args.model)
     args.plan = os.path.abspath(args.plan)
 
-    with tempfile.TemporaryDirectory() as d:
-        features = generate_features(d, args.domain, args.problem)
-        planner = query_model(args.model, features)
-        print(f"Selected Planner: {planner}")
-        execute_planner(d, args.domain, args.problem, args.plan, planner)
+    d = DIR_CURR_FILE
+    features = generate_features(d, args.domain, args.problem)
+    planner = query_model(args.model, features)
+    print(f"Selected Planner: {planner}")
+    execute_planner(d, args.domain, args.problem, args.plan, planner)
 
 
 

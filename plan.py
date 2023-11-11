@@ -13,6 +13,17 @@ import traceback
 DIR = Path(__file__).resolve().parent
 CONTAINER_PLANNER_DIR = DIR / "planners"
 
+"""
+We use a single code base for all LAPKT BFWS planners even though the
+competition versions used different builds:
+- agile setting:
+    - dual bfws uses a 64 bit build
+    - polynomial bfws and bfws preference use a 32 bit build
+- sat setting:
+    - dual bfws and bfws preference use a 64 bit build
+    - polynomial bfws use a 32 bit build
+We decided to go with a single 64 bit build for all configurations.
+"""
 LAPKT_DRIVERS = {
     "dual-bfws-agl": "BFWS/fd-version/bfws.py",
     "dual-bfws-sat": "BFWS/fd-version/bfws_anytime_fd_singularity.py",
@@ -321,7 +332,7 @@ def main():
             run_image(args, cmd)
         elif image_nick == "ipc2018-agl-olcff":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward-conjunctions/fast-downward.py",
-            "--build=release64clangpgonative",
+            "--build=release64",
             "--plan-file", args.planfile,
             args.domainfile, args.problemfile,
             "--search-options",
