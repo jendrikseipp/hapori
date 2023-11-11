@@ -5,11 +5,9 @@ from pathlib import Path
 from lab.experiment import Experiment
 
 import project
-
 from portfolio import Track
 from ranitsearch import RanitSearchPortfolio
 from selector import SelectorPortfolio, UniformPortfolio
-
 
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
@@ -40,12 +38,12 @@ project.add_absolute_report(
     exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full"
 )
 
-exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-opt")
-exp.add_report(SelectorPortfolio(track=TRACK), name=f"selector-opt")
+exp.add_report(UniformPortfolio(track=TRACK), name="uniform-opt")
+exp.add_report(SelectorPortfolio(track=TRACK), name="selector-opt")
 
 # TODO: run this n times and choose portfolio with highest score.
 exp.add_report(
-    RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-opt"
+    RanitSearchPortfolio(track=TRACK), name="randomized-iterated-search-opt"
 )
 
 exp.run_steps()

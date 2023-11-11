@@ -1,13 +1,11 @@
-from collections import defaultdict
-from pathlib import Path
 import platform
 import re
 import subprocess
 import sys
 import traceback
+from pathlib import Path
 
 from downward.experiment import FastDownwardExperiment
-from downward.reports import PlanningReport
 from downward.reports.absolute import AbsoluteReport
 from downward.reports.scatter import ScatterPlotReport
 from downward.reports.taskwise import TaskwiseReport
@@ -19,8 +17,6 @@ from lab.environments import (
 )
 from lab.experiment import ARGPARSER
 from lab.reports import Attribute, geometric_mean
-from lab import tools
-
 
 # Silence import-unused messages. Experiment scripts may use these imports.
 assert (
@@ -107,7 +103,8 @@ def get_repo_base() -> Path:
     Search upwards in the directory tree from the main script until a
     directory with a subdirectory named ".git" is found.
 
-    Abort if the repo base cannot be found."""
+    Abort if the repo base cannot be found.
+    """
     path = Path(tools.get_script_path())
     while path.parent != path:
         if (path / ".git").is_dir():
@@ -187,8 +184,7 @@ def fetch_algorithm(exp, expname, algo, *, new_algo=None):
 
 
 def fetch_algorithms(exp, expname, *, algos=None, name=None, filters=None):
-    """
-    Fetch multiple or all algorithms.
+    """Fetch multiple or all algorithms.
     """
     assert not expname.rstrip("/").endswith("-eval")
     algos = set(algos or [])

@@ -4,8 +4,8 @@ import logging
 
 import numpy
 
-from portfolio import Portfolio, Track
 import config_selector
+from portfolio import Portfolio, Track
 
 
 class SelectorPortfolio(Portfolio):
@@ -21,7 +21,7 @@ class SelectorPortfolio(Portfolio):
         ) % self.plantime
 
     def compute_portfolio(self):
-        """implementation of compute_portfolio method as it is implemented in
+        """Implementation of compute_portfolio method as it is implemented in
         IncreasingTimeslotPortfolio.
         """
         if self.subset_size == "auto":
@@ -50,7 +50,7 @@ class SelectorPortfolio(Portfolio):
         )
 
     def auto_configs_coverage(self):
-        """tries all possible subset sizes and returns the subset for
+        """Tries all possible subset sizes and returns the subset for
         the best one
         """
 
@@ -62,7 +62,7 @@ class SelectorPortfolio(Portfolio):
         return max(configs_iter(), key=lambda candidate: candidate[0])
 
     def auto_configs_quality(self):
-        """tries all possible subset sizes and returns the subset for
+        """Tries all possible subset sizes and returns the subset for
         the best one
         """
 

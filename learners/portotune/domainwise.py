@@ -5,11 +5,10 @@ from collections import defaultdict
 
 import numpy as np
 
-from portfolio import Portfolio
-from portfolio import EPSILON
+from portfolio import EPSILON, Portfolio
 
 
-class DomainConfigValues(object):
+class DomainConfigValues:
     def __init__(self, domain, config, times, qualities):
         self.domain = domain
         self.config = config
@@ -154,8 +153,7 @@ class DomainwisePortfolio(Portfolio):
         return improvement
 
     def get_gap(self, domain):
-        """
-        Return the score that this domain could get if we could run all
+        """Return the score that this domain could get if we could run all
         configs for 30 minutes sequentially minus the already obtained score.
 
         Normalizing the gap by the score_max seems to decrease the overall

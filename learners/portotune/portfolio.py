@@ -1,11 +1,9 @@
-from collections import defaultdict
-from enum import auto, Enum
 import os
+from collections import defaultdict
+from enum import Enum, auto
 
 import numpy as np
-
 from downward.reports import PlanningReport
-
 
 TIMEOUT = 1800
 EPSILON = 0.0001
@@ -124,7 +122,6 @@ class Portfolio(PlanningReport):
 
     def _retrieve_information(self):
         """Parse the passed report."""
-
         best_costs = {}
         for (domain, problem, algo), run in self.runs.items():
             if run["coverage"]:
@@ -216,8 +213,7 @@ class Portfolio(PlanningReport):
         ]
 
     def sorted_runtimes(self):
-        """
-        Return the runtimes in the order of their configs in self.algorithms. The
+        """Return the runtimes in the order of their configs in self.algorithms. The
         runtime is 0 for configs not included in the schedule.
         """
         configs_to_times = dict(
@@ -231,8 +227,7 @@ class Portfolio(PlanningReport):
         )
 
     def reduce_score_based(self, runtimes, granularity=1):
-        """
-        Reduces the runtime for each config as long as the resulting evaluation
+        """Reduces the runtime for each config as long as the resulting evaluation
         score does not decrease.
         """
         score = self.evaluator.score(runtimes)
@@ -400,23 +395,20 @@ class Portfolio(PlanningReport):
         return "\n".join(rows)
 
 
-class PortfolioEvaluator(object):
-    """
-    Calculates the performance of an portfolio on a given benchmark. The
+class PortfolioEvaluator:
+    """Calculates the performance of an portfolio on a given benchmark. The
     benchmark is given as the an array of times and qualities of all configs on
     all problems.
     """
 
     def __init__(self, times, qualities):
-        """
-        times, qualities: np 2d arrays of equal size
+        """times, qualities: np 2d arrays of equal size
         """
         self.times = times
         self.qualities = qualities
 
     def score(self, runtimes, problems_id_list=None):
-        """
-        Returns score for given config runtimes. Runtimes for all configs must
+        """Returns score for given config runtimes. Runtimes for all configs must
         be present. Configs that are not used within the portfolio should have a
         runtime of 0.
         """
@@ -448,9 +440,8 @@ class PortfolioEvaluator(object):
         return np.sum(solved_problems_quality, axis=0)
 
 
-class PortfolioAverageEvaluator(object):
-    """
-    Evaluates average score on a variation of times.
+class PortfolioAverageEvaluator:
+    """Evaluates average score on a variation of times.
     """
 
     def __init__(self, times_variations, qualities):
@@ -475,8 +466,7 @@ class PortfolioAverageEvaluator(object):
 
 
 def norm_time_variation_generator(times, stddev=1.0, num=100):
-    """
-    Genrates 'num' normally distributed variations of runtime. Times have to
+    """Genrates 'num' normally distributed variations of runtime. Times have to
     be pure numerical. You are responsible for replacing missing values with
     appropriate numerical ones.
     """
@@ -490,8 +480,7 @@ def _times_variation(times, stddev=1.0):
 
 
 def get_norm_average_evaluator(times, qualities, num=100, stddev=1):
-    """
-    Factory method for PortfolioAverageEvaluator with normal distributed
+    """Factory method for PortfolioAverageEvaluator with normal distributed
     variations.
     """
     variations = norm_time_variation_generator(times, stddev=stddev, num=num)

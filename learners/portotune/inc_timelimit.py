@@ -2,7 +2,7 @@
 
 import numpy
 
-from portfolio import Portfolio, EPSILON
+from portfolio import EPSILON, Portfolio
 
 
 class IncreasingTimelimitPortfolio(Portfolio):

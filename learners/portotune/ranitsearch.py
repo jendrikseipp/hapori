@@ -3,7 +3,7 @@ import random
 
 import numpy
 
-from portfolio import Portfolio, EPSILON
+from portfolio import EPSILON, Portfolio
 
 
 class RanitSearchPortfolio(Portfolio):
@@ -29,7 +29,7 @@ class RanitSearchPortfolio(Portfolio):
         max_runtime = self.plantime / 2
 
         def rand_swap(succ_runtimes):
-            """swap a random runtime proportion between to random configs =="""
+            """Swap a random runtime proportion between to random configs =="""
             while True:
                 # sample to ids without replacement
                 id1, id2 = random.sample(range(num_configs), 2)
@@ -46,7 +46,7 @@ class RanitSearchPortfolio(Portfolio):
                 return succ_runtimes
 
         def rand_all(succ_runtimes):
-            """takes a small time proportion from all configs
+            """Takes a small time proportion from all configs
             and assign it to a random config
             """
             delta = int(random.random() * self.plantime)
@@ -104,7 +104,7 @@ class RanitSearchPortfolio(Portfolio):
                         self.reduce_score_based(best_runtimes)
                     # continue using new best runntimes
                     break
-                    # todo: implement some timeout, random restart etc
+                    # TODO: implement some timeout, random restart etc
                 if not tries % 1000:
                     logging.info("Try %d, trying harder..." % tries)
                 # if not tries % 500 and not reduced:

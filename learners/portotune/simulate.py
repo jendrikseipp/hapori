@@ -1,8 +1,7 @@
 import os
 
-from lab.tools import Properties, import_python_file
-
 from downward.reports import PlanningReport
+from lab.tools import Properties, import_python_file
 
 
 class PortfolioSimulator(PlanningReport):
