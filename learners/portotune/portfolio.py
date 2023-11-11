@@ -28,13 +28,13 @@ class Track(Enum):
 
 
 class Portfolio(PlanningReport):
-    def __init__(self, track, absolute_quality=False, plantime=TIMEOUT, **kwargs):
+    def __init__(self, track, absolute_score=False, plantime=TIMEOUT, **kwargs):
         self.track = track
         self.plantime = plantime
         PlanningReport.__init__(self, **kwargs)
         # Use absolute scores instead of scores normalized by the number
         # of problems per domain.
-        self.absolute_quality = absolute_quality
+        self.absolute_score = absolute_score
         # Evaluates performance on a set of "num" training variations
         self.num_variations = None
         # Standard derivation of variations of runtime
@@ -47,7 +47,7 @@ class Portfolio(PlanningReport):
         # subclasses
         self.settings = []
         self.settings.append("Maximum plantime: %i" % self.plantime)
-        self.settings.append("Absolute quality: %s" % self.absolute_quality)
+        self.settings.append("Absolute score: %s" % self.absolute_score)
         if self.num_variations:
             self.settings.append("Number of variations: %i" % self.num_variations)
             self.settings.append(
@@ -169,17 +169,17 @@ class Portfolio(PlanningReport):
             self.trained.append([])
             num_problems = len(solved_problems_per_domain[domain])
             for config in self.algorithms:
-                runtime, cost, quality = data[(domain, problem)][config]
+                runtime, cost, score = data[(domain, problem)][config]
                 self.runtimes[-1].append(runtime)
-                if self.absolute_quality:
-                    self.scores[-1].append(quality)
+                if self.absolute_score:
+                    self.scores[-1].append(score)
                 else:
-                    # normalize each quality by the number of solved tasks
+                    # normalize each score by the number of solved tasks
                     if num_problems == 0:
-                        normalized_quality = 0
+                        normalized_score = 0
                     else:
-                        normalized_quality = float(quality) / num_problems
-                    self.scores[-1].append(normalized_quality)
+                        normalized_score = float(score) / num_problems
+                    self.scores[-1].append(normalized_score)
                 # True if the config was trained on the domain otherwise False
                 self.trained[-1].append(same_domain(domain, config))
 
@@ -401,13 +401,13 @@ class PortfolioEvaluator:
         if problems_id_list is None:
             # Select all problems
             problems_id_list = slice(None)
-        solved_problems_quality = np.where(
+        solved_problems_score = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
             self.scores[problems_id_list, :],
             0,
         )
-        best_quality_per_config = np.max(solved_problems_quality, axis=1)
-        return np.sum(best_quality_per_config)
+        best_score_per_config = np.max(solved_problems_score, axis=1)
+        return np.sum(best_score_per_config)
 
     def max_score(self):
         return self.score(np.infty)
@@ -417,12 +417,12 @@ class PortfolioEvaluator:
         if problems_id_list is None:
             # Select all problems
             problems_id_list = slice(None)
-        solved_problems_quality = np.where(
+        solved_problems_score = np.where(
             (self.times[problems_id_list, :] < (runtimes + EPSILON)),
             self.scores[problems_id_list, :],
             0,
         )
-        return np.sum(solved_problems_quality, axis=0)
+        return np.sum(solved_problems_score, axis=0)
 
 
 class PortfolioAverageEvaluator:

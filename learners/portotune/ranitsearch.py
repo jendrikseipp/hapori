@@ -77,7 +77,7 @@ class RanitSearchPortfolio(Portfolio):
     def improve_portfolio(self, runtimes):
         """Tries to improve the given schedule/portfolio.
 
-        Returns (quality, improved_runtimes).
+        Returns (score, improved_runtimes).
         """
         logging.info("improving runtimes...")
         best_runtimes = runtimes

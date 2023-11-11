@@ -24,7 +24,7 @@ class SelectorPortfolio(Portfolio):
         """
         if self.subset_size == "auto":
             if self.track == Track.SAT:
-                quality, subset = self.auto_configs_quality()
+                score, subset = self.auto_configs_score()
             elif self.track == Track.OPT:
                 runtime, subset = self.auto_configs_coverage()
             else:
@@ -33,7 +33,7 @@ class SelectorPortfolio(Portfolio):
         elif str(self.subset_size).isdigit():
             subset_size = int(self.subset_size)
             if self.track == Track.SAT:
-                quality, subset = self.select_configs_quality(subset_size)
+                score, subset = self.select_configs_score(subset_size)
             elif self.track == Track.OPT:
                 runtime, subset = self.select_configs_coverage(subset_size)
             else:
@@ -59,7 +59,7 @@ class SelectorPortfolio(Portfolio):
 
         return max(configs_iter(), key=lambda candidate: candidate[0])
 
-    def auto_configs_quality(self):
+    def auto_configs_score(self):
         """Tries all possible subset sizes and returns the subset for
         the best one.
         """
@@ -67,7 +67,7 @@ class SelectorPortfolio(Portfolio):
         def configs_iter():
             for subset_size in self._auto_subset_sizes():
                 logging.info("calculating subsets for subset size %d" % subset_size)
-                yield self.select_configs_quality(subset_size)
+                yield self.select_configs_score(subset_size)
 
         return max(configs_iter(), key=lambda candidate: candidate[0])
 
@@ -101,11 +101,11 @@ class SelectorPortfolio(Portfolio):
         logging.info("Calculating subset of configurations.")
         return config_selector.min_subset(times, subset_size)
 
-    def select_configs_quality(self, subset_size):
-        """Chooses a subset of size subset_size  that maximizes quality as
+    def select_configs_score(self, subset_size):
+        """Chooses a subset of size subset_size  that maximizes score as
         described in config_selector.max_subset. Problems that would not be
         solved in plantime_single will be treated as unsolved.
-        Returns a tuple (accumulated quality, subset indices).
+        Returns a tuple (accumulated score, subset indices).
         """
         plantime_single = self.plantime / subset_size
         times = self.filter_unsolved_problems(self.runtimes, plantime_single)
