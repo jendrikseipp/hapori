@@ -36,17 +36,24 @@ PLAN_FILE_NAME_LENGTH = 10
 
 def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
-    complete_args = [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
+    complete_args = []
+    if time is not None or memory is not None:
+        complete_args.extend(["runlim", "--propagate"])
+    if time is not None:
+        complete_args.append(f"--time-limit={time}")
+    if memory is not None:
+        complete_args.append(f"--space-limit={int(limits.convert_to_mb(memory))}")
+    complete_args += [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
     if planner:
         complete_args += ["--config", planner]
-    print("args: %s" % complete_args)
+    print("Hapori component args: %s" % complete_args)
 
     try:
         exitcode = call.check_call(
-            "search", complete_args, time_limit=time, memory_limit=memory)
+            "search", complete_args, time_limit=None, memory_limit=None)
     except subprocess.CalledProcessError as err:
         exitcode = err.returncode
-    print("exitcode: %d" % exitcode)
+    print("Hapori component exitcode: %d" % exitcode)
     print()
     return exitcode
 
