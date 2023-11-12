@@ -5,8 +5,9 @@ SUFFIX="opt"
 FNAME="output_opt"
 RUNTIMEDATA='runtimes_opt.csv'
 SPLIT="split_opt.txt"
+SPLIT="split_opt_notest.txt"
 TIMEOUT="1800"
-IMAGES='images22'
+IMAGES='images23'
 
 
 
