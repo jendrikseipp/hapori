@@ -293,9 +293,9 @@ adam_beta_2 = 0.999
 adam_epsilon = 1e-8
 
 #SGD Optimizer
-decay = 0.005
-learning_rate = 0.098
-momentum = 0.95
+decay = 1e-6
+learning_rate = 0.01
+momentum = 0.9
 nesterov = True
 
 #Network Architecture
@@ -306,11 +306,11 @@ conv_filter_size1 = 5
 dense_activity_regularizer = options.dense_activity_regularizer
 dense_kernel_regularizer = options.dense_kernel_regularizer
 dense_layers = options.dense_layers
-dropout_rate = 0.5
+dropout_rate = 0.1
 pool_filter_size = 2
 
 #Training
-batch_size = 100
+batch_size = 80
 epochs = options.epochs
 loss_function = DEFAULT_LOSS_FUNCTIONS[options.label_type] if options.loss_function is None else options.loss_function
 optimizer = DEFAULT_OPTIMIZERS[options.label_type] if options.optimizer is None else options.optimizer
@@ -425,7 +425,6 @@ labels, list_instance_names = labels[filter_exists], list_instance_names[filter_
 # Convert labels for training
 original_labels = labels.copy()
 labels = convert_labels(options.label_type, labels.copy(), TIMEOUT)
-
 
 """---------------------------------- Generate Models and Data for each Fold ----------------------------------------"""
 fold_resources = []
