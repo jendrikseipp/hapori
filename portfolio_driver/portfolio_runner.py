@@ -38,7 +38,7 @@ def run_search(image, planner, domain_file, problem_file, plan_file, time, memor
     dispatch = REPO / "plan.py"
     complete_args = []
     if time is not None or memory is not None:
-        complete_args.append("runlim")  # --propagate is not supported by Ubuntu's runlim version.
+        complete_args.extend(["runlim", "--propagate"])
     if time is not None:
         complete_args.append(f"--time-limit={time}")
     if memory is not None:
