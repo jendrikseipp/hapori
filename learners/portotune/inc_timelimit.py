@@ -11,10 +11,7 @@ class IncreasingTimelimitPortfolio(Portfolio):
         self.settings.append("Timeslot size: %i" % self.stepsize)
 
         self.portfolio_name = "Increasing Timeslots Portfolio"
-        self.report_descr = (
-            "A portfolio of **%i seconds**. Generation based on "
-            "increasing timeslots of **%i seconds**."
-        ) % (self.plantime, self.stepsize)
+        self.settings.append(f"Stepsize: {self.stepsize}")
 
     def compute_portfolio(self):
         schedule_runtimes = []

@@ -13,11 +13,7 @@ class SelectorPortfolio(Portfolio):
         self.subset_size = subset_size
 
         self.portfolio_name = "Selector Portfolio"
-        self.report_descr = (
-            "A portfolio of **%i seconds**. "
-            "Generation based on finding the best "
-            "subset of algorithms."
-        ) % self.plantime
+        self.settings.append(f"Subset size: {self.subset_size}")
 
     def compute_portfolio(self):
         """Implementation of compute_portfolio method as it is implemented in
@@ -120,7 +116,6 @@ class UniformPortfolio(SelectorPortfolio):
     def __init__(self, track, **kwargs):
         SelectorPortfolio.__init__(self, track, subset_size=None, **kwargs)
         self.portfolio_name = "Uniform Portfolio"
-        self.report_descr = "A portfolio of **%i seconds**. " % self.plantime
 
     def compute_portfolio(self):
         self.subset_size = len(self.algorithms)

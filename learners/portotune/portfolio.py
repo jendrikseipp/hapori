@@ -54,9 +54,6 @@ class Portfolio(PlanningReport):
                 "Standard deviation of the variations: %f" % self.variations_stddev
             )
 
-        # for the portfolio report - this should be redefined by the subclasses
-        self.report_descr = "A portfolio for Fast Downward."
-
     def compute_portfolio(self):
         raise NotImplementedError
 
@@ -275,7 +272,6 @@ class Portfolio(PlanningReport):
 
         rows = []
         rows.append("= %s =" % self.portfolio_name)
-        rows.append("%s" % self.report_descr)
         rows.extend("- %s" % setting for setting in self.settings)
         rows.append("")
         rows.append("")

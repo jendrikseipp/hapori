@@ -52,7 +52,6 @@ class DomainwisePortfolio(Portfolio):
         Portfolio.__init__(self, *args, **kwargs)
 
         self.portfolio_name = "Domain-wise portfolio"
-        self.report_descr = "A per-domain portfolio."
 
     def compute_portfolio(self):
         # replace missing times with infinity for the evaluator

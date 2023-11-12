@@ -11,7 +11,6 @@ class ClusterPortfolio(Portfolio):
         self.clusters = clusters
 
         self.portfolio_name = "Cluster portfolio"
-        self.report_descr = "A cluster portfolio."
         self.settings.append(f"Clusters: {self.clusters}")
 
     def compute_portfolio(self):
