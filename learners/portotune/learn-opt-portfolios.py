@@ -6,6 +6,7 @@ from lab.experiment import Experiment
 
 import project
 from portfolio import Track
+from cluster import ClusterPortfolio
 from ranitsearch import RanitSearchPortfolio
 from selector import SelectorPortfolio, UniformPortfolio
 
@@ -41,6 +42,8 @@ project.add_absolute_report(
 
 exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-{SUFFIX}")
 exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"selector-{SUFFIX}")
+# Try all cluster sizes.
+exp.add_report(ClusterPortfolio(track=TRACK, clusters=3), name=f"cluster-{SUFFIX}")
 
 # TODO: run this n times and choose portfolio with highest score.
 exp.add_report(
