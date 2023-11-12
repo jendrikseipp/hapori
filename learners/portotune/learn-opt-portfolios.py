@@ -24,6 +24,7 @@ ATTRIBUTES = [
 ]
 
 TRACK = Track.OPT
+SUFFIX = "opt"
 DATA = "../../experiments/data/01-opt-planners-eval/properties-hardest.json.xz"
 
 exp = Experiment()
@@ -38,12 +39,12 @@ project.add_absolute_report(
     exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full"
 )
 
-exp.add_report(UniformPortfolio(track=TRACK), name="uniform-opt")
-exp.add_report(SelectorPortfolio(track=TRACK), name="selector-opt")
+exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-{SUFFIX}")
+exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"selector-{SUFFIX}")
 
 # TODO: run this n times and choose portfolio with highest score.
 exp.add_report(
-    RanitSearchPortfolio(track=TRACK), name="randomized-iterated-search-opt"
+    RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-{SUFFIX}"
 )
 
 exp.run_steps()

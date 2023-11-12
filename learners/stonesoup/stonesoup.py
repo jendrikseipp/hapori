@@ -26,13 +26,13 @@ def dump_portfolio(track, configs, timeouts, results, **kwargs):
         sys.stdout = open(outfile, "w")
 
     print('"""')
+    print(f"Track = {track}")
     kwargs.setdefault("runtime", "{}s".format(sum(timeouts)))
     for key, value in sorted(kwargs.items()):
         if value is not None:
             print("{}: {}".format(key.capitalize(), value))
     print('"""')
     print()
-    print("TRACK = \"{}\"".format(track))
     print("CONFIGS = [")
 
     assert len(configs) == len(timeouts)
@@ -332,7 +332,7 @@ def main():
         "Max time": max(portfolio.timeouts.values()),
     }
 
-    print("Sort by decreasing coverage")
+    print("Sort by decreasing coverage (when giving each algorithm the full time)")
     configs = sort_configs_by_decreasing_coverage(results.configs, results)
 
     dump_portfolio(

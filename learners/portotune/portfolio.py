@@ -239,13 +239,9 @@ class Portfolio(PlanningReport):
         domain_quotas = np.array(domain_quotas)
 
         rows = []
-        rows.append("#! /usr/bin/env python")
-        rows.append("# -*- coding: utf-8 -*-\n")
-        rows.append("import portfolio\n")
-
         rows.append('"""')
         rows.append("Portfolio generator: %s\n" % self.portfolio_name)
-        rows.append("Score: %.4f" % self.evaluator.score(self.sorted_runtimes()))
+        rows.append("Score: %.2f" % self.evaluator.score(self.sorted_runtimes()))
         rows.append(
             "Average score quota: %.2f" % np.mean(domain_quotas, dtype=np.float64)
         )
@@ -259,25 +255,19 @@ class Portfolio(PlanningReport):
             rows.append("   %s" % setting)
         rows.append('"""\n')
 
-        rows.append("CONFIGS = [")
+        rows.append("PLANNERS = [")
         params = []
         schedule = self.schedule()
-        for config_id, runtime in schedule:
-            config = self.algorithms[config_id]
-            params.append("    # " + config)
-            params.append(f"    ({int(runtime)}), ")
-        rows.append("\n".join(params)[:-2])
+        for algo_id, runtime in schedule:
+            algo = self.algorithms[algo_id]
+            planner, config = algo.split(":")
+            params.append("    # " + algo)
+            params.append(f"    ({int(runtime)}, ['{planner}', '{config}']),")
+        rows.append("\n".join(params))
         rows.append("]\n")
 
-        rows.append(
-            "portfolio.run(configs=CONFIGS, optimal=%s, timeout=%d)"
-            % (self.track == Track.OPT, self.plantime)
-        )
-
-        with open(self.portfolio_file, "w") as file_handler:
-            file_handler.write("\n".join(rows))
-        # Make file executable
-        os.chmod(self.portfolio_file, 0o755)
+        with open(self.portfolio_file, "w") as f:
+            f.write("\n".join(rows))
 
     def get_markup(self):
         sorted_time_limits = self.sorted_runtimes()
@@ -366,7 +356,7 @@ class Portfolio(PlanningReport):
             columns = []
             columns.append(domain)
             columns.append(problem)
-            for config_id, _config in enumerate(self.algorithms):
+            for config_id in range(len(self.algorithms)):
                 runtime = self.runtimes[problem_id][config_id]
                 if runtime is None:
                     columns.append("")

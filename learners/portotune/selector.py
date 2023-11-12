@@ -7,9 +7,10 @@ from portfolio import Portfolio, Track
 
 
 class SelectorPortfolio(Portfolio):
-    def __init__(self, *args, **kwargs):
-        self.subset_size = kwargs.pop("subset_size", "auto")
-        Portfolio.__init__(self, *args, **kwargs)
+    def __init__(self, track,  subset_size, **kwargs):
+        """*subset_size* can be a number or "auto"."""
+        Portfolio.__init__(self, track, **kwargs)
+        self.subset_size = subset_size
 
         self.portfolio_name = "Selector Portfolio"
         self.report_descr = (
@@ -116,8 +117,8 @@ class SelectorPortfolio(Portfolio):
 
 
 class UniformPortfolio(SelectorPortfolio):
-    def __init__(self, *args, **kwargs):
-        SelectorPortfolio.__init__(self, *args, **kwargs)
+    def __init__(self, track, **kwargs):
+        SelectorPortfolio.__init__(self, track, subset_size=None, **kwargs)
         self.portfolio_name = "Uniform Portfolio"
         self.report_descr = "A portfolio of **%i seconds**. " % self.plantime
 

@@ -15,7 +15,7 @@ class ClusterPortfolio(Portfolio):
         self.settings.append("Clusters: %i" % self.clusters)
 
     def compute_portfolio(self):
-        self.schedule_runtimes = [0 for config in self.algorithms]
+        self.schedule_runtimes = [0 for _ in self.algorithms]
         self.schedule_config_ids = list(range(len(self.algorithms)))
 
         print(self.algorithms)
