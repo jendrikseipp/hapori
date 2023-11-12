@@ -8,7 +8,13 @@ Stage: build-ipc2018-decstar
 %post
     ## Install all necessary dependencies.
     apt-get update
-    apt-get -y install g++ make python
+    apt-get -y install g++ git make python
+
+    git clone https://github.com/arminbiere/runlim.git
+    cd runlim
+    git checkout e5484a6
+    ./configure.sh
+    make -j4
 
     ## Build your planner
     cd /planner/planners/ipc2018-decstar/src
@@ -29,6 +35,8 @@ Stage: run
     /planner/planners/ipc2018-decstar/src/translate
     /planner/planners/ipc2018-decstar/src/search/downward-release
 
+    /runlim/runlim /usr/bin/runlim
+
 %files
     configs /planner/configs
     plan.py /planner/plan.py
@@ -39,7 +47,7 @@ Stage: run
     apt-get update
 
     # requirements of all component planners
-    apt-get -y install --no-install-recommends python runlim software-properties-common time gawk python-pip
+    apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     pip2 install -U wheel setuptools
     pip2 install networkx
 
