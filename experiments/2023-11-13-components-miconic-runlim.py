@@ -89,6 +89,8 @@ if RUNNING_ON_CLUSTER:
     SAT_TIME_LIMIT = 60
 else:
     # SUITE = ["labyrinth-opt23-adl:p01.pddl", "recharging-robots-opt23-adl:p01.pddl"]
+    # SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
+    # SUITE = ["parcprinter-strips:0-p30.pddl"]
     SUITE = ["miconic-strips:0-p01.pddl"]
     ENVIRONMENT = LocalEnvironment(processes=4)
     OPT_TIME_LIMIT = 1
@@ -96,16 +98,18 @@ else:
 
 ATTRIBUTES = [
     "cost",
-    "plan_length",
+    # "plan_length",
     "coverage",
     "error",
     "run_dir",
     "cpu_time",
     "wall_time",
     "used_memory",
-    "resident_memory",
-    "virtual_memory",
+    "solver_status_str",
+    "solver_status_num",
     "invalid_plan",
+    "memory_limit",
+    "time_limit",
 ]
 
 
@@ -176,7 +180,6 @@ def main(image_name):
                         "--output-file=runlim.txt",
                         f"--time-limit={time_limit}",
                         f"--space-limit={MEMORY_LIMIT}",
-                        "-d",
                         "--propagate",
                         "{image}",
                         "{domain}",

@@ -106,34 +106,34 @@ def get_parser():
         required=True,
     )
     parser.add_pattern(
-        "time_limit", r"[runlim] time limit:\t*(\d+) seconds",
+        "time_limit", r"\[runlim\] time limit:\t*(\d+) seconds",
         type=int, file="runlim.txt", required=True,
     )
     parser.add_pattern(
-        "memory_limit", r"[runlim] space limit:\t*(\d+) MB",
+        "memory_limit", r"\[runlim\] space limit:\t*(\d+) MB",
         type=int, file="runlim.txt", required=True,
     )
     # Cumulative runtime and memory of the solver and all child processes.
     parser.add_pattern(
-        "wall_time", r"[runlim] real:\t*(.+) seconds",
+        "wall_time", r"\[runlim\] real:\t*(.+) seconds",
         type=float, file="runlim.txt", required=True
     )
     parser.add_pattern(
-        "cpu_time", r"[runlim] time:\t*(.+) seconds",
+        "cpu_time", r"\[runlim\] time:\t*(.+) seconds",
         type=float, file="runlim.txt", required=True
     )
     parser.add_pattern(
-        "used_memory", r"[runlim] space:\t*(\d+) MB",
+        "used_memory", r"\[runlim\] space:\t*(\d+) MB",
         type=int, file="runlim.txt",
         required=True
     )
     parser.add_pattern(
-        "solver_status_str", r"[runlim] status:\t*(.+)",
+        "solver_status_str", r"\[runlim\] status:\t*(.+)",
         type=str, file="runlim.txt",
         required=True
     )
     parser.add_pattern(
-        "solver_status_numerical", r"[runlim] status:\t*(\d+)",
+        "solver_status_num", r"\[runlim\] result:\t*(\d+)",
         type=int, file="runlim.txt",
         required=True
     )
