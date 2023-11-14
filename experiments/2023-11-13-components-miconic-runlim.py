@@ -198,9 +198,6 @@ def main(image_name):
                 run.set_property("problem", task.problem)
                 run.set_property("algorithm", planner_name)
                 run.set_property("id", [planner_name, task.domain, task.problem])
-                break
-            break
-        break
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
