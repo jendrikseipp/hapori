@@ -72,27 +72,27 @@ def get_portfolio_attributes(portfolio):
 FD_CONFIGS = get_portfolio_attributes(DIR / "configs" / "fd_2018_configs.py")["CONFIGS"]
 
 CONFIGS = {
-    "ipc2018-agl-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
-    "ipc2018-agl-mercury2014": ["sat", "agl"],
-    "ipc2018-agl-merwin": ["sat", "agl"],
+    "ipc2018-cerberus": ["sat", "agl", "sat-gl", "agl-gl"],
+    "ipc2018-mercury2014": ["sat", "agl"],
+    "ipc2018-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
     "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))], # covers both fdss and fd-remix
     "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
     "ipc2018-opt-delfi": DELFI_CMDS.keys(),
     "ipc2018-opt-metis": ["metis2"],  # Metis 1 is contained in the configurations of Delfi
-    "ipc2018-agl-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
+    "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)],
     "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
     "ipc2018-symple2": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
 }
 
 SINGLE_CONFIG_IMAGES = [
-    "ipc2014-agl-jasper",
+    "ipc2014-jasper", # sat + agl
     "ipc2014-agl-mpc",
     "ipc2014-agl-probe",
     "ipc2014-opt-symba1",
-    "ipc2018-agl-freelunch-madagascar",
-    "ipc2018-agl-olcff",
-    "ipc2018-lapkt-dfs-plus",
+    "ipc2018-freelunch-madagascar", # sat + agl
+    "ipc2018-olcff", # sat + agl
+    "ipc2018-lapkt-dfs-plus", # sat + agl
     "ipc2018-opt-complementary2",
     "ipc2018-opt-planning-pdbs",
     "ipc2018-opt-scorpion",
@@ -246,7 +246,7 @@ def main():
                 "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
                 "--search-options"] + ds_config
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-saarplan":
+        elif image_nick == "ipc2018-saarplan":
             track, temp = config.split('-')
             assert track in ['agl', 'sat'], track
             portfolio_path = DIR / "configs" / f"seq_{track}_saarplan.py"
@@ -290,10 +290,10 @@ def main():
             assert config == "metis2"
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{image_nick}/builds/release64/bin/preprocess", "--overall-time-limit", "30m", args.domainfile, args.problemfile, "--symmetries", "sym=structural_symmetries(search_symmetries=dks)", "--search", "astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"]
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-mercury2014":
+        elif image_nick == "ipc2018-mercury2014":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/src/plan-ipc", f"seq-{config}-mercury", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-cerberus":
+        elif image_nick == "ipc2018-cerberus":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
             run_image(args, cmd)
         elif image_nick == "ipc2018-opt-scorpion":
@@ -305,13 +305,13 @@ def main():
         elif image_nick == "ipc2014-opt-symba1":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", "seq-opt-symba-1", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-merwin":
+        elif image_nick == "ipc2018-merwin":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan-{config}", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
         elif image_nick == "ipc2018-lapkt-dfs-plus":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/LAPKT-public/planners/dfs_plus/dfs_plus.py", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-freelunch-madagascar":
+        elif image_nick == "ipc2018-freelunch-madagascar":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan.sh", args.domainfile, args.problemfile, args.planfile, f"{CONTAINER_PLANNER_DIR}/{image_nick}/MpC", f"{CONTAINER_PLANNER_DIR}/{image_nick}/incplan-lgl"]
             run_image(args, cmd)
         elif image_nick == "ipc2018-opt-planning-pdbs":
@@ -324,13 +324,13 @@ def main():
         elif image_nick == "ipc2014-agl-mpc":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/MpC", args.domainfile, args.problemfile, "-o", args.planfile, "-Q"]
             run_image(args, cmd)
-        elif image_nick == "ipc2014-agl-jasper":
+        elif image_nick == "ipc2014-jasper":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
         elif image_nick == "ipc2014-agl-probe":
             cmd = [f"{CONTAINER_PLANNER_DIR}/{image_nick}/plan", args.domainfile, args.problemfile, args.planfile]
             run_image(args, cmd)
-        elif image_nick == "ipc2018-agl-olcff":
+        elif image_nick == "ipc2018-olcff":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{image_nick}/fast-downward-conjunctions/fast-downward.py",
             "--build=release64",
             "--plan-file", args.planfile,
