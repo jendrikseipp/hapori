@@ -101,12 +101,14 @@ if RUNNING_ON_CLUSTER:
         setup='export PATH=/scicore/soft/apps/CMake/3.23.1-GCCcore-11.3.0/bin:/scicore/soft/apps/libarchive/3.6.1-GCCcore-11.3.0/bin:/scicore/soft/apps/cURL/7.83.0-GCCcore-11.3.0/bin:/scicore/soft/apps/Python/3.10.4-GCCcore-11.3.0/bin:/scicore/soft/apps/OpenSSL/1.1/bin:/scicore/soft/apps/XZ/5.2.5-GCCcore-11.3.0/bin:/scicore/soft/apps/SQLite/3.38.3-GCCcore-11.3.0/bin:/scicore/soft/apps/Tcl/8.6.12-GCCcore-11.3.0/bin:/scicore/soft/apps/ncurses/6.3-GCCcore-11.3.0/bin:/scicore/soft/apps/bzip2/1.0.8-GCCcore-11.3.0/bin:/scicore/soft/apps/binutils/2.38-GCCcore-11.3.0/bin:/scicore/soft/apps/GCCcore/11.3.0/bin:/infai/sieverss/repos/bin:/infai/sieverss/local:/export/soft/lua_lmod/centos7/lmod/lmod/libexec:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH\nexport LD_LIBRARY_PATH=/scicore/soft/apps/libarchive/3.6.1-GCCcore-11.3.0/lib:/scicore/soft/apps/cURL/7.83.0-GCCcore-11.3.0/lib:/scicore/soft/apps/Python/3.10.4-GCCcore-11.3.0/lib:/scicore/soft/apps/OpenSSL/1.1/lib:/scicore/soft/apps/libffi/3.4.2-GCCcore-11.3.0/lib64:/scicore/soft/apps/GMP/6.2.1-GCCcore-11.3.0/lib:/scicore/soft/apps/XZ/5.2.5-GCCcore-11.3.0/lib:/scicore/soft/apps/SQLite/3.38.3-GCCcore-11.3.0/lib:/scicore/soft/apps/Tcl/8.6.12-GCCcore-11.3.0/lib:/scicore/soft/apps/libreadline/8.1.2-GCCcore-11.3.0/lib:/scicore/soft/apps/ncurses/6.3-GCCcore-11.3.0/lib:/scicore/soft/apps/bzip2/1.0.8-GCCcore-11.3.0/lib:/scicore/soft/apps/binutils/2.38-GCCcore-11.3.0/lib:/scicore/soft/apps/zlib/1.2.12-GCCcore-11.3.0/lib:/scicore/soft/apps/GCCcore/11.3.0/lib64')
     OPT_TIME_LIMIT = 60
     SAT_TIME_LIMIT = 60
+    AGL_TIME_LIMIT = 60
 else:
     # SUITE = ["labyrinth-opt23-adl:p01.pddl", "recharging-robots-opt23-adl:p01.pddl"]
     SUITE = ["folding-opt23-adl:p01.pddl"]
     ENVIRONMENT = LocalEnvironment(processes=4)
-    OPT_TIME_LIMIT = 1
-    SAT_TIME_LIMIT = 1
+    OPT_TIME_LIMIT = 5
+    SAT_TIME_LIMIT = 5
+    AGL_TIME_LIMIT = 5
 
 ATTRIBUTES = [
     "cost",
@@ -125,38 +127,16 @@ ATTRIBUTES = [
 ]
 
 
-def get_image_name(file_name):
-    parts = file_name.split("+")
-    assert len(parts) == 2
-    image_name = parts[1]
-    if image_name.endswith(".py"):
-        image_name = image_name[:-3]
-    return image_name
-
-
-def is_opt_config(image_name, config_name):
-    image_name = image_name.lower()
-    config_name = config_name.lower()
-    for k, v in [("opt", True), ("sat", False), ("agl", False)]:
-        if config_name.startswith(k) or config_name.endswith(k):
-            return v
-    if image_name == "ipc2018-fd-2018":
-        return False
-    if image_name == "ipc2018-lapkt-bfws":
-        return False
-    if image_name == "ipc2018-lapkt-dfs-plus":
-        return False
-    for k, v in [("opt", True), ("sat", False), ("agl", False)]:
-        if image_name.find(f"-{k}-") > -1:
-            return v
-    assert False
-
-
-def get_configs(name):
-    configs = plan.CONFIGS.get(name)
-    assert configs is not None
-    for config_name in configs:
-        yield config_name, f"{name}+{config_name}"
+def get_time_limit(track):
+    match track:
+        case "opt":
+            return OPT_TIME_LIMIT
+        case "sat":
+            return SAT_TIME_LIMIT
+        case "agl":
+            return AGL_TIME_LIMIT
+        case _:
+            sys.exit(f"unknown track {track}")
 
 
 def main(image_name):
@@ -176,44 +156,46 @@ def main(image_name):
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
-    for planner_nick in list(plan.CONFIGS.keys()):
-        for config_name, planner_name in get_configs(planner_nick):
-            time_limit = OPT_TIME_LIMIT if is_opt_config(planner_nick, config_name) else SAT_TIME_LIMIT
-            for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
-                run = exp.add_run()
-                run.add_resource("domain", task.domain_file, "domain.pddl")
-                run.add_resource("problem", task.problem_file, "problem.pddl")
-                # Use runlim to limit time and memory. It must be on the system
-                # PATH.
-                run.add_command(
-                    "run-planner",
-                    [
-                        "runlim",
-                        "--output-file=runlim.txt",
-                        f"--time-limit={time_limit}",
-                        f"--space-limit={MEMORY_LIMIT}",
-                        "--propagate",
-                        "{image}",
-                        "{domain}",
-                        "{problem}",
-                        "sas_plan",
-                        planner_nick,
-                        config_name
-                    ],
-                )
-                run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
-                # Remove temporary files from old Fast Downward versions.
-                run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
-                run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
+    for track in ["opt", "sat", "agl"]:
+        time_limit = get_time_limit(track)
+        for planner, configs in plan.get_configs_for_track(track).items():
+            for config in configs:
+                algorithm_name = f"{track}+{planner}+{config}"
+                for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+                    run = exp.add_run()
+                    run.add_resource("domain", task.domain_file, "domain.pddl")
+                    run.add_resource("problem", task.problem_file, "problem.pddl")
+                    # Use runlim to limit time and memory. It must be on the system
+                    # PATH.
+                    run.add_command(
+                        "run-planner",
+                        [
+                            "runlim",
+                            "--output-file=runlim.txt",
+                            f"--time-limit={time_limit}",
+                            f"--space-limit={MEMORY_LIMIT}",
+                            "--propagate",
+                            "{image}",
+                            "{domain}",
+                            "{problem}",
+                            "sas_plan",
+                            planner,
+                            config
+                        ],
+                    )
+                    run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
+                    # Remove temporary files from old Fast Downward versions.
+                    run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
+                    run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
 
-                run.set_property("domain", task.domain)
-                run.set_property("problem", task.problem)
-                run.set_property("algorithm", planner_name)
-                run.set_property("id", [planner_name, task.domain, task.problem])
+                    run.set_property("domain", task.domain)
+                    run.set_property("problem", task.problem)
+                    run.set_property("algorithm", algorithm_name)
+                    run.set_property("id", [algorithm_name, task.domain, task.problem])
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
     exp.run_steps()
 
 if __name__ == "__main__":
-    main("hapori_components.img")
+    main("hapori_components.sif")
