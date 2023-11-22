@@ -98,9 +98,9 @@ SINGLE_CONFIG_PLANNERS = [
     "ipc2018-opt-scorpion",
 ]
 
-for planner_nick in SINGLE_CONFIG_PLANNERS:
-    assert planner_nick not in CONFIGS, planner_nick
-    CONFIGS[planner_nick] = ["default"]
+for planner in SINGLE_CONFIG_PLANNERS:
+    assert planner not in CONFIGS, planner
+    CONFIGS[planner] = ["default"]
 
 
 def csv_list(s):
@@ -168,45 +168,45 @@ def run_planner(args, cmd):
 def main():
     args = parse_args()
     if args.list_configs:
-        for planner_nick, configs in sorted(CONFIGS.items()):
+        for planner, configs in sorted(CONFIGS.items()):
             for config in sorted(configs):
-                print(f"(1, ['{planner_nick}', '{config}']),")
+                print(f"(1, ['{planner}', '{config}']),")
         sys.exit()
 
-    planner_nick = str(args.planner)
-    if planner_nick not in CONFIGS:
-        sys.exit(f"unknown planner {planner_nick}")
+    planner = str(args.planner)
+    if planner not in CONFIGS:
+        sys.exit(f"unknown planner {planner}")
 
     configs = args.configs
-    print(f"Planner nick: {planner_nick}")
+    print(f"Planner: {planner}")
     print(f"Configs: {configs}")
     print(f"Plan file: {args.planfile}")
     if not configs:
-        sys.exit(f"Planner {planner_nick} needs at least one config from {list(CONFIGS[planner_nick])}.")
+        sys.exit(f"Planner {planner} needs at least one config from {list(CONFIGS[planner])}.")
     for config in configs:
         if config == "all":
-            configs = CONFIGS[planner_nick]
-        elif config not in CONFIGS[planner_nick]:
-            sys.exit(f"Planner {planner_nick} does not support config {config}.")
+            configs = CONFIGS[planner]
+        elif config not in CONFIGS[planner]:
+            sys.exit(f"Planner {planner} does not support config {config}.")
 
     for config in configs:
         print(f"Run planner config {config}")
-        if planner_nick == "ipc2018-fd-2018":
+        if planner == "ipc2018-fd-2018":
             assert config.startswith("config"), config
             config_index = int(config[len("config"):])
             assert 0 <= config_index < len(FD_CONFIGS)
             fd_config = prepare_config(FD_CONFIGS[config_index])
             cmd = [
                 "python2",
-                f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py", "--build=release64",
+                f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64",
                 "--plan-file", args.planfile,
-                "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/builds/h2-mutexes/bin/preprocess",
+                "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/h2-mutexes/bin/preprocess",
                 args.domainfile, args.problemfile] + fd_config
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-lapkt-bfws":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/{LAPKT_DRIVERS[config]}", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2018-lapkt-bfws":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/{LAPKT_DRIVERS[config]}", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-decstar":
+        elif planner == "ipc2018-decstar":
             track, temp = config.split('-')
             assert track in ['agl', 'sat', 'opt'], track
             portfolio_path = DIR / "configs" / f"seq_{track}_ds.py"
@@ -240,13 +240,13 @@ def main():
                 'opt' : 120,
             }
             cmd = [
-                "python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/src/fast-downward.py",
+                "python2", f"{CONTAINER_PLANNER_DIR}/{planner}/src/fast-downward.py",
                 "--plan-file", args.planfile,
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2-time-limit", f"{h2_time_limit[track]}",
                 "--search-options"] + ds_config
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-saarplan":
+        elif planner == "ipc2018-saarplan":
             track, temp = config.split('-')
             assert track in ['agl', 'sat'], track
             portfolio_path = DIR / "configs" / f"seq_{track}_saarplan.py"
@@ -262,14 +262,14 @@ def main():
             }
             cmd = [
                 "python2",
-                f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py",
+                f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py",
                 "--plan-file", args.planfile,
                 args.domainfile, args.problemfile,
                 "--preprocess-options", "--h2_time_limit", f"{h2_time_limit[track]}",
                 "--search-options"]
             cmd.extend(saarplan_config)
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-symple1" or planner_nick == "ipc2018-symple2":
+        elif planner == "ipc2018-symple1" or planner == "ipc2018-symple2":
             if "OPT" in config:
                 h2_time_limit = "60"
             elif "SAT" in config:
@@ -278,60 +278,60 @@ def main():
                 h2_time_limit = "60"
             else:
                 sys.exit("unknown config for Symple")
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/src/plan", args.domainfile, args.problemfile, h2_time_limit, "ipc-18", config, "--plan-file", args.planfile]
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/src/plan", args.domainfile, args.problemfile, h2_time_limit, "ipc-18", config, "--plan-file", args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-opt-delfi":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py", "--build", "release64"]
+        elif planner == "ipc2018-opt-delfi":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build", "release64"]
             if "masb50kmiasmdfp" not in config:
-                cmd.extend(["--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/builds/release64/bin/preprocess"])
+                cmd.extend(["--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/release64/bin/preprocess"])
             cmd.extend(["--plan-file", args.planfile, args.domainfile, args.problemfile] + DELFI_CMDS[config])
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-opt-metis":
+        elif planner == "ipc2018-opt-metis":
             assert config == "metis2"
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/builds/release64/bin/preprocess", "--overall-time-limit", "30m", args.domainfile, args.problemfile, "--symmetries", "sym=structural_symmetries(search_symmetries=dks)", "--search", "astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"]
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/release64/bin/preprocess", "--overall-time-limit", "30m", args.domainfile, args.problemfile, "--symmetries", "sym=structural_symmetries(search_symmetries=dks)", "--search", "astar(max([celmcut,lmcount(lm_factory=lm_merged([lm_rhw,lm_hm(m=1)]),admissible=true,transform=multiply_out_conditional_effects)]),symmetries=sym,pruning=stubborn_sets_simple(minimum_pruning_ratio=0.01),num_por_probes=1000)"]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-mercury2014":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/src/plan-ipc", f"seq-{config}-mercury", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2018-mercury2014":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/src/plan-ipc", f"seq-{config}-mercury", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-cerberus":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
+        elif planner == "ipc2018-cerberus":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-opt-scorpion":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/builds/h2-mutexes/bin/preprocess", "--alias", "seq-opt-scorpion", "--overall-time-limit", "30m", args.domainfile, args.problemfile]
+        elif planner == "ipc2018-opt-scorpion":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/h2-mutexes/bin/preprocess", "--alias", "seq-opt-scorpion", "--overall-time-limit", "30m", args.domainfile, args.problemfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-opt-complementary2":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, args.domainfile, args.problemfile, "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=true,use_norm_dist=true)))"]
+        elif planner == "ipc2018-opt-complementary2":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, args.domainfile, args.problemfile, "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=true,use_norm_dist=true)))"]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2014-opt-symba1":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan", "seq-opt-symba-1", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2014-opt-symba1":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/plan", "seq-opt-symba-1", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-merwin":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan-{config}", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2018-merwin":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/plan-{config}", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-lapkt-dfs-plus":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/LAPKT-public/planners/dfs_plus/dfs_plus.py", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2018-lapkt-dfs-plus":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/LAPKT-public/planners/dfs_plus/dfs_plus.py", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-freelunch-madagascar":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan.sh", args.domainfile, args.problemfile, args.planfile, f"{CONTAINER_PLANNER_DIR}/{planner_nick}/MpC", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/incplan-lgl"]
+        elif planner == "ipc2018-freelunch-madagascar":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/plan.sh", args.domainfile, args.problemfile, args.planfile, f"{CONTAINER_PLANNER_DIR}/{planner}/MpC", f"{CONTAINER_PLANNER_DIR}/{planner}/incplan-lgl"]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-opt-planning-pdbs":
-            cmd = ["python", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward.py",
+        elif planner == "ipc2018-opt-planning-pdbs":
+            cmd = ["python", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py",
             "--build=release64",
             "--plan-file", args.planfile,
             args.domainfile, args.problemfile,
             "--search", "astar(cpdbs_symbolic(genetic_ss(use_ucb=true,num_episodes=10000000,num_collections=1,pdb_factory=symbolic,genetic_time_limit=900,time_limit=1.0,create_perimeter=true,use_first_goal_vars=false,use_norm_dist=true)))"]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2014-agl-mpc":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/MpC", args.domainfile, args.problemfile, "-o", args.planfile, "-Q"]
+        elif planner == "ipc2014-agl-mpc":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/MpC", args.domainfile, args.problemfile, "-o", args.planfile, "-Q"]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2014-jasper":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2014-jasper":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/plan", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2014-agl-probe":
-            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner_nick}/plan", args.domainfile, args.problemfile, args.planfile]
+        elif planner == "ipc2014-agl-probe":
+            cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/plan", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
-        elif planner_nick == "ipc2018-olcff":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner_nick}/fast-downward-conjunctions/fast-downward.py",
+        elif planner == "ipc2018-olcff":
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward-conjunctions/fast-downward.py",
             "--build=release64",
             "--plan-file", args.planfile,
             args.domainfile, args.problemfile,
@@ -345,7 +345,7 @@ def main():
             "--preprocess-options", "--h2_time_limit", "30"]
             run_planner(args, cmd)
         else:
-            sys.exit(f"planner {planner_nick} not handled!")
+            sys.exit(f"planner {planner} not handled!")
 
 
 if __name__ == "__main__":
