@@ -5,6 +5,7 @@ from __future__ import with_statement
 
 from collections import defaultdict
 from copy import deepcopy
+from itertools import product
 
 import axiom_rules
 import fact_groups
@@ -24,7 +25,6 @@ import timers
 # derived variable is synonymous with another variable (derived or
 # non-derived).
 
-ALLOW_CONFLICTING_EFFECTS = True
 USE_PARTIAL_ENCODING = True
 DETECT_UNREACHABLE = True
 
@@ -150,7 +150,6 @@ def translate_strips_conditions(conditions, dictionary, ranges,
     return translate_strips_conditions_aux(conditions, dictionary, ranges)
 
 def translate_strips_operator(operator, dictionary, ranges, mutex_dict, mutex_ranges, implied_facts):
-
     conditions = translate_strips_conditions(operator.precondition, dictionary, ranges, mutex_dict, mutex_ranges)
     if conditions is None:
         return []
@@ -159,149 +158,123 @@ def translate_strips_operator(operator, dictionary, ranges, mutex_dict, mutex_ra
         op = translate_strips_operator_aux(operator, dictionary, ranges,
                                            mutex_dict, mutex_ranges,
                                            implied_facts, condition)
-        sas_operators.append(op)
+        if op is not None:
+            sas_operators.append(op)
     return sas_operators
+
+def negate_and_translate_condition(condition, dictionary, ranges, mutex_dict,
+                                   mutex_ranges):
+    # condition is a list of lists of literals (DNF)
+    # the result is the negation of the condition in DNF in
+    # finite-domain representation (a list of dictionaries that map
+    # variables to values)
+    negation = []
+    if [] in condition: # condition always satisfied
+        return None # negation unsatisfiable
+    for combination in product(*condition):
+        cond = [l.negate() for l in combination]
+        cond = translate_strips_conditions(cond, dictionary, ranges,
+                                mutex_dict, mutex_ranges)
+        if cond is not None:
+            negation.extend(cond)
+    return negation if negation else None
 
 def translate_strips_operator_aux(operator, dictionary, ranges, mutex_dict,
     mutex_ranges, implied_facts, condition):
-    # NOTE: This function does not really deal with the intricacies of properly
-    # encoding delete effects for grouped propositions in the presence of
-    # conditional effects. It should work ok but will bail out in more
-    # complicated cases even though a conflict does not necessarily exist.
-    possible_add_conflict = False
 
-    effect = {}
-
+    # collect all add effects
+    effects_by_variable = defaultdict(lambda : defaultdict(list))
+    add_conds_by_variable = defaultdict(list)
     for conditions, fact in operator.add_effects:
         eff_condition_list = translate_strips_conditions(conditions, dictionary,
                                                          ranges, mutex_dict,
                                                          mutex_ranges)
         if eff_condition_list is None: # Impossible condition for this effect.
             continue
-        eff_condition = [eff_cond.items()
-                         for eff_cond in eff_condition_list]
         for var, val in dictionary[fact]:
-            if condition.get(var) == val:
-                # Effect implied by precondition.
-                global removed_implied_effect_counter
-                removed_implied_effect_counter += 1
-                # print "Skipping effect of %s..." % operator.name
-                continue
-            effect_pair = effect.get(var)
-            if not effect_pair:
-                effect[var] = (val, eff_condition)
-            else:
-                other_val, eff_conditions = effect_pair
-                # Don't flag conflict just yet... the operator might be invalid
-                # because of conflicting add/delete effects (see pipesworld).
-                if other_val != val:
-                    possible_add_conflict = True
-                eff_conditions.extend(eff_condition)
-
+            effects_by_variable[var][val].extend(eff_condition_list)
+            add_conds_by_variable[var].append(conditions)
+    
+    # collect all del effects
+    del_effects_by_variable = defaultdict(lambda: defaultdict(list))
     for conditions, fact in operator.del_effects:
-        eff_condition_list = translate_strips_conditions(conditions, dictionary, ranges, mutex_dict, mutex_ranges)
-        if eff_condition_list is None:
+        eff_condition_list = translate_strips_conditions(conditions, dictionary,
+                                                         ranges, mutex_dict,
+                                                         mutex_ranges)
+        if eff_condition_list is None: # Impossible condition for this effect.
             continue
-        eff_condition = [eff_cond.items()
-                         for eff_cond in eff_condition_list]
         for var, val in dictionary[fact]:
-            none_of_those = ranges[var] - 1
+            del_effects_by_variable[var][val].extend(eff_condition_list)
 
-            other_val, eff_conditions = effect.setdefault(var, (none_of_those, []))
-
-            if other_val != none_of_those:
-                # Look for matching add effect; ignore this del effect if found.
-                for cond in eff_condition:
-                    assert cond in eff_conditions or [] in eff_conditions, \
-                                  "Add effect with uncertain del effect partner?"
-                if other_val == val:
-                    if ALLOW_CONFLICTING_EFFECTS:
-                        # Conflicting ADD and DEL effect. This is *only* allowed if
-                        # this is also a precondition, in which case there is *no*
-                        # effect (the ADD takes precedence). We delete the add effect here.
-                        if condition.get(var) != val:
-                            # HACK HACK HACK!
-                            # There used to be an assertion here that actually
-                            # forbid this, but this was wrong in Pipesworld-notankage
-                            # (e.g. task 01). The thing is, it *is* possible for
-                            # an operator with proven (with the given invariants)
-                            # inconsistent preconditions to actually end up here if
-                            # the inconsistency of the preconditions is not obvious at
-                            # the SAS+ encoding level.
-                            #
-                            # Example: Pipes-Notank-01, operator
-                            # (pop-unitarypipe s12 b4 a1 a2 b4 lco lco).
-                            # This has precondition last(b4, s12) and on(b4, a2) which
-                            # is inconsistent because b4 can only be in one place.
-                            # However, the chosen encoding encodes *what is last in s12*
-                            # separately, and so the precondition translates to
-                            # "last(s12) = b4 and on(b4) = a2", which does not look
-                            # inconsistent at first glance.
-                            #
-                            # Something reasonable to do here would be to make a
-                            # decent check that the precondition is indeed inconsistent
-                            # (using *all* mutexes), but that seems tough with this
-                            # convoluted code, so we just warn and reject the operator.
-                            print "Warning: %s rejected. Cross your fingers." % (
-                                operator.name)
-                            return None
-                            assert False
-
-                        assert eff_conditions == [[]]
-                        del effect[var]
+    # add effect var=none_of_those for all del effects with the additional
+    # condition that the deleted value has been true and no add effect triggers
+    for var in del_effects_by_variable:
+        no_add_effect_condition = negate_and_translate_condition(
+            add_conds_by_variable[var], dictionary, ranges, mutex_dict,
+            mutex_ranges)
+        if no_add_effect_condition is None: # there is always an add effect
+            continue
+        none_of_those = ranges[var] - 1
+        for val, conds in del_effects_by_variable[var].items():
+            for cond in conds:
+                # add guard
+                if var in cond and cond[var] != val:
+                    continue # condition inconsistent with deleted atom
+                cond[var] = val 
+                # add condition that no add effect triggers
+                for no_add_cond in no_add_effect_condition:
+                    new_cond = dict(cond)
+                    for cvar, cval in no_add_cond.items():
+                        if cvar in new_cond and new_cond[cvar] != cval:
+                            # the del effect condition plus the deleted atom
+                            # imply that some add effect on the variable
+                            # triggers
+                            break
+                        new_cond[cvar] = cval
                     else:
-                        assert not eff_condition[0] and not eff_conditions[0], "Uncertain conflict"
-                        return None  # Definite conflict otherwise.
-            else: # no add effect on this variable
-                if condition.get(var) != val:
-                    if var in condition:
-                        ## HACK HACK HACK! There is a precondition on the variable for
-                        ## this delete effect on another value, so there is no need to
-                        ## represent the delete effect. Right? Right???
-                        del effect[var]
-                        continue
-                    for index, cond in enumerate(eff_condition_list):
-                        if cond.get(var) != val:
-                            # Need a guard for this delete effect.
-                            assert (var not in condition and
-                                    var not in eff_condition[index]), "Oops?"
-                            eff_condition[index].append((var, val))
-                eff_conditions.extend(eff_condition)
+                        effects_by_variable[var][none_of_those].append(new_cond)
 
-    if possible_add_conflict:
-        operator.dump()
+    return build_sas_operator(operator.name, condition, effects_by_variable,
+                              operator.cost, ranges, implied_facts)
 
-
-    assert not possible_add_conflict, "Conflicting add effects?"
-
-    # assert eff_condition != other_condition, "Duplicate effect"
-    # assert eff_condition and other_condition, "Dominated conditional effect"
-
+def build_sas_operator(name, condition, effects_by_variable, cost, ranges, implied_facts):
     if ADD_IMPLIED_PRECONDITIONS:
         implied_precondition = set()
         for fact in condition.iteritems():
             implied_precondition.update(implied_facts[fact])
 
     pre_post = []
-    for var, (post, eff_condition_lists) in effect.iteritems():
-        pre = condition.pop(var, -1)
-        if ranges[var] == 2:
-            # Apply simplifications for binary variables.
-            if prune_stupid_effect_conditions(var, post, eff_condition_lists):
-                global simplified_effect_condition_counter
-                simplified_effect_condition_counter += 1
-            if (ADD_IMPLIED_PRECONDITIONS and
-                pre == -1 and (var, 1 - post) in implied_precondition):
-                global added_implied_precondition_counter
-                added_implied_precondition_counter += 1
-                pre = 1 - post
-                # print "Added precondition (%d = %d) to %s" % (
-                #     var, pre, operator.name)
-        for eff_condition in eff_condition_lists:
-            pre_post.append((var, pre, post, eff_condition))
-    prevail = condition.items()
-
-    return sas_tasks.SASOperator(operator.name, prevail, pre_post, operator.cost)
+    for var in effects_by_variable:
+        orig_pre = condition.get(var, -1)
+        for post, eff_conditions in effects_by_variable[var].items():
+            pre = orig_pre
+            # if the effect does not change the variable value, we ignore it
+            if pre == post:
+                continue
+            # otherwise the condition on var is not a prevail condition but a
+            # precondition, so we remove it from the prevail condition
+            condition.pop(var, -1)
+            eff_condition_lists = [sorted(eff_cond.items())
+                                  for eff_cond in eff_conditions]
+            if ranges[var] == 2:
+                # Apply simplifications for binary variables.
+                if prune_stupid_effect_conditions(var, post, eff_condition_lists):
+                    global simplified_effect_condition_counter
+                    simplified_effect_condition_counter += 1
+                if (ADD_IMPLIED_PRECONDITIONS and
+                    pre == -1 and (var, 1 - post) in implied_precondition):
+                    global added_implied_precondition_counter
+                    added_implied_precondition_counter += 1
+                    pre = 1 - post
+            for eff_condition in eff_condition_lists:
+                # we do not need to represent a precondition as effect condition
+                if (var, pre) in eff_condition:
+                    eff_condition.remove((var,pre))
+                pre_post.append((var, pre, post, eff_condition))
+    if not pre_post: # operator is noop
+        return None
+    prevail = list(condition.items())
+    return sas_tasks.SASOperator(name, prevail, pre_post, cost)
 
 def prune_stupid_effect_conditions(var, val, conditions):
     ## (IF <conditions> THEN <var> := <val>) is a conditional effect.
