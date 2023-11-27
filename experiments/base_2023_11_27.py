@@ -66,7 +66,7 @@ assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
 MEMORY_LIMIT = 8000  # MiB
 if RUNNING_ON_CLUSTER:
-    project.SUITE_STRIPS_AND_ADL
+    SUITE = project.SUITE_STRIPS_AND_ADL
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
