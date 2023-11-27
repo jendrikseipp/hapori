@@ -3,7 +3,6 @@
 """Run an Apptainer-based planner."""
 
 import argparse
-from collections import defaultdict
 import itertools
 from pathlib import Path
 import subprocess
@@ -104,26 +103,33 @@ for planner in SINGLE_CONFIG_PLANNERS:
     CONFIGS[planner] = ["default"]
 
 
+def get_configs_for_planner_and_track(planner, track):
+    assert track in ["opt", "sat", "agl"]
+    configs = CONFIGS[planner]
+    result = []
+    for config in configs:
+        if any(track in x for x in [planner, config.lower()]):
+            result.append(config)
+        if planner == "ipc2018-lapkt-bfws" and config == "poly-bfws" and track in ["sat", "agl"]:
+            result.append(config)
+    if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-olcff" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-lapkt-dfs-plus" and track in ["sat", "agl"]:
+        result = configs
+    return result
+
+
 def get_configs_for_track(track):
     assert track in ["opt", "sat", "agl"]
-    result = defaultdict(list)
-    for planner, configs in CONFIGS.items():
-        planner = planner.lower()
-        for config in configs:
-            if any(track in x for x in [planner, config.lower()]):
-                result[planner].append(config)
-            if planner == "ipc2018-lapkt-bfws" and config == "poly-bfws" and track in ["sat", "agl"]:
-                result[planner].append(config)
-        if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
-            result[planner] = configs
-        if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
-            result[planner] = configs
-        if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
-            result[planner] = configs
-        if planner == "ipc2018-olcff" and track in ["sat", "agl"]:
-            result[planner] = configs
-        if planner == "ipc2018-lapkt-dfs-plus" and track in ["sat", "agl"]:
-            result[planner] = configs
+    result = {}
+    for planner in CONFIGS.keys():
+        result[planner] = get_configs_for_planner_and_track(planner, track)
     return result
 
 

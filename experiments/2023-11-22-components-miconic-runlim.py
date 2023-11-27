@@ -58,9 +58,9 @@ class BaseReport(AbsoluteReport):
 NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
-REPO = DIR.parent
-IMAGES_DIR = REPO / "images"
-assert IMAGES_DIR.is_dir(), IMAGES_DIR
+REPO = project.get_repo_base()
+COMPONENTS_IMAGE = REPO / "images" / "hapori_components.sif"
+assert COMPONENTS_IMAGE.is_file(), COMPONENTS_IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
@@ -127,7 +127,7 @@ def get_time_limit(track):
             sys.exit(f"unknown track {track}")
 
 
-def main(image_name):
+def main():
     exp = Experiment(environment=ENVIRONMENT)
     exp.add_step("build", exp.build)
     exp.add_step("start", exp.start_runs)
@@ -135,12 +135,9 @@ def main(image_name):
     exp.add_fetcher(name="fetch")
     exp.add_parser(get_parser())
 
-    file_image = IMAGES_DIR / image_name
-    assert file_image.is_file(), file_image
-    exp.add_resource("image", file_image, symlink=True)
-
-    exp.add_resource("run_plan", DIR.parent / "plan.py")
-    exp.add_resource("fd_2018_configs", DIR.parent / "configs/fd_2018_configs.py")
+    exp.add_resource("image", COMPONENTS_IMAGE, symlink=True)
+    exp.add_resource("run_plan", REPO / "plan.py")
+    exp.add_resource("fd_2018_configs", REPO / "configs/fd_2018_configs.py")
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
@@ -186,4 +183,4 @@ def main(image_name):
     exp.run_steps()
 
 if __name__ == "__main__":
-    main("hapori_components.sif")
+    main()
