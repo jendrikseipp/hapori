@@ -38,7 +38,7 @@ def run_search(image, planner, domain_file, problem_file, plan_file, time, memor
     dispatch = REPO / "plan.py"
     complete_args = []
     if time is not None or memory is not None:
-        complete_args.extend(["runlim", "--propagate"])
+        complete_args.extend(["runlim", f"--output-file=runlim-{image}-{planner}.txt", "--propagate"])
     if time is not None:
         complete_args.append(f"--time-limit={time}")
     if memory is not None:
