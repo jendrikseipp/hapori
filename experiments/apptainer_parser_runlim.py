@@ -32,8 +32,9 @@ def set_outcome(content, props):
     solved = props["coverage"]
     unsolvable = False  # assume all tasks are solvable
     unsupported = props["unsupported"]
-    out_of_time = int("out of time" in lines)
-    out_of_memory = int("out of memory" in lines)
+    out_of_time = int(props["solver_status_num"] == 2)
+    out_of_memory = int(props["solver_status_num"] == 3)
+    out_of_time_or_memory = 0
     invalid_plan = props["invalid_plan"]
     # runsolver decides "out of time" based on CPU rather than (cumulated)
     # WCTIME.
@@ -43,18 +44,24 @@ def set_outcome(content, props):
         and not out_of_time
         and not out_of_memory
         and not unsupported
-        and not invalid_plan
-        and props["cpu_time"] > props["time_limit"]
-    ):
-        out_of_time = 1
+        and not invalid_plan):
+        if props["cpu_time"] > props["time_limit"]:
+            out_of_time = 1
+        elif props["cpu_time"]  > 1750 and props["used_memory"] > 7000:
+            out_of_time_or_memory = 1
+        elif props["cpu_time"]  > 1750:
+            out_of_time = 1
+        elif props["used_memory"] > 7000:
+            out_of_memory = 1
+
     # In cases where CPU time is very slightly above the threshold so that
-    # runsolver didn't kill the planner yet and the planner solved a task
+    # runlim didn't kill the planner yet and the planner solved a task
     # just within the limit, runsolver will still record an "out of time".
     # We remove this record. This case also applies to iterative planners.
     # If such planners solve the task, we don't treat them as running out
     # of time.
     if (solved or unsolvable) and (out_of_time or out_of_memory):
-        print("task solved however runsolver recorded an out_of_*")
+        print("task solved however runlim recorded an out_of_*")
         print(props)
         out_of_time = 0
         out_of_memory = 0
@@ -64,7 +71,7 @@ def set_outcome(content, props):
         props["wall_time"] = None
 
     # print(solved, unsolvable, out_of_time, out_of_memory, unsupported, invalid_plan)
-    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ unsupported ^ invalid_plan:
+    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
         elif unsolvable:
@@ -73,6 +80,8 @@ def set_outcome(content, props):
             props["error"] = "out_of_time"
         elif out_of_memory:
             props["error"] = "out_of_memory"
+        elif out_of_time_or_memory:
+            props["error"] = "out_of_time_or_memory"
         elif unsupported:
             props["error"] = "unsupported"
         elif invalid_plan:
