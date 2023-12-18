@@ -15,6 +15,31 @@ def coverage(content, props):
 def invalid_plan(content, props):
     props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1
 
+def custom_errors_stdout(content, props):
+    lines = content.splitlines()
+    if any('Planning task not solvable' in line for line in lines): # probe
+        props["unsupported"] = True
+    if any('Was not allowed to increase horizon length.' in line for line in lines): # mpc
+        props["error"] = "out_of_memory"
+    return props
+
+def custom_errors_stderr(content, props):
+    lines = content.splitlines()
+    if any('Error: Parser failed to read file' in line for line in lines): # VAL on some cavediving-adl tasks
+        props["unsupported"] = True
+    if any('alloc' in line for line in lines): # jasper, decstar, symba
+        props["error"] = "out_of_memory"
+    return props
+
+# handle things filtered by fitler-stderr.py
+def custom_errors_stderr_bak(content, props):
+    lines = content.splitlines()
+    if any("CPU time limit exceeded" in line for line in lines):
+        props["error"] = "out_of_time"
+    if any("std::bad_alloc" in line for line in lines): # decstar
+        props["error"] = "out_of_memory"
+    return props
+
 def unsupported(content, props):
     if "unsupported" in props and props["unsupported"]:
         return
@@ -32,8 +57,8 @@ def set_outcome(content, props):
     solved = props["coverage"]
     unsolvable = False  # assume all tasks are solvable
     unsupported = props["unsupported"]
-    out_of_time = int(props["solver_status_num"] == 2)
-    out_of_memory = int(props["solver_status_num"] == 3)
+    out_of_time = int(props.get("error") == "out_of_time" or props["solver_status_num"] == 2)
+    out_of_memory = int(props.get("error") == "out_of_memory" or props["solver_status_num"] == 3)
     out_of_time_or_memory = 0
     invalid_plan = props["invalid_plan"]
     # runsolver decides "out of time" based on CPU rather than (cumulated)
@@ -152,6 +177,9 @@ def get_parser():
     parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
+    parser.add_function(custom_errors_stdout)
+    parser.add_function(custom_errors_stderr, file="run.err")
+    parser.add_function(custom_errors_stderr_bak, file="run.err.bak")
     parser.add_function(unsupported)
     parser.add_function(unsupported, file="run.err")
     parser.add_function(set_outcome, file="runlim.txt")
