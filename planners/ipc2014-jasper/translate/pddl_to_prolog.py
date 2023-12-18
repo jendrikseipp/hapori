@@ -63,7 +63,7 @@ class PrologProgram:
             if not eff_vars.issubset(cond_vars):
                 must_add_predicate = True
                 eff_vars -= cond_vars
-                for var in eff_vars:
+                for var in sorted(eff_vars):
                     rule.add_condition(pddl.Atom("@object", [var]))
         if must_add_predicate:
             print "Unbound effect variables: Adding @object predicate."
@@ -123,18 +123,22 @@ class Rule:
             if var_name[0] == "?":
                 if var_name in used_variables:
                     new_var_name = "%s@%d" % (var_name, len(new_conditions))
-                    atom = atom.rename_variables({var_name: new_var_name})
+                    atom = atom.replace_argument(i, new_var_name)
                     new_conditions.append(pddl.Atom("=", [var_name, new_var_name]))
                 else:
                     used_variables.add(var_name)
         return atom
     def rename_duplicate_variables(self):
-        new_conditions = []
-        self.effect = self._rename_duplicate_variables(self.effect, new_conditions)
-        for condition in self.conditions:
-            condition = self._rename_duplicate_variables(condition, new_conditions)
-        self.conditions += new_conditions
-        return bool(new_conditions)
+        extra_conditions = []
+        self.effect = self._rename_duplicate_variables(
+            self.effect, extra_conditions)
+        old_conditions = self.conditions
+        self.conditions = []
+        for condition in old_conditions:
+            self.conditions.append(self._rename_duplicate_variables(
+                    condition, extra_conditions))
+        self.conditions += extra_conditions
+        return bool(extra_conditions)
     def __str__(self):
         cond_str = ", ".join(map(str, self.conditions))
         return "%s :- %s." % (self.effect, cond_str)
