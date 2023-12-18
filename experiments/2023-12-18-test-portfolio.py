@@ -64,7 +64,7 @@ assert IMAGE.is_file(), IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 
-MEMORY_LIMIT = 3500  # MiB
+MEMORY_LIMIT = 8000  # MiB
 if RUNNING_ON_CLUSTER:
     SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
     ENVIRONMENT = BaselSlurmEnvironment(
