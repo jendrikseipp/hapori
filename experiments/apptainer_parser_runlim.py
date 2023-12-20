@@ -13,13 +13,15 @@ def coverage(content, props):
         props["error"] = "unexpected-error"
 
 def invalid_plan(content, props):
-    props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1
+    props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1 or content.find("Bad plan description") > -1
 
 def custom_errors_stdout(content, props):
     lines = content.splitlines()
     if any('Planning task not solvable' in line for line in lines): # probe
         props["unsupported"] = True
     if any('Was not allowed to increase horizon length.' in line for line in lines): # mpc
+        props["error"] = "out_of_memory"
+    if any('alloc' in line for line in lines): # delfi
         props["error"] = "out_of_memory"
     return props
 
@@ -36,7 +38,7 @@ def custom_errors_stderr_bak(content, props):
     lines = content.splitlines()
     if any("CPU time limit exceeded" in line for line in lines):
         props["error"] = "out_of_time"
-    if any("std::bad_alloc" in line for line in lines): # decstar
+    if any("alloc" in line for line in lines): # decstar
         props["error"] = "out_of_memory"
     return props
 
@@ -57,8 +59,13 @@ def set_outcome(content, props):
     solved = props["coverage"]
     unsolvable = False  # assume all tasks are solvable
     unsupported = props["unsupported"]
-    out_of_time = int(props.get("error") == "out_of_time" or props["solver_status_num"] == 2)
-    out_of_memory = int(props.get("error") == "out_of_memory" or props["solver_status_num"] == 3)
+    out_of_time = int(props["solver_status_num"] == 2)
+    out_of_memory = int(props["solver_status_num"] == 3)
+    if not out_of_time and not out_of_memory:
+        if props.get("error") == "out_of_time":
+            out_of_time = 1
+        if props.get("error") == "out_of_memory":
+            out_of_memory = 1
     out_of_time_or_memory = 0
     invalid_plan = props["invalid_plan"]
     # runsolver decides "out of time" based on CPU rather than (cumulated)
@@ -95,7 +102,7 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    # print(solved, unsolvable, out_of_time, out_of_memory, unsupported, invalid_plan)
+    print(solved, unsolvable, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
     if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
@@ -112,7 +119,7 @@ def set_outcome(content, props):
         elif invalid_plan:
             props["error"] = "invalid_plan"
     else:
-        props.add_unexplained_error(f"could not determine outcome from {props}")
+        props.add_unexplained_error(f"could not determine outcome")
         props["error"] = "unknown-outcome"
 
 
@@ -184,3 +191,14 @@ def get_parser():
     parser.add_function(unsupported, file="run.err")
     parser.add_function(set_outcome, file="runlim.txt")
     return parser
+
+# facility to test parsing files in a directory called test
+if __name__ == "__main__":
+    from lab import tools
+    from pathlib import Path
+    parser = get_parser()
+    props = tools.Properties("properties")
+    run_dir = Path("test").resolve()
+    parser.parse(run_dir, props)
+    print(props)
+    props.write()

@@ -95,21 +95,77 @@ else:
     AGL_TIME_LIMIT = 5
 
 ATTRIBUTES = [
+    # "claimed_coverage",
     "cost",
-    # "plan_length",
     "coverage",
-    "error",
-    "run_dir",
     "cpu_time",
-    "wall_time",
-    "used_memory",
-    "solver_status_str",
-    "solver_status_num",
+    "error",
     "invalid_plan",
-    "memory_limit",
-    "time_limit",
+    # "memory_limit",
+    # "node",
+    # "planner_exit_code",
+    # "planner_wall_clock_time",
+    "run_dir",
+    "solver_status_num",
+    "solver_status_str",
+    # "time_limit",
+    "unsupported",
+    "used_memory",
+    # "wall_time",
 ]
 
+cavediving_adl_instances_val_does_not_like = [
+    '1-p-2_2-2-0.4.pddl', '1-p-2_2-2-0.5.pddl', '1-p-2_2-2-0.6.pddl',
+    '1-p-2_2-2-0.45.pddl', '1-p-2_2-2_2-0.4.pddl',
+    '1-p-2_2-2_2-0.5.pddl', '1-p-2_2-2_2-0.6.pddl',
+    '1-p-2_2-2_2-0.45.pddl', '1-p-2_2-2_2-0.55.pddl',
+    '1-p-2_2_2-2-0.4.pddl', '1-p-2_2_2-2-0.5.pddl',
+    '1-p-2_2_2-2-0.6.pddl', '1-p-2_2_2-2-0.45.pddl',
+    '1-p-2_2_2-2-0.55.pddl', '1-p-2_2_2-2_2-0.4.pddl',
+    '1-p-2_2_2-2_2-0.5.pddl', '1-p-2_2_2-2_2-0.6.pddl',
+    '1-p-2_2_2-2_2-0.45.pddl', '1-p-2_2_2-2_2-0.55.pddl',
+    '1-p-2_2_2-2_2_2-0.4.pddl', '1-p-2_2_2-2_2_2-0.5.pddl',
+    '1-p-2_2_2-2_2_2-0.6.pddl', '1-p-2_2_2-2_2_2-0.45.pddl',
+    '1-p-2_2_2-2_2_2-0.55.pddl', '1-p-2_2_2_2-2-0.4.pddl',
+    '1-p-2_2_2_2-2-0.5.pddl', '1-p-2_2_2_2-2-0.6.pddl',
+    '1-p-2_2_2_2-2-0.45.pddl', '1-p-2_2_2_2-2-0.55.pddl',
+    '1-p-2_2_2_2-2_2-0.4.pddl', '1-p-2_2_2_2-2_2-0.5.pddl',
+    '1-p-2_2_2_2-2_2-0.6.pddl', '1-p-2_2_2_2-2_2-0.45.pddl',
+    '1-p-2_2_2_2-2_2-0.55.pddl', '1-p-3_2-2-0.5.pddl',
+    '1-p-3_2-2-0.6.pddl', '1-p-3_2-2-0.55.pddl',
+    '1-p-3_2-3_2-0.4.pddl', '1-p-3_2-3_2-0.5.pddl',
+    '1-p-3_2-3_2-0.6.pddl', '1-p-3_2-3_2-0.45.pddl',
+    '1-p-3_2-3_2-0.55.pddl', '1-p-3_2_2-2-0.4.pddl',
+    '1-p-3_2_2-2-0.5.pddl', '1-p-3_2_2-2-0.6.pddl',
+    '1-p-3_2_2-2-0.45.pddl', '1-p-3_2_2-2-0.55.pddl',
+    '1-p-3_2_2-2_2-0.4.pddl', '1-p-3_2_2-2_2-0.5.pddl',
+    '1-p-3_2_2-2_2-0.6.pddl', '1-p-3_2_2-2_2-0.45.pddl',
+    '1-p-3_2_2-2_2-0.55.pddl', '1-p-3_2_2-3_2_2-0.4.pddl',
+    '1-p-3_2_2-3_2_2-0.5.pddl', '1-p-3_2_2-3_2_2-0.6.pddl',
+    '1-p-3_2_2-3_2_2-0.45.pddl', '1-p-3_2_2-3_2_2-0.55.pddl',
+    '1-p-3_3-3-0.4.pddl', '1-p-3_3-3-0.5.pddl', '1-p-3_3-3-0.6.pddl',
+    '1-p-3_3-3-0.45.pddl', '1-p-3_3-3-0.55.pddl',
+    '1-p-3_3-3_3-0.4.pddl', '1-p-3_3-3_3-0.5.pddl',
+    '1-p-3_3-3_3-0.6.pddl', '1-p-3_3-3_3-0.45.pddl',
+    '1-p-3_3-3_3-0.55.pddl', '1-p-3_3_2-2-0.4.pddl',
+    '1-p-3_3_2-2-0.5.pddl', '1-p-3_3_2-2-0.6.pddl',
+    '1-p-3_3_2-2-0.45.pddl', '1-p-3_3_2-2-0.55.pddl',
+    '1-p-3_3_2-3_2-0.4.pddl', '1-p-3_3_2-3_2-0.5.pddl',
+    '1-p-3_3_2-3_2-0.6.pddl', '1-p-3_3_2-3_2-0.45.pddl',
+    '1-p-3_3_2-3_2-0.55.pddl', '1-p-3_3_2-3_3_2-0.4.pddl',
+    '1-p-3_3_2-3_3_2-0.5.pddl', '1-p-3_3_2-3_3_2-0.6.pddl',
+    '1-p-3_3_2-3_3_2-0.45.pddl', '1-p-3_3_2-3_3_2-0.55.pddl',
+    '1-p-3_3_3-3-0.4.pddl', '1-p-3_3_3-3-0.5.pddl',
+    '1-p-3_3_3-3-0.6.pddl', '1-p-3_3_3-3-0.45.pddl',
+    '1-p-3_3_3-3-0.55.pddl', '1-p-3_3_3-3_3-0.4.pddl',
+    '1-p-3_3_3-3_3-0.5.pddl', '1-p-3_3_3-3_3-0.6.pddl',
+    '1-p-3_3_3-3_3-0.45.pddl', '1-p-3_3_3-3_3-0.55.pddl',
+    '1-p-3_3_3-3_3_3-0.4.pddl', '1-p-3_3_3-3_3_3-0.5.pddl',
+    '1-p-3_3_3-3_3_3-0.6.pddl', '1-p-3_3_3-3_3_3-0.45.pddl',
+    '1-p-3_3_3-3_3_3-0.55.pddl',
+]
+def filter_cavediving(run):
+    return run['domain'] != 'cavediving-adl' or run['problem'] not in cavediving_adl_instances_val_does_not_like
 
 def get_time_limit(track):
     match track:
@@ -192,5 +248,5 @@ def main(planner, tracks):
                 run.set_property("id", [algorithm_name, task.domain, task.problem])
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
-    exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
+    exp.add_report(BaseReport(attributes=ATTRIBUTES, filter=filter_cavediving), outfile=report)
     exp.run_steps()
