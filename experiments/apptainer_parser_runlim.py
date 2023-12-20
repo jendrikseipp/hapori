@@ -17,8 +17,6 @@ def invalid_plan(content, props):
 
 def custom_errors_stdout(content, props):
     lines = content.splitlines()
-    if any('Planning task not solvable' in line for line in lines): # probe
-        props["unsupported"] = True
     if any('Was not allowed to increase horizon length.' in line for line in lines): # mpc
         props["error"] = "out_of_memory"
     if any('alloc' in line for line in lines): # delfi
@@ -27,18 +25,9 @@ def custom_errors_stdout(content, props):
 
 def custom_errors_stderr(content, props):
     lines = content.splitlines()
-    if any('Error: Parser failed to read file' in line for line in lines): # VAL on some cavediving-adl tasks
-        props["unsupported"] = True
-    if any('alloc' in line for line in lines): # jasper, decstar, symba
-        props["error"] = "out_of_memory"
-    return props
-
-# handle things filtered by fitler-stderr.py
-def custom_errors_stderr_bak(content, props):
-    lines = content.splitlines()
     if any("CPU time limit exceeded" in line for line in lines):
         props["error"] = "out_of_time"
-    if any("alloc" in line for line in lines): # decstar
+    if any("alloc" in line for line in lines): # decstar, jasper, decstar, symba
         props["error"] = "out_of_memory"
     return props
 
@@ -46,10 +35,14 @@ def unsupported(content, props):
     if "unsupported" in props and props["unsupported"]:
         return
     if (content.find(" does not support axioms!") > -1 or
-            content.find("axioms not supported") > -1 or
-            content.find("Tried to use unsupported feature") > -1 or
-            content.find("This configuration does not support") > -1 or
-            content.find("No factoring found!") > -1):
+        content.find("axioms not supported") > -1 or
+        content.find("Tried to use unsupported feature") > -1 or
+        content.find("This configuration does not support") > -1 or
+        content.find("No factoring found!") > -1 or
+        content.find("WARNING: unsupported :requirement :derived-predicates") > -1 or # mpc
+        content.find("Error: Parser failed to read file") > -1 or # VAL on some cavediving-adl tasks
+        content.find("Planning task not solvable") > -1 # probe
+        ):
         props["unsupported"] = True
     else:
         props["unsupported"] = False
@@ -186,7 +179,8 @@ def get_parser():
     parser.add_function(invalid_plan)
     parser.add_function(custom_errors_stdout)
     parser.add_function(custom_errors_stderr, file="run.err")
-    parser.add_function(custom_errors_stderr_bak, file="run.err.bak")
+    # also parse errors removed by fitler-stderr.py
+    parser.add_function(custom_errors_stderr, file="run.err.bak")
     parser.add_function(unsupported)
     parser.add_function(unsupported, file="run.err")
     parser.add_function(set_outcome, file="runlim.txt")
