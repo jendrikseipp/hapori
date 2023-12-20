@@ -102,7 +102,7 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    print(solved, unsolvable, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
+    # print(solved, unsolvable, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
     if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
