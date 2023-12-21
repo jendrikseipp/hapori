@@ -57,6 +57,9 @@ def generate_portfolio_exitcode(exitcodes):
     print("Exit codes: {}".format(exitcodes))
     exitcodes = set(exitcodes)
 
+    if not exitcodes:
+        return HAPORI_UNKNOWN
+
     # At least one plan was found.
     if SUCCESS in exitcodes:
         if OUT_OF_MEMORY in exitcodes and OUT_OF_TIME in exitcodes:
