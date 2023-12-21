@@ -187,13 +187,14 @@ def run_planner(args, cmd):
     plan_prefix = Path(args.planfile).resolve()
     existing_plan_files = [str(plan) for plan in get_existing_plans(plan_prefix)]
 
-    print(f"Found plan file(s): {existing_plan_files}")
     if existing_plan_files:
+        print(f"Found plan file(s): {existing_plan_files}")
         if args.check:
-            subprocess.check_call(["validate", "-L", "-v", args.domainfile, args.problemfile] + existing_plan_files)
+            subprocess.run(["validate", "-L", "-v", args.domainfile, args.problemfile] + existing_plan_files)
     else:
-        # We use --config=all only for testing small instances, so exit here if one config fails to solve the easy task.
+        print("No plan file(s) found")
         sys.exit(99)
+
 
 def main():
     args = parse_args()

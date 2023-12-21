@@ -31,21 +31,20 @@ from . import util
 
 DIR = Path(__file__).resolve().parent
 REPO = DIR.parent
-PLAN_FILE_NAME_LENGTH = 10
 
 
-def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
+def run_search(planner, config, pos, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
     complete_args = []
     if time is not None or memory is not None:
-        complete_args.extend(["runlim", f"--output-file=runlim-{image}-{planner}.txt", "--propagate"])
+        complete_args.extend(["runlim", f"--output-file=runlim-pos{pos}-{planner}-{config}.txt", "--propagate"])
     if time is not None:
         complete_args.append(f"--time-limit={time}")
     if memory is not None:
         complete_args.append(f"--space-limit={int(limits.convert_to_mb(memory))}")
-    complete_args += [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
-    if planner:
-        complete_args += ["--config", planner]
+    complete_args += [sys.executable, str(dispatch), planner, domain_file, problem_file, plan_file]
+    if config:
+        complete_args += ["--config", config]
     print("Hapori component args: %s" % complete_args)
 
     try:
@@ -78,12 +77,12 @@ def get_random_string(length):
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     plan_counter = 1
-    for pos, (relative_time, (image, planner)) in enumerate(configs):
-        next_plan_prefix = f"config.{pos}.{image}"
+    for pos, (relative_time, (planner, config)) in enumerate(configs):
+        next_plan_prefix = f"config.{pos}.{planner}"
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             continue
-        exitcode = run_search(image, planner, domain_file, problem_file, next_plan_prefix, run_time, memory)
+        exitcode = run_search(planner, config, pos, domain_file, problem_file, next_plan_prefix, run_time, memory)
 
         existing_plan_files = [str(plan) for plan in get_existing_plans(next_plan_prefix) ]
         # print(f"Component computed the following plan(s): {existing_plan_files}")
@@ -96,11 +95,11 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, t
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    for pos, (relative_time, (image, planner)) in enumerate(configs):
+    for pos, (relative_time, (planner, config)) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
         if run_time <= 0:
             continue
-        exitcode = run_search(image, planner, domain_file, problem_file, plan_manager.get_plan_prefix(),
+        exitcode = run_search(planner, config, pos, domain_file, problem_file, plan_manager.get_plan_prefix(),
                               run_time, memory)
         yield exitcode
 
