@@ -25,6 +25,7 @@ the network is not optimal, so we recommend copying the images to a local
 filesystem (e.g., /tmp/) before running experiments.
 """
 
+import math
 import os
 from pathlib import Path
 import platform
@@ -75,7 +76,7 @@ if RUNNING_ON_CLUSTER:
         # resource.getrlimit(resource.RLIMIT_AS). So it seems
         # reasonable to use this as a default limit.
         memory_per_cpu="3947M",
-        cpus_per_task=1,
+        cpus_per_task=3,
         # paths obtained via:
         # $ module purge
         # $ module -q load Python/3.10.4-GCCcore-11.3.0
@@ -90,9 +91,9 @@ if RUNNING_ON_CLUSTER:
 else:
     SUITE = ["miconic-strips:0-p01.pddl"]
     ENVIRONMENT = LocalEnvironment(processes=4)
-    OPT_TIME_LIMIT = 1
-    SAT_TIME_LIMIT = 1
-    AGL_TIME_LIMIT = 1
+    OPT_TIME_LIMIT = 5
+    SAT_TIME_LIMIT = 5
+    AGL_TIME_LIMIT = 5
 
 ATTRIBUTES = [
     "cost",
@@ -148,6 +149,8 @@ def main():
             run.add_resource("problem", task.problem_file, "problem.pddl")
             # Use runlim to limit time and memory. It must be on the system
             # PATH.
+            internal_memory_limit = math.ceil(MEMORY_LIMIT*0.9) # generously keep some memory for running the portfolio driver
+            internal_time_limit = math.ceil(time_limit*0.99) # use a slightly smaller runtime limit for the portfolio
             run.add_command(
                 "run-planner",
                 [
@@ -159,7 +162,10 @@ def main():
                     "{image}",
                     "{domain}",
                     "{problem}",
-                    "sas_plan"
+                    "sas_plan",
+                    internal_memory_limit,
+                    internal_time_limit,
+                    portfolio,
                 ],
             )
             run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
