@@ -22,6 +22,6 @@ elif [[ -f "$3.1" ]]; then
     echo "running validate on $3.$x"
     validate "$1" "$2" "$3.$x"
 else
-    echo "no plan file(s) found; not running valide"
+    echo "no plan file(s) found; not running validate"
 fi
 
