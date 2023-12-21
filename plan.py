@@ -103,7 +103,7 @@ for planner in SINGLE_CONFIG_PLANNERS:
     CONFIGS[planner] = ["default"]
 
 
-def get_configs_for_planner_and_track(planner, track):
+def get_configs_for_planner_and_track(planner, track, part=None):
     assert track in ["opt", "sat", "agl"]
     configs = CONFIGS[planner]
     result = []
@@ -113,7 +113,15 @@ def get_configs_for_planner_and_track(planner, track):
         if planner == "ipc2018-lapkt-bfws" and config == "poly-bfws" and track in ["sat", "agl"]:
             result.append(config)
     if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
-        result = configs
+        assert part is not None
+        assert part in ['A', 'B', 'C']
+        assert len(configs) == 62
+        if part == 'A':
+            result = configs[:21]
+        if part == 'B':
+            result = configs[21:42]
+        if part == 'C':
+            result = configs[42:]
     if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
         result = configs
     if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:

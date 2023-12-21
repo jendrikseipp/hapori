@@ -180,22 +180,17 @@ def get_time_limit(track):
 
 
 # used by users who import this file
-def get_planner_and_tracks(file_name):
+def get_planner(file_name):
     assert file_name.endswith(".py")
     file_name = file_name[:-3]
     parts = file_name.split("+")
-    assert len(parts) == 2 or len(parts) == 3
+    assert len(parts) == 2
     planner = parts[1]
     assert planner in plan.CONFIGS
-    if len(parts) == 3:
-        track = parts[2]
-        tracks = [track]
-    else:
-        tracks = ["opt", "sat", "agl"]
-    return planner, tracks
+    return planner
 
 
-def main(planner, tracks):
+def main(planner, tracks=["opt", "sat", "agl"], part=None):
     assert planner in plan.CONFIGS
     assert all(x in ["opt", "sat", "agl"] for x in tracks)
     exp = Experiment(environment=ENVIRONMENT)
@@ -213,7 +208,7 @@ def main(planner, tracks):
 
     for track in tracks:
         time_limit = get_time_limit(track)
-        for config in plan.get_configs_for_planner_and_track(planner, track):
+        for config in plan.get_configs_for_planner_and_track(planner, track, part):
             algorithm_name = f"{track}+{planner}+{config}"
             for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
                 run = exp.add_run()

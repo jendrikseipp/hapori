@@ -7,13 +7,14 @@ from lab.parser import Parser
 
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
-    props["claimed_coverage"] = int("Solution found." in props)
+    props["claimed_coverage"] = int(any("Solution found" in line for line in content.splitlines()))
     if not props["coverage"] and props["claimed_coverage"]:
-        print(f"unexpected error: {props}", file=sys.stderr)
-        props["error"] = "unexpected-error"
+        props.add_unexplained_error(f"solver claims solution; we found no plan")
 
 def invalid_plan(content, props):
-    props["invalid_plan"] = content.find("Plan failed to execute") > -1 or content.find("Bad operator in plan!") > -1 or content.find("Bad plan description") > -1
+    props["invalid_plan"] = (content.find("Plan failed to execute") > -1 or
+        content.find("Bad operator in plan!") > -1 or
+        content.find("Bad plan description") > -1)
 
 def custom_errors_stdout(content, props):
     lines = content.splitlines()
