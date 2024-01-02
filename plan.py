@@ -155,7 +155,7 @@ def parse_args():
     parser.add_argument("--configs", help=f"Pass 'all' to run all configs. Possible values: {CONFIGS}", type=csv_list, default=["default"])
     parser.add_argument("domainfile", type=abs_path)
     parser.add_argument("problemfile", type=abs_path)
-    parser.add_argument("planfile", type=abs_path)
+    parser.add_argument("planfile", type=str) # do not turn this into type abs_path to be able to use plan.py in containers
     parser.add_argument("--check", action="store_true", help="Check planner exitcode and validate plans.")
     parser.add_argument("--list-configs", action="store_true", help="Show list of planner and config names and exit.")
     return parser.parse_args()
@@ -177,7 +177,7 @@ def prepare_config(config, replacements=None):
 
 
 def get_existing_plans(plan_prefix):
-    plan_prefix = plan_prefix.resolve()
+    plan_prefix = Path(plan_prefix).resolve()
     if plan_prefix.exists():
         yield plan_prefix
 
@@ -192,8 +192,7 @@ def get_existing_plans(plan_prefix):
 def run_planner(args, cmd):
     print(f"Calling planner: {cmd}")
     subprocess.run(cmd, check=args.check)
-    plan_prefix = Path(args.planfile).resolve()
-    existing_plan_files = [str(plan) for plan in get_existing_plans(plan_prefix)]
+    existing_plan_files = [str(plan) for plan in get_existing_plans(args.planfile)]
 
     if existing_plan_files:
         print(f"Found plan file(s): {existing_plan_files}")
