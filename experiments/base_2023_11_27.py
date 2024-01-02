@@ -59,7 +59,7 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-COMPONENTS_IMAGE = REPO / "images" / "hapori_components.sif"
+COMPONENTS_IMAGE = REPO / "images" / "2024-01-02-hapori_components.sif"
 assert COMPONENTS_IMAGE.is_file(), COMPONENTS_IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
@@ -201,7 +201,6 @@ def main(planner, tracks=["opt", "sat", "agl"], part=None):
 
     exp.add_parser(get_parser())
     exp.add_resource("image", COMPONENTS_IMAGE, symlink=True)
-    exp.add_resource("run_plan", DIR.parent / "plan.py")
     exp.add_resource("fd_2018_configs", DIR.parent / "configs/fd_2018_configs.py")
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
