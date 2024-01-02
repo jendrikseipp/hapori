@@ -12,7 +12,7 @@ fonttools==4.38.0
     # via matplotlib
 kiwisolver==1.4.4
     # via matplotlib
-lab==8.0
+lab @ git+https://github.com/aibasel/lab.git@7c502270c26ba7eca87bae57e5692750131318cd
     # via -r requirements.in
 labreports @ git+https://github.com/jendrikseipp/labreports.git
     # via -r requirements.in
