@@ -123,9 +123,9 @@ def get_configs_for_planner_and_track(planner, track, part=None):
         if part == 'C':
             result = configs[24:36]
         if part == 'D':
-            result = configs[36:48]
+            result = configs[36:49]
         if part == 'E':
-            result = configs[48:62]
+            result = configs[49:62]
     if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
         result = configs
     if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
