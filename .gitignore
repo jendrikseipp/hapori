@@ -1,4 +1,6 @@
 *.img
+*.sif
+images/
 
 portfolio_driver/__pycache__/
 
