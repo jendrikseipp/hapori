@@ -114,14 +114,18 @@ def get_configs_for_planner_and_track(planner, track, part=None):
             result.append(config)
     if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
         assert part is not None
-        assert part in ['A', 'B', 'C']
+        assert part in ['A', 'B', 'C', 'D', 'E']
         assert len(configs) == 62
         if part == 'A':
-            result = configs[:21]
+            result = configs[:12]
         if part == 'B':
-            result = configs[21:42]
+            result = configs[12:24]
         if part == 'C':
-            result = configs[42:]
+            result = configs[24:36]
+        if part == 'D':
+            result = configs[36:48]
+        if part == 'E':
+            result = configs[48:62]
     if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
         result = configs
     if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
