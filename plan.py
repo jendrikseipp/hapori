@@ -77,8 +77,8 @@ CONFIGS = {
     "ipc2018-merwin": ["sat", "agl"],
     "ipc2018-decstar": [f"opt-config{i:02d}" for i in range(0, 7)] + [f"agl-config{i:02d}" for i in range(0, 3)] + [f"sat-config{i:02d}" for i in range(0, 4)],
     "ipc2018-fd-2018": [f"config{i:02d}" for i in range(len(FD_CONFIGS))], # covers both fdss and fd-remix
-    "ipc2018-lapkt-bfws": LAPKT_DRIVERS.keys(),
-    "ipc2018-opt-delfi": DELFI_CMDS.keys(),
+    "ipc2018-lapkt-bfws": list(LAPKT_DRIVERS.keys()),
+    "ipc2018-opt-delfi": list(DELFI_CMDS.keys()),
     "ipc2018-opt-metis": ["metis2"],  # Metis 1 is contained in the configurations of Delfi
     "ipc2018-saarplan": [f"sat-config{i:02d}" for i in range(2, 3)] + [f"agl-config{i:02d}" for i in range(1, 2)], # other non-used configs covered by decstar
     "ipc2018-symple1": ["symple100000OPT", "symple100000SAT", "symple100000AGL"],
@@ -101,48 +101,6 @@ SINGLE_CONFIG_PLANNERS = [
 for planner in SINGLE_CONFIG_PLANNERS:
     assert planner not in CONFIGS, planner
     CONFIGS[planner] = ["default"]
-
-
-def get_configs_for_planner_and_track(planner, track, part=None):
-    assert track in ["opt", "sat", "agl"]
-    configs = CONFIGS[planner]
-    result = []
-    for config in configs:
-        if any(track in x for x in [planner, config.lower()]):
-            result.append(config)
-        if planner == "ipc2018-lapkt-bfws" and config == "poly-bfws" and track in ["sat", "agl"]:
-            result.append(config)
-    if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
-        assert part is not None
-        assert part in ['A', 'B', 'C', 'D', 'E']
-        assert len(configs) == 62
-        if part == 'A':
-            result = configs[:12]
-        if part == 'B':
-            result = configs[12:24]
-        if part == 'C':
-            result = configs[24:36]
-        if part == 'D':
-            result = configs[36:49]
-        if part == 'E':
-            result = configs[49:62]
-    if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
-        result = configs
-    if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
-        result = configs
-    if planner == "ipc2018-olcff" and track in ["sat", "agl"]:
-        result = configs
-    if planner == "ipc2018-lapkt-dfs-plus" and track in ["sat", "agl"]:
-        result = configs
-    return result
-
-
-def get_configs_for_track(track):
-    assert track in ["opt", "sat", "agl"]
-    result = {}
-    for planner in CONFIGS.keys():
-        result[planner] = get_configs_for_planner_and_track(planner, track)
-    return result
 
 
 def csv_list(s):

@@ -184,10 +184,51 @@ def get_planner(file_name):
     assert file_name.endswith(".py")
     file_name = file_name[:-3]
     parts = file_name.split("+")
-    assert len(parts) == 2
     planner = parts[1]
     assert planner in plan.CONFIGS
     return planner
+
+
+def get_configs_for_planner_and_track(planner, track, part=None):
+    assert track in ["opt", "sat", "agl"]
+    configs = plan.CONFIGS[planner]
+    result = []
+    for config in configs:
+        if any(track in x for x in [planner, config.lower()]):
+            result.append(config)
+        if planner == "ipc2018-lapkt-bfws" and config == "poly-bfws" and track in ["sat", "agl"]:
+            result.append(config)
+    if planner == "ipc2018-fd-2018" and track in ["sat", "agl"]:
+        assert part is not None
+        assert part in ['A', 'B', 'C', 'D', 'E']
+        assert len(configs) == 62
+        if part == 'A':
+            result = configs[:12]
+        if part == 'B':
+            result = configs[12:24]
+        if part == 'C':
+            result = configs[24:36]
+        if part == 'D':
+            result = configs[36:49]
+        if part == 'E':
+            result = configs[49:62]
+    if planner == "ipc2018-opt-delfi" and track == "opt":
+        assert part is not None
+        assert part in ['A', 'B']
+        assert len(configs) == 16
+        if part == 'A':
+            result = configs[:8]
+        if part == 'B':
+            result = configs[8:]
+    if planner == "ipc2014-jasper" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-freelunch-madagascar" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-olcff" and track in ["sat", "agl"]:
+        result = configs
+    if planner == "ipc2018-lapkt-dfs-plus" and track in ["sat", "agl"]:
+        result = configs
+    return result
 
 
 def main(planner, tracks=["opt", "sat", "agl"], part=None):
@@ -207,7 +248,7 @@ def main(planner, tracks=["opt", "sat", "agl"], part=None):
 
     for track in tracks:
         time_limit = get_time_limit(track)
-        for config in plan.get_configs_for_planner_and_track(planner, track, part):
+        for config in get_configs_for_planner_and_track(planner, track, part):
             algorithm_name = f"{track}+{planner}+{config}"
             for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
                 run = exp.add_run()
