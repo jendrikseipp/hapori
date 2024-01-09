@@ -18,6 +18,7 @@ __all__ = ["run"]
 from pathlib import Path
 import itertools
 import random
+import re
 import shutil
 import string
 import subprocess
@@ -36,15 +37,14 @@ REPO = DIR.parent
 def run_search(planner, config, pos, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
     complete_args = []
-    if time is not None or memory is not None:
-        complete_args.extend(["runlim", f"--output-file=runlim-pos{pos}-{planner}-{config}.txt", "--propagate"])
+    assert time is not None or memory is not None
+    runlim_file = f"runlim-pos{pos}-{planner}-{config}.txt"
+    complete_args.extend(["runlim", f"--output-file={runlim_file}", "--propagate"])
     if time is not None:
         complete_args.append(f"--time-limit={time}")
     if memory is not None:
         complete_args.append(f"--space-limit={int(limits.convert_to_mb(memory))}")
-    complete_args += [sys.executable, str(dispatch), planner, domain_file, problem_file, plan_file]
-    if config:
-        complete_args += ["--config", config]
+    complete_args += [sys.executable, str(dispatch), planner, domain_file, problem_file, plan_file, "--config", config]
     print("Hapori component args: %s" % complete_args)
 
     try:
@@ -53,12 +53,22 @@ def run_search(planner, config, pos, domain_file, problem_file, plan_file, time,
     except subprocess.CalledProcessError as err:
         exitcode = err.returncode
     print("Hapori component exitcode: %d" % exitcode)
+    runlim_run_time = 0.0
+    assert Path(runlim_file).exists(), f"{runlim_file} not found"
+    with open(runlim_file, "r") as f:
+        pattern = re.compile(r"\[runlim\] time:\t*(.+) seconds")
+        match = pattern.search(f.read())
+        if match:
+            runlim_run_time = float(match.group(1))
+            print(f"Hapori component runlim run time: {runlim_run_time}")
+    if runlim_run_time == 0.0:
+        sys.exit("Could not determine runlim run time")
     print()
-    return exitcode
+    return exitcode, runlim_run_time
 
 
-def compute_run_time(timeout, configs, pos):
-    remaining_time = timeout - util.get_elapsed_time()
+def compute_run_time(timeout, configs, pos, run_time_so_far):
+    remaining_time = timeout - util.get_elapsed_time() - run_time_so_far
     print("remaining time: {}".format(remaining_time))
     relative_time = configs[pos][0]
     remaining_relative_time = sum(config[0] for config in configs[pos:])
@@ -66,7 +76,6 @@ def compute_run_time(timeout, configs, pos):
     print("config {}: relative time {}, remaining time {}, absolute time {}".format(
           pos, relative_time, remaining_relative_time, absolute_time_limit))
     return absolute_time_limit
-
 
 
 def get_random_string(length):
@@ -77,12 +86,16 @@ def get_random_string(length):
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     plan_counter = 1
+    runlim_run_time_so_far = 0.0
     for pos, (relative_time, (planner, config)) in enumerate(configs):
         next_plan_prefix = f"config.{pos}.{planner}"
-        run_time = compute_run_time(timeout, configs, pos)
+        run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
         if run_time <= 0:
-            continue
-        exitcode = run_search(planner, config, pos, domain_file, problem_file, next_plan_prefix, run_time, memory)
+            return
+        exitcode, used_run_time = run_search(
+            planner, config, pos, domain_file, problem_file,
+            next_plan_prefix, run_time, memory)
+        runlim_run_time_so_far += used_run_time
 
         existing_plan_files = [str(plan) for plan in get_existing_plans(next_plan_prefix) ]
         # print(f"Component computed the following plan(s): {existing_plan_files}")
@@ -95,12 +108,15 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, t
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
+    runlim_run_time_so_far = 0.0
     for pos, (relative_time, (planner, config)) in enumerate(configs):
-        run_time = compute_run_time(timeout, configs, pos)
+        run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
         if run_time <= 0:
-            continue
-        exitcode = run_search(planner, config, pos, domain_file, problem_file, plan_manager.get_plan_prefix(),
-                              run_time, memory)
+            return
+        exitcode, used_run_time = run_search(
+            planner, config, pos, domain_file, problem_file,
+            plan_manager.get_plan_prefix(), run_time, memory)
+        runlim_run_time_so_far += used_run_time
         yield exitcode
 
         if exitcode == returncodes.SUCCESS:
