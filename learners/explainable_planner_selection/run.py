@@ -28,8 +28,8 @@ def generate_features(domain, problem):
     try:
         subprocess.call([
             sys.executable, FILE_FEATURE_EXTRACTOR,
-            "--domain-file", f_domain,
-            "--instance-file", f_problem,
+            "--domain-file", domain,
+            "--instance-file", problem,
             "--json-output-file", f_features,
             "--no-extract-sas", "--no-extract-lpg-probing",
             "--no-extract-fd-probing", "--no-extract-sat", "--no-extract-torchlight",
@@ -40,7 +40,7 @@ def generate_features(domain, problem):
     if f_features.exists():
         with open(f_features) as f:
             features = json.load(f)
-        f_features.unlink()
+        f_features.unlink(missing_ok=True)
         tmp = list(features["instance_features"].values())
         assert len(tmp) == 1
         features = tmp[0]
