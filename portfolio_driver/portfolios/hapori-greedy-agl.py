@@ -8,7 +8,7 @@ Coverage: 2231
 Runtime: 1785s
 Score: 1400.25
 """
-CONFIGS = [
+PLANNERS = [
     # ipc2014-agl-mpc:default
     (1, ['ipc2014-agl-mpc', 'default']),
     # ipc2014-agl-probe:default
