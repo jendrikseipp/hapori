@@ -88,7 +88,7 @@ def set_outcome(content, props):
     # of time.
     if (solved or unsolvable) and (out_of_time or out_of_memory):
         print("task solved however runlim recorded an out_of_*")
-        print(props)
+        # print(props)
         out_of_time = 0
         out_of_memory = 0
 

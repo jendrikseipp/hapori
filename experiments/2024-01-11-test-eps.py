@@ -60,7 +60,7 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-IMAGE = REPO / "images" / "hapori_sequential_portfolios_test.sif"
+IMAGE = REPO / "images" / "hapori_eps.sif"
 assert IMAGE.is_file(), IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
@@ -68,7 +68,7 @@ assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
 MEMORY_LIMIT = 8000  # MiB
 if RUNNING_ON_CLUSTER:
     # SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
-    SUITE = project.SUITE_STRIPS
+    SUITE = project.SUITE_IPC23
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="silvan.sievers@unibas.ch",
@@ -86,15 +86,15 @@ if RUNNING_ON_CLUSTER:
         # $ echo $PATH
         # $ echo $LD_LIBRARY_PATH
         setup='export PATH=/scicore/soft/apps/CMake/3.23.1-GCCcore-11.3.0/bin:/scicore/soft/apps/libarchive/3.6.1-GCCcore-11.3.0/bin:/scicore/soft/apps/cURL/7.83.0-GCCcore-11.3.0/bin:/scicore/soft/apps/Python/3.10.4-GCCcore-11.3.0/bin:/scicore/soft/apps/OpenSSL/1.1/bin:/scicore/soft/apps/XZ/5.2.5-GCCcore-11.3.0/bin:/scicore/soft/apps/SQLite/3.38.3-GCCcore-11.3.0/bin:/scicore/soft/apps/Tcl/8.6.12-GCCcore-11.3.0/bin:/scicore/soft/apps/ncurses/6.3-GCCcore-11.3.0/bin:/scicore/soft/apps/bzip2/1.0.8-GCCcore-11.3.0/bin:/scicore/soft/apps/binutils/2.38-GCCcore-11.3.0/bin:/scicore/soft/apps/GCCcore/11.3.0/bin:/infai/sieverss/repos/bin:/infai/sieverss/local:/export/soft/lua_lmod/centos7/lmod/lmod/libexec:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH\nexport LD_LIBRARY_PATH=/scicore/soft/apps/libarchive/3.6.1-GCCcore-11.3.0/lib:/scicore/soft/apps/cURL/7.83.0-GCCcore-11.3.0/lib:/scicore/soft/apps/Python/3.10.4-GCCcore-11.3.0/lib:/scicore/soft/apps/OpenSSL/1.1/lib:/scicore/soft/apps/libffi/3.4.2-GCCcore-11.3.0/lib64:/scicore/soft/apps/GMP/6.2.1-GCCcore-11.3.0/lib:/scicore/soft/apps/XZ/5.2.5-GCCcore-11.3.0/lib:/scicore/soft/apps/SQLite/3.38.3-GCCcore-11.3.0/lib:/scicore/soft/apps/Tcl/8.6.12-GCCcore-11.3.0/lib:/scicore/soft/apps/libreadline/8.1.2-GCCcore-11.3.0/lib:/scicore/soft/apps/ncurses/6.3-GCCcore-11.3.0/lib:/scicore/soft/apps/bzip2/1.0.8-GCCcore-11.3.0/lib:/scicore/soft/apps/binutils/2.38-GCCcore-11.3.0/lib:/scicore/soft/apps/zlib/1.2.12-GCCcore-11.3.0/lib:/scicore/soft/apps/GCCcore/11.3.0/lib64')
-    OPT_TIME_LIMIT = 180
-    SAT_TIME_LIMIT = 180
-    AGL_TIME_LIMIT = 30
+    OPT_TIME_LIMIT = 1800
+    SAT_TIME_LIMIT = 1800
+    AGL_TIME_LIMIT = 300
 else:
     SUITE = ["miconic-strips:0-p01.pddl"]
     ENVIRONMENT = LocalEnvironment(processes=4)
-    OPT_TIME_LIMIT = 5
-    SAT_TIME_LIMIT = 5
-    AGL_TIME_LIMIT = 5
+    OPT_TIME_LIMIT = 15
+    SAT_TIME_LIMIT = 15
+    AGL_TIME_LIMIT = 15
 
 ATTRIBUTES = [
     "cost",
@@ -113,9 +113,7 @@ ATTRIBUTES = [
 ]
 
 
-def get_time_limit(portfolio):
-    track = portfolio[-3:]
-    assert track in ["opt", "sat", "agl"], track
+def get_time_limit(track):
     match track:
         case "opt":
             return OPT_TIME_LIMIT
@@ -141,43 +139,43 @@ def main():
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
-    for portfolio in ["hapori-stonesoup-opt"]:
-        time_limit = get_time_limit(portfolio)
-        algorithm_name = f"{portfolio}"
-        for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
-            run = exp.add_run()
-            run.add_resource("domain", task.domain_file, "domain.pddl")
-            run.add_resource("problem", task.problem_file, "problem.pddl")
-            # Use runlim to limit time and memory. It must be on the system
-            # PATH.
-            internal_memory_limit = math.ceil(MEMORY_LIMIT*0.9) # generously keep some memory for running the portfolio driver
-            internal_time_limit = math.ceil(time_limit*0.99) # use a slightly smaller runtime limit for the portfolio
-            run.add_command(
-                "run-planner",
-                [
-                    "runlim",
-                    "--output-file=runlim.txt",
-                    f"--time-limit={time_limit}",
-                    f"--space-limit={MEMORY_LIMIT}",
-                    "--propagate",
-                    "{image}",
-                    "{domain}",
-                    "{problem}",
-                    "sas_plan",
-                    internal_memory_limit,
-                    internal_time_limit,
-                    portfolio,
-                ],
-            )
-            run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
-            # Remove temporary files from old Fast Downward versions.
-            run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
-            run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
+    tracks = ["opt", "sat"]
+    learning = ["linear_regression", "decision_tree"]
 
-            run.set_property("domain", task.domain)
-            run.set_property("problem", task.problem)
-            run.set_property("algorithm", algorithm_name)
-            run.set_property("id", [algorithm_name, task.domain, task.problem])
+    for track in tracks:
+        time_limit = get_time_limit(track)
+        for learn in learning:
+            algorithm_name = f"hapori-eps-{learn}-{track}"
+            for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+                run = exp.add_run()
+                run.add_resource("domain", task.domain_file, "domain.pddl")
+                run.add_resource("problem", task.problem_file, "problem.pddl")
+                # Use runlim to limit time and memory. It must be on the system
+                # PATH.
+                run.add_command(
+                    "run-planner",
+                    [
+                        "runlim",
+                        "--output-file=runlim.txt",
+                        f"--time-limit={time_limit}",
+                        f"--space-limit={MEMORY_LIMIT}",
+                        "--propagate",
+                        "{image}",
+                        "{domain}",
+                        "{problem}",
+                        "sas_plan",
+                        f"{track}_{learn}"
+                    ],
+                )
+                run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
+                # Remove temporary files from old Fast Downward versions.
+                run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
+                run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
+
+                run.set_property("domain", task.domain)
+                run.set_property("problem", task.problem)
+                run.set_property("algorithm", algorithm_name)
+                run.set_property("id", [algorithm_name, task.domain, task.problem])
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
