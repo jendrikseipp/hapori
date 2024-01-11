@@ -111,7 +111,7 @@ def select_algorithm_from_model(json_model, h5_model, image, planner_names):
     assert len(priorities) == len(planner_names)
     best_planner_idx = np.argmin(priorities)
     best_planner = planner_names[best_planner_idx]
-    print("Chose %s" % best_planner)
+    print("Model chose %s" % best_planner)
     return best_planner
 
 
@@ -153,10 +153,12 @@ def main(args):
     if image_file is None:
         # TODO: why these defaults? Verify that these are the best planners from the training set
         planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:agl-config01'
+        print("Could not compute image. Use default planner.")
     else:
         json_model = os.path.join(DIR_SCRIPT, 'models', args.model_name + ".json")
         h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
         planner = select_algorithm_from_model(json_model, h5_model, image_file, planner_names)
+    print("Selected Planner: %s" % planner)
     sys.stdout.flush()
     execute_planner(pwd, domain, problem, plan, planner)
 
