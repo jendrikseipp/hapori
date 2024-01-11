@@ -90,8 +90,8 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, t
     for pos, (relative_time, (planner, config)) in enumerate(configs):
         next_plan_prefix = f"config.{pos}.{planner}"
         run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
-        if run_time <= 0:
-            return
+        if run_time <= 0: # skip over portfolio components with too low time limit
+            continue
         exitcode, used_run_time = run_search(
             planner, config, pos, domain_file, problem_file,
             next_plan_prefix, run_time, memory)
@@ -111,8 +111,8 @@ def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, 
     runlim_run_time_so_far = 0.0
     for pos, (relative_time, (planner, config)) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
-        if run_time <= 0:
-            return
+        if run_time <= 0: # skip over portfolio components with too low time limit
+            continue
         exitcode, used_run_time = run_search(
             planner, config, pos, domain_file, problem_file,
             plan_manager.get_plan_prefix(), run_time, memory)
