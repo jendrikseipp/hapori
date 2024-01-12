@@ -60,7 +60,7 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-IMAGE = REPO / "images" / "hapori_delfi.sif"
+IMAGE = REPO / "images" / "2024-01-12-hapori_sequential_portfolios.sif"
 assert IMAGE.is_file(), IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
@@ -70,14 +70,14 @@ if RUNNING_ON_CLUSTER:
     # SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
     SUITE = project.SUITE_IPC23
     ENVIRONMENT = BaselSlurmEnvironment(
-        partition="infai_3",
+        partition="infai_2",
         email="silvan.sievers@unibas.ch",
         # The limit of 3947 MiB is a virtual memory size limit set
         # externally (by slurm?). This can be observed using
         # resource.getrlimit(resource.RLIMIT_AS). So it seems
         # reasonable to use this as a default limit.
-        memory_per_cpu="3947M",
-        cpus_per_task=3,
+        memory_per_cpu="6354M",
+        cpus_per_task=2,
         # paths obtained via:
         # $ module purge
         # $ module -q load Python/3.10.4-GCCcore-11.3.0
@@ -113,13 +113,15 @@ ATTRIBUTES = [
 ]
 
 
-def get_time_limit(track):
+def get_time_limit(portfolio):
+    track = portfolio[-3:]
+    assert track in ["opt", "sat", "agl"], track
     match track:
-        case "optimal":
+        case "opt":
             return OPT_TIME_LIMIT
-        case "satisficing":
+        case "sat":
             return SAT_TIME_LIMIT
-        case "agile":
+        case "agl":
             return AGL_TIME_LIMIT
         case _:
             sys.exit(f"unknown track {track}")
@@ -139,15 +141,34 @@ def main():
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
-    for track in ["optimal", "agile", "satisficing"]:
-        time_limit = get_time_limit(track)
-        algorithm_name = f"hapori-delfi-{track}"
+    portfolios = [
+        'hapori-greedy-agl',
+        'hapori-greedy-opt',
+        'hapori-greedy-sat',
+        'hapori-ibacop2-opt',
+        'hapori-ibacop2-sat',
+        'hapori-miplan-opt',
+        'hapori-miplan-random-agl',
+        'hapori-miplan-sat',
+        'hapori-stonesoup-agl',
+        'hapori-stonesoup-opt',
+        'hapori-stonesoup-sat',
+        'hapori-uniform-agl',
+        'hapori-uniform-opt',
+        'hapori-uniform-sat',
+    ]
+
+    for portfolio in portfolios:
+        time_limit = get_time_limit(portfolio)
+        algorithm_name = f"{portfolio}"
         for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
             run = exp.add_run()
             run.add_resource("domain", task.domain_file, "domain.pddl")
             run.add_resource("problem", task.problem_file, "problem.pddl")
             # Use runlim to limit time and memory. It must be on the system
             # PATH.
+            internal_memory_limit = math.ceil(MEMORY_LIMIT*0.9) # generously keep some memory for running the portfolio driver
+            internal_time_limit = math.ceil(time_limit*0.99) # use a slightly smaller runtime limit for the portfolio
             run.add_command(
                 "run-planner",
                 [
@@ -160,7 +181,9 @@ def main():
                     "{domain}",
                     "{problem}",
                     "sas_plan",
-                    track,
+                    internal_memory_limit,
+                    internal_time_limit,
+                    portfolio,
                 ],
             )
             run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])

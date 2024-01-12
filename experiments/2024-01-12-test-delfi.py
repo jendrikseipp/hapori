@@ -60,7 +60,7 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-IMAGE = REPO / "images" / "hapori_eps.sif"
+IMAGE = REPO / "images" / "2024-01-12-hapori_delfi.sif"
 assert IMAGE.is_file(), IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
@@ -70,14 +70,14 @@ if RUNNING_ON_CLUSTER:
     # SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
     SUITE = project.SUITE_IPC23
     ENVIRONMENT = BaselSlurmEnvironment(
-        partition="infai_3",
+        partition="infai_2",
         email="silvan.sievers@unibas.ch",
         # The limit of 3947 MiB is a virtual memory size limit set
         # externally (by slurm?). This can be observed using
         # resource.getrlimit(resource.RLIMIT_AS). So it seems
         # reasonable to use this as a default limit.
-        memory_per_cpu="3947M",
-        cpus_per_task=3,
+        memory_per_cpu="6354M",
+        cpus_per_task=2,
         # paths obtained via:
         # $ module purge
         # $ module -q load Python/3.10.4-GCCcore-11.3.0
@@ -115,11 +115,11 @@ ATTRIBUTES = [
 
 def get_time_limit(track):
     match track:
-        case "opt":
+        case "optimal":
             return OPT_TIME_LIMIT
-        case "sat":
+        case "satisficing":
             return SAT_TIME_LIMIT
-        case "agl":
+        case "agile":
             return AGL_TIME_LIMIT
         case _:
             sys.exit(f"unknown track {track}")
@@ -139,43 +139,39 @@ def main():
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
-    tracks = ["opt", "sat"]
-    learning = ["linear_regression", "decision_tree"]
-
-    for track in tracks:
+    for track in ["optimal", "agile", "satisficing"]:
         time_limit = get_time_limit(track)
-        for learn in learning:
-            algorithm_name = f"hapori-eps-{learn}-{track}"
-            for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
-                run = exp.add_run()
-                run.add_resource("domain", task.domain_file, "domain.pddl")
-                run.add_resource("problem", task.problem_file, "problem.pddl")
-                # Use runlim to limit time and memory. It must be on the system
-                # PATH.
-                run.add_command(
-                    "run-planner",
-                    [
-                        "runlim",
-                        "--output-file=runlim.txt",
-                        f"--time-limit={time_limit}",
-                        f"--space-limit={MEMORY_LIMIT}",
-                        "--propagate",
-                        "{image}",
-                        "{domain}",
-                        "{problem}",
-                        "sas_plan",
-                        f"{track}_{learn}"
-                    ],
-                )
-                run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
-                # Remove temporary files from old Fast Downward versions.
-                run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
-                run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
+        algorithm_name = f"hapori-delfi-{track}"
+        for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+            run = exp.add_run()
+            run.add_resource("domain", task.domain_file, "domain.pddl")
+            run.add_resource("problem", task.problem_file, "problem.pddl")
+            # Use runlim to limit time and memory. It must be on the system
+            # PATH.
+            run.add_command(
+                "run-planner",
+                [
+                    "runlim",
+                    "--output-file=runlim.txt",
+                    f"--time-limit={time_limit}",
+                    f"--space-limit={MEMORY_LIMIT}",
+                    "--propagate",
+                    "{image}",
+                    "{domain}",
+                    "{problem}",
+                    "sas_plan",
+                    track,
+                ],
+            )
+            run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
+            # Remove temporary files from old Fast Downward versions.
+            run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
+            run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
 
-                run.set_property("domain", task.domain)
-                run.set_property("problem", task.problem)
-                run.set_property("algorithm", algorithm_name)
-                run.set_property("id", [algorithm_name, task.domain, task.problem])
+            run.set_property("domain", task.domain)
+            run.set_property("problem", task.problem)
+            run.set_property("algorithm", algorithm_name)
+            run.set_property("id", [algorithm_name, task.domain, task.problem])
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
