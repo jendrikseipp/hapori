@@ -61,8 +61,8 @@ def run_search(planner, config, pos, domain_file, problem_file, plan_file, time,
         if match:
             runlim_run_time = float(match.group(1))
             print(f"Hapori component runlim run time: {runlim_run_time}")
-    if runlim_run_time == 0.0:
-        sys.exit("Could not determine runlim run time")
+        else:
+            sys.exit(f"Could not determine runlim run time from runlim file {runlim_run_time}")
     print()
     return exitcode, runlim_run_time
 
