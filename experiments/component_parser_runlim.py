@@ -51,7 +51,6 @@ def unsupported(content, props):
 def set_outcome(content, props):
     lines = content.splitlines()
     solved = props["coverage"]
-    unsolvable = False  # assume all tasks are solvable
     unsupported = props["unsupported"]
     out_of_time = int(props["solver_status_num"] == 2)
     out_of_memory = int(props["solver_status_num"] == 3)
@@ -62,11 +61,9 @@ def set_outcome(content, props):
             out_of_memory = 1
     out_of_time_or_memory = 0
     invalid_plan = props["invalid_plan"]
-    # runsolver decides "out of time" based on CPU rather than (cumulated)
-    # WCTIME.
+    # print(solved, out_of_time, out_of_memory, unsupported, invalid_plan)
     if (
         not solved
-        and not unsolvable
         and not out_of_time
         and not out_of_memory
         and not unsupported
@@ -86,22 +83,20 @@ def set_outcome(content, props):
     # We remove this record. This case also applies to iterative planners.
     # If such planners solve the task, we don't treat them as running out
     # of time.
-    if (solved or unsolvable) and (out_of_time or out_of_memory):
+    if solved and (out_of_time or out_of_memory):
         print("task solved however runlim recorded an out_of_*")
         # print(props)
         out_of_time = 0
         out_of_memory = 0
 
-    if not solved and not unsolvable:
+    if not solved:
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    # print(solved, unsolvable, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
-    if solved ^ unsolvable ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
+    # print(solved, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
+    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
         if solved:
             props["error"] = "solved"
-        elif unsolvable:
-            props["error"] = "unsolvable"
         elif out_of_time:
             props["error"] = "out_of_time"
         elif out_of_memory:
@@ -187,13 +182,13 @@ def get_parser():
     parser.add_function(set_outcome, file="runlim.txt")
     return parser
 
-# facility to test parsing files in a directory called test
+# facility to test parsing files in the directory the script is called from
 if __name__ == "__main__":
     from lab import tools
     from pathlib import Path
     parser = get_parser()
     props = tools.Properties("properties")
-    run_dir = Path("test").resolve()
+    run_dir = Path(".").resolve()
     parser.parse(run_dir, props)
     print(props)
     props.write()

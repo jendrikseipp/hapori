@@ -31,7 +31,7 @@ from pathlib import Path
 import platform
 import sys
 
-from apptainer_parser_runlim import get_parser
+from portfolio_parser_runlim import get_parser
 
 from downward import suites
 from downward.reports.absolute import AbsoluteReport
