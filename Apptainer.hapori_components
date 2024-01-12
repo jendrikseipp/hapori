@@ -696,12 +696,12 @@ Stage: run
 %post
     apt-get update
 
-    # requirements of all component planners
+    # combined requirements of all component planners
     apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     pip2 install -U wheel setuptools
     pip2 install networkx
 
-    # requirements of drivers
+    # requirements of the plan.py driver
     apt-get -y install --no-install-recommends python3
 
     # clean up
@@ -715,7 +715,7 @@ Stage: run
     DOMAINFILE="$1"
     PROBLEMFILE="$2"
     PLANFILE="$3"
-    IMAGE="$4"
+    PLANNER="$4"
     CONFIG="$5"
     shift
     shift
@@ -724,7 +724,7 @@ Stage: run
     shift
 
     python3 /planner/plan.py \
-        "$IMAGE" \
+        "$PLANNER" \
         "$DOMAINFILE" \
         "$PROBLEMFILE" \
         "$PLANFILE" \
@@ -732,4 +732,7 @@ Stage: run
 
 %labels
 Name        Hapori Components
-Description Used to test all component planners.
+Description Use this to run any component planner individually.
+Authors     Jendrik Seipp <jendrik.seipp@liu.se>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Alberto Pozanco <alberto.pozanco@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Silvan Sievers <silvan.sievers@unibas.ch>
+License     GPL 3
+Tracks      optimal,satisficing,agile

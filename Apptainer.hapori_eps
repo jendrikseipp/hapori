@@ -701,7 +701,7 @@ Stage: run
 %post
     apt-get update
 
-    # requirements of all component planners combined
+    # combined requirements of all component planners
     apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     pip2 install -U wheel setuptools
     pip2 install networkx
