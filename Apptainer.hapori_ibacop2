@@ -513,6 +513,41 @@ Stage: build-ipc2018-olcff
 
 Bootstrap: docker
 From: ubuntu:18.04
+Stage: build-learner-ibacop
+
+# Copy planner binary and required files from Stage 1.
+%files
+    learners/ibacop2 /planner/learners/ibacop2
+
+%post
+    ## Install only dependencies for running the planner.
+    apt-get update
+    apt-get install --no-install-recommends -y \
+        cmake\
+        make\
+        gcc-multilib \
+        flex \
+        bison \
+        g++-multilib \
+        gawk \
+        pypy\
+        python-pandas\
+        python-sklearn
+
+    ## Build the planner
+    cd /planner/learners/ibacop2
+    MAKE_FLAGS="-j 6"
+    export MAKE_FLAGS
+    ./build
+
+    strip --strip-all /planner/learners/ibacop2/src/features/ff-learner/roller3.0
+    strip --strip-all /planner/learners/ibacop2/src/features/heuristics/preprocess/preprocess
+    strip --strip-all /planner/learners/ibacop2/src/features/heuristics/search/downward-4
+    strip --strip-all /planner/learners/ibacop2/src/features/preprocess/preprocess
+    strip --strip-all /planner/learners/ibacop2/src/search-mercury/downward-4
+
+Bootstrap: docker
+From: ubuntu:18.04
 Stage: build-runlim
 
 %post
@@ -704,6 +739,20 @@ Stage: run
     /planner/planners/ipc2018-olcff/fast-downward-conjunctions/fast-downward.py
     /planner/planners/ipc2018-olcff/fast-downward-conjunctions/builds/release64/bin
 
+%files from build-learner-ibacop
+    /planner/learners/ibacop2/src/features/ff-learner/roller3.0
+    /planner/learners/ibacop2/src/features/heuristics/training.sh
+    /planner/learners/ibacop2/src/features/heuristics/translate
+    /planner/learners/ibacop2/src/features/heuristics/preprocess/preprocess
+    /planner/learners/ibacop2/src/features/heuristics/search/downward-4
+    /planner/learners/ibacop2/src/features/preprocess/preprocess
+    /planner/learners/ibacop2/src/features/translate
+    /planner/learners/ibacop2/src/launcher
+    /planner/learners/ibacop2/src/models
+    /planner/learners/ibacop2/src/search-mercury/downward*
+    /planner/learners/ibacop2/src/search-mercury/unitcost
+    /planner/learners/ibacop2/ibacop-features.sh
+
 %files from build-runlim
     /runlim/runlim /usr/bin/runlim
 
@@ -720,6 +769,9 @@ Stage: run
     apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     pip2 install -U wheel setuptools
     pip2 install networkx
+
+    # requirements of ibacop-features
+    apt-get -y install --no-install-recommends python-pandas python-sklearn
 
     # requirements of the portfolio driver
     apt-get -y install --no-install-recommends python3
