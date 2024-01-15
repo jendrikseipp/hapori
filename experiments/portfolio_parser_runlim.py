@@ -19,15 +19,15 @@ def invalid_plan(content, props):
 def set_outcome(content, props):
     lines = content.splitlines()
     solved = props["coverage"]
-    # use 0 as solver status if runlim file is incomplete
-    out_of_time = int(props.get("solver_status_num", 0) == 2)
-    out_of_memory = int(props.get("solver_status_num", 0) == 3)
-    if not out_of_time and not out_of_memory:
-        if props.get("error") == "out_of_time":
-            out_of_time = 1
-        if props.get("error") == "out_of_memory":
-            out_of_memory = 1
+    out_of_time = 0
+    out_of_memory = 0
     out_of_time_or_memory = 0
+    exit_code = props["planner_exit_code"]
+    runlim_status = props.get("solver_status_num", 0) # runlim file can be incomplete if the run crashes
+    if exit_code == 2 or exit_code == 123 or runlim_status == 2:
+        out_of_time = 1
+    if exit_code == 3 or exit_code == 122 or runlim_status == 3:
+        out_of_memory = 1
     invalid_plan = props["invalid_plan"]
     # print(solved, out_of_time, out_of_memory, invalid_plan)
     if (
