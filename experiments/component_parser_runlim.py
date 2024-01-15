@@ -43,6 +43,7 @@ def unsupported(content, props):
         content.find("WARNING: unsupported :requirement :derived-predicates") > -1 or # mpc
         content.find("Error: Parser failed to read file") > -1 or # VAL on some cavediving-adl tasks
         content.find("Planning task not solvable") > -1 # probe
+        content.find("currently does not support axioms") > -1 # complementary2
         ):
         props["unsupported"] = True
     else:
