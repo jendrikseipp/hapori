@@ -21,13 +21,16 @@ def set_outcome(content, props):
     solved = props["coverage"]
     out_of_time = 0
     out_of_memory = 0
-    out_of_time_or_memory = 0
-    exit_code = props["planner_exit_code"]
-    runlim_status = props.get("solver_status_num", 0) # runlim file can be incomplete if the run crashes
+    out_of_time_and_memory = 0
+    exit_code = props["planner_exit_code"] # returncode computed from portfolio driver
+    # runlim file can be incomplete if the run crashes, use 0 as default
+    runlim_status = props.get("solver_status_num", 0) # status from "outermost" runlim layer
     if exit_code == 2 or exit_code == 123 or runlim_status == 2:
         out_of_time = 1
     if exit_code == 3 or exit_code == 122 or runlim_status == 3:
         out_of_memory = 1
+    if exit_code == 124:
+        out_of_time_and_memory = 1
     invalid_plan = props["invalid_plan"]
     # print(solved, out_of_time, out_of_memory, invalid_plan)
     if (
@@ -41,7 +44,7 @@ def set_outcome(content, props):
         if cpu_time > props["time_limit"]:
             out_of_time = 1
         elif cpu_time > 1750 and used_memory > 7000:
-            out_of_time_or_memory = 1
+            out_of_time_and_memory = 1
         elif cpu_time > 1750:
             out_of_time = 1
         elif used_memory > 7000:
@@ -63,16 +66,16 @@ def set_outcome(content, props):
         props["cpu_time"] = None
         props["wall_time"] = None
 
-    # print(solved, out_of_time, out_of_memory, out_of_time_or_memory, invalid_plan)
-    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ invalid_plan:
+    # print(solved, out_of_time, out_of_memory, out_of_time_and_memory, invalid_plan)
+    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_and_memory ^ invalid_plan:
         if solved:
             props["error"] = "solved"
         elif out_of_time:
             props["error"] = "out_of_time"
         elif out_of_memory:
             props["error"] = "out_of_memory"
-        elif out_of_time_or_memory:
-            props["error"] = "out_of_time_or_memory"
+        elif out_of_time_and_memory:
+            props["error"] = "out_of_time_and_memory"
         elif invalid_plan:
             props["error"] = "invalid_plan"
     else:
@@ -141,7 +144,6 @@ def get_parser():
     parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
-    # also parse errors removed by fitler-stderr.py
     parser.add_function(set_outcome, file="runlim.txt")
     return parser
 
