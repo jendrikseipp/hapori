@@ -36,9 +36,9 @@ def set_outcome(content, props):
     match exit_code:
         case 0:
             props.add_unexplained_error("exit code 0 but neither solved nor invalid plan")
-        case [3, 122]:
+        case 3 | 122:
             props["error"] = "out_of_memory"
-        case [2, 123]:
+        case 2 | 123:
             props["error"] = "out_of_time"
         case 124:
             props["error"] = "out_of_time_and_memory"
