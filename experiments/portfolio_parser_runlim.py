@@ -9,7 +9,7 @@ def coverage(content, props):
     props["coverage"] = int("cost" in props)
     props["claimed_coverage"] = int(any("Solution found" in line for line in content.splitlines()))
     if not props["coverage"] and props["claimed_coverage"]:
-        props.add_unexplained_error(f"solver claims solution; we found no plan")
+        props.add_unexplained_error(f"solver claims solution; we found no or an invalid plan")
 
 def invalid_plan(content, props):
     props["invalid_plan"] = (content.find("Plan failed to execute") > -1 or
@@ -17,70 +17,43 @@ def invalid_plan(content, props):
         content.find("Bad plan description") > -1)
 
 def set_outcome(content, props):
-    lines = content.splitlines()
     solved = props["coverage"]
-    out_of_time = 0
-    out_of_memory = 0
-    out_of_time_and_memory = 0
-    exit_code = props["planner_exit_code"] # returncode computed from portfolio driver
-    # runlim file can be incomplete if the run crashes, use 0 as default
-    runlim_status = props.get("solver_status_num", 0) # status from "outermost" runlim layer
-    if exit_code == 2 or exit_code == 123 or runlim_status == 2:
-        out_of_time = 1
-    if exit_code == 3 or exit_code == 122 or runlim_status == 3:
-        out_of_memory = 1
-    if exit_code == 124:
-        out_of_time_and_memory = 1
-    invalid_plan = props["invalid_plan"]
-    # print(solved, out_of_time, out_of_memory, invalid_plan)
-    if (
-        not solved
-        and not out_of_time
-        and not out_of_memory
-        and not invalid_plan):
-        # use 0 for time/memory if runlim file is incomplete
-        cpu_time = props.get("cpu_time", 0)
-        used_memory = props.get("used_memory", 0)
-        if cpu_time > props["time_limit"]:
-            out_of_time = 1
-        elif cpu_time > 1750 and used_memory > 7000:
-            out_of_time_and_memory = 1
-        elif cpu_time > 1750:
-            out_of_time = 1
-        elif used_memory > 7000:
-            out_of_memory = 1
 
-    # In cases where CPU time is very slightly above the threshold so that
-    # runlim didn't kill the planner yet and the planner solved a task
-    # just within the limit, runsolver will still record an "out of time".
-    # We remove this record. This case also applies to iterative planners.
-    # If such planners solve the task, we don't treat them as running out
-    # of time.
-    if solved and (out_of_time or out_of_memory):
-        print("task solved however runlim recorded an out_of_*")
-        # print(props)
-        out_of_time = 0
-        out_of_memory = 0
+    if solved:
+        props["error"] = "solved"
+        return props
 
-    if not solved:
-        props["cpu_time"] = None
-        props["wall_time"] = None
+    if props["invalid_plan"]:
+        props["error"] = "invalid_plan"
+        return props
 
-    # print(solved, out_of_time, out_of_memory, out_of_time_and_memory, invalid_plan)
-    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_and_memory ^ invalid_plan:
-        if solved:
-            props["error"] = "solved"
-        elif out_of_time:
-            props["error"] = "out_of_time"
-        elif out_of_memory:
+    # Delete records of runtime if the task was not solved.
+    props["cpu_time"] = None
+    props["wall_time"] = None
+
+    # Returncode computed from portfolio driver or the abort from runlim.
+    exit_code = props["planner_exit_code"]
+    match exit_code:
+        case 0:
+            props.add_unexplained_error("exit code 0 but neither solved nor invalid plan")
+        case [3, 122]:
             props["error"] = "out_of_memory"
-        elif out_of_time_and_memory:
+        case [2, 123]:
+            props["error"] = "out_of_time"
+        case 124:
             props["error"] = "out_of_time_and_memory"
-        elif invalid_plan:
-            props["error"] = "invalid_plan"
-    else:
-        props.add_unexplained_error(f"could not determine outcome")
-        props["error"] = "unknown-outcome"
+        case 125:
+            props["error"] = "all_components_error"
+        case 126:
+            props["error"] = "error_and_out_of_memory"
+        case 127:
+            props["error"] = "error_and_out_of_time"
+        case 128:
+            props["error"] = "error_and_out_of_time_and_memory"
+        case _:
+            props.add_unexplained_error(f"unknown-portfolio-returncode {exit_code}")
+            props["error"] = "unknown-portfolio-returncode"
+    return props
 
 
 def type_int_or_none(elem):
@@ -144,7 +117,7 @@ def get_parser():
     parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
-    parser.add_function(set_outcome, file="runlim.txt")
+    parser.add_function(set_outcome)
     return parser
 
 # facility to test parsing files in the directory the script is called from
