@@ -33,11 +33,14 @@ class Task(object):
         return axiom
 
     def parse(domain_pddl, task_pddl):
-        domain_name, requirements, types, constants, predicates, functions, actions, axioms \
+        domain_name, domain_requirements, types, constants, predicates, functions, actions, axioms \
                      = parse_domain(domain_pddl)
-        task_name, task_domain_name, objects, init, goal, use_metric = parse_task(task_pddl)
+        task_name, task_domain_name, task_requirements, objects, init, goal, use_metric = parse_task(task_pddl)
 
         assert domain_name == task_domain_name
+        requirements = Requirements(sorted(set(
+                    domain_requirements.requirements +
+                    task_requirements.requirements)))
         objects = constants + objects
         init += [conditions.Atom("=", (obj.name, obj.name)) for obj in objects]
         return Task(domain_name, task_name, requirements, types, objects,
@@ -45,8 +48,8 @@ class Task(object):
     parse = staticmethod(parse)
 
     def dump(self):
-        print "Problem %s: %s [%s]" % (self.domain_name, self.task_name,
-                                       self.requirements)
+        print "Problem %s: %s [%s]" % (
+            self.domain_name, self.task_name, self.requirements)
         print "Types:"
         for type in self.types:
             print "  %s" % type
@@ -160,7 +163,15 @@ def parse_task(task_pddl):
     assert domain_line[0] == ":domain" and len(domain_line) == 2
     yield domain_line[1]
 
-    objects_opt = iterator.next()
+    requirements_opt = iterator.next()
+    if requirements_opt[0] == ":requirements":
+        requirements = requirements_opt[1:]
+        objects_opt = iterator.next()
+    else:
+        requirements = []
+        objects_opt = requirements_opt
+    yield Requirements(requirements)
+
     if objects_opt[0] == ":objects":
         yield pddl_types.parse_typed_list(objects_opt[1:])
         init = iterator.next()
