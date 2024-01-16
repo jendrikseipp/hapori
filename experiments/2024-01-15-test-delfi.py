@@ -31,7 +31,8 @@ from pathlib import Path
 import platform
 import sys
 
-from portfolio_parser_runlim import get_parser
+# use the component parser because delfi selects a single planner
+from component_parser_runlim import get_parser
 
 from downward import suites
 from downward.reports.absolute import AbsoluteReport
