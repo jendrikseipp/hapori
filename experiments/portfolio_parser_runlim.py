@@ -32,7 +32,7 @@ def set_outcome(content, props):
     props["wall_time"] = None
 
     # Returncode computed from portfolio driver or the abort from runlim.
-    exit_code = props["planner_exit_code"]
+    exit_code = props.get("planner_exit_code", 0) # safe-guard for runs that didn't start/complete
     match exit_code:
         case 0:
             props.add_unexplained_error("exit code 0 but neither solved nor invalid plan")
