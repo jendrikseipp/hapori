@@ -8,17 +8,18 @@ making changes below.
 
 ### return codes of this driver
 PORTFOLIO_SUCCESS = 0
-PORTFOLIO_PLAN_FOUND_AND_OUT_OF_MEMORY = 101
-PORTFOLIO_PLAN_FOUND_AND_OUT_OF_TIME = 102
-PORTFOLIO_PLAN_FOUND_AND_OUT_OF_MEMORY_AND_TIME = 103
 PORTFOLIO_OUT_OF_MEMORY = 122
 PORTFOLIO_OUT_OF_TIME = 123
 PORTFOLIO_OUT_OF_MEMORY_AND_TIME = 124
+PORTFOLIO_ERROR = 125
+PORTFOLIO_ERROR_AND_OUT_OF_MEMORY = 126
+PORTFOLIO_ERROR_AND_OUT_OF_TIME = 127
+PORTFOLIO_ERROR_AND_OUT_OF_MEMORY_AND_TIME = 128
 DRIVER_CRITICAL_ERROR = 135
 DRIVER_INPUT_ERROR = 136
 DRIVER_UNSUPPORTED = 137
 
-### runlim return codes
+### runlim return codes -- returned from each component planner call
 SUCCESS = 0
 EXECVP_FAILED = 1
 OUT_OF_TIME = 2
@@ -56,30 +57,37 @@ def generate_portfolio_exitcode(exitcodes):
     exitcodes = set(exitcodes)
 
     if not exitcodes:
-        return HAPORI_UNKNOWN
+        return PORTFOLIO_ERROR
 
     # At least one plan was found.
     if SUCCESS in exitcodes:
-        if OUT_OF_MEMORY in exitcodes and OUT_OF_TIME in exitcodes:
-            return PORTFOLIO_PLAN_FOUND_AND_OUT_OF_MEMORY_AND_TIME
-        elif OUT_OF_MEMORY in exitcodes:
-            return PORTFOLIO_PLAN_FOUND_AND_OUT_OF_MEMORY
-        elif OUT_OF_TIME in exitcodes:
-            return PORTFOLIO_PLAN_FOUND_AND_OUT_OF_TIME
-        else:
-            return PORTFOLIO_SUCCESS
+        return PORTFOLIO_SUCCESS
 
-    # No plan was found due to hitting resource limits.
-    if OUT_OF_MEMORY in exitcodes and OUT_OF_TIME in exitcodes:
-        return PORTFOLIO_OUT_OF_MEMORY_AND_TIME
-    elif OUT_OF_MEMORY in exitcodes:
-        return PORTFOLIO_OUT_OF_MEMORY
-    elif OUT_OF_TIME in exitcodes:
-        return PORTFOLIO_OUT_OF_TIME
+    # All component planners failed.
+    if all(res in [
+        EXECVP_FAILED, SEGFAULT, BUS_ERROR, FORK_FAILED, INTERNAL_ERROR, SOME_SIGNAL, HAPORI_UNKNOWN
+        ] for res in exitcodes):
+        return PORTFOLIO_ERROR
 
+    # Some component planners failed.
+    error = False
     if any(res in [
         EXECVP_FAILED, SEGFAULT, BUS_ERROR, FORK_FAILED, INTERNAL_ERROR, SOME_SIGNAL, HAPORI_UNKNOWN
         ] for res in exitcodes):
-        return HAPORI_UNKNOWN
+        error = True
+
+    # No plan was found due to hitting resource limits.
+    if OUT_OF_MEMORY in exitcodes and OUT_OF_TIME in exitcodes:
+        if error:
+            return PORTFOLIO_ERROR_AND_OUT_OF_MEMORY_AND_TIME
+        return PORTFOLIO_OUT_OF_MEMORY_AND_TIME
+    elif OUT_OF_MEMORY in exitcodes:
+        if error:
+            return PORTFOLIO_ERROR_AND_OUT_OF_MEMORY
+        return PORTFOLIO_OUT_OF_MEMORY
+    elif OUT_OF_TIME in exitcodes:
+        if error:
+            return PORTFOLIO_ERROR_AND_OUT_OF_TIME
+        return PORTFOLIO_OUT_OF_TIME
 
     assert False, "Error: Unhandled exit codes: {}".format(exitcodes)
