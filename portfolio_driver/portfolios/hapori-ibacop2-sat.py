@@ -4,7 +4,7 @@ import subprocess
 schedule_file = "ibacop_planners.out"
 
 DEFAULT_PLANNERS = [
-    (600, ['ipc2014-agl-jasper', 'default']),
+    (600, ['ipc2014-jasper', 'default']),
     (600, ['ipc2014-agl-probe', 'default']),
     (600, ['ipc2018-lapkt-bfws', 'dual-bfws-agl']),
 ]
