@@ -30,6 +30,8 @@ def custom_errors_stderr(content, props):
         props["error"] = "out_of_time"
     if any("alloc" in line for line in lines): # decstar, jasper, decstar, symba
         props["error"] = "out_of_memory"
+    if any("std::length_error" in line for line in lines): # symba
+        props["error"] = "out_of_memory"
     return props
 
 def unsupported(content, props):
