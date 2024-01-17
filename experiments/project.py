@@ -61,11 +61,30 @@ EVALUATIONS_PER_TIME = Attribute(
 SUITE_STRIPS = ['agricola-strips', 'airport-strips', 'barman-strips', 'blocksworld-strips', 'childsnack-strips', 'data-network-strips', 'depots-strips', 'driverlog-strips', 'elevators-strips', 'ferry-strips', 'floortile-strips', 'freecell-strips', 'ged-strips', 'goldminer-strips', 'grid-strips', 'gripper-strips', 'hanoi-strips', 'hiking-strips', 'logistics-strips', 'miconic-strips', 'movie-strips', 'mprime-strips', 'mystery-strips', 'no-mprime-strips', 'no-mystery-strips', 'nomystery-strips', 'npuzzle-strips', 'openstacks-strips', 'organic-synthesis-split-strips', 'organic-synthesis-strips', 'parcprinter-strips', 'parking-strips', 'pathways-strips', 'pegsol-strips', 'petri-net-alignment-strips', 'pipesworld-notankage-strips', 'pipesworld-tankage-strips', 'psr-small-strips', 'rovers-strips', 'satellite-strips', 'scanalyzer-strips', 'snake-strips', 'sokoban-strips', 'spanner-strips', 'spider-strips', 'storage-strips', 'termes-strips', 'tetris-strips', 'thoughtful-strips', 'tidybot-strips', 'tpp-strips', 'transport-strips', 'trucks-strips', 'visitall-strips', 'woodworking-strips', 'zenotravel-strips']
 
 SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-adl', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adl', 'trucks-adl']
+# fmt: on
 
-SUITE_IPC23 = ["folding-opt23-adl", "folding-sat23-adl", "labyrinth-opt23-adl", "labyrinth-sat23-adl", "quantum-layout-opt23-strips", "quantum-layout-sat23-strips", "recharging-robots-opt23-adl", "recharging-robots-sat23-adl", "ricochet-robots-opt23-adl", "ricochet-robots-sat23-adl", "rubiks-cube-opt23-adl", "rubiks-cube-sat23-adl", "slitherlink-opt23-adl", "slitherlink-sat23-adl"]
+SUITE_IPC23_OPT = [
+    "folding-opt23-adl",
+    "labyrinth-opt23-adl",
+    "quantum-layout-opt23-strips",
+    "recharging-robots-opt23-adl",
+    "ricochet-robots-opt23-adl",
+    "rubiks-cube-opt23-adl",
+    "slitherlink-opt23-adl",
+]
+
+SUITE_IPC23_SAT_AGL = [
+    "folding-sat23-adl",
+    "labyrinth-sat23-adl",
+    "quantum-layout-sat23-strips",
+    "recharging-robots-sat23-adl",
+    "ricochet-robots-sat23-adl",
+    "rubiks-cube-sat23-adl",
+    "slitherlink-sat23-adl",
+]
 
 SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
-# fmt: on
+
 
 def get_portfolio_attributes(portfolio):
     attributes = {}
