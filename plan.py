@@ -294,7 +294,12 @@ def main():
             cmd = [f"{CONTAINER_PLANNER_DIR}/{planner}/src/plan-ipc", f"seq-{config}-mercury", args.domainfile, args.problemfile, args.planfile]
             run_planner(args, cmd)
         elif planner == "ipc2018-cerberus":
-            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
+            cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile]
+            if "sat" in config:
+                cmd.extend(["--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/h2-mutexes/bin/preprocess"])
+            alias = "seq-%s-cerberus2018%s" % ("sat" if "sat" in config else "agl", "-gl" if "-gl" in config else "")
+            cmd.extend(["--alias", alias, "--overall-time-limit", "30m", args.domainfile, args.problemfile])
+            # cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/plan.py", args.domainfile, args.problemfile, args.planfile, config]
             run_planner(args, cmd)
         elif planner == "ipc2018-opt-scorpion":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/h2-mutexes/bin/preprocess", "--alias", "seq-opt-scorpion", "--overall-time-limit", "30m", args.domainfile, args.problemfile]

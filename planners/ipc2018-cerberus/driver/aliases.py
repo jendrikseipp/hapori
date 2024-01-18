@@ -200,6 +200,76 @@ for col in ["greedy_level", "from_coloring"]:
                 "--always"]
 
 
+def get_cerberus_agl(col="from_coloring"):
+    return [ 
+        "--if-unit-cost",
+        "--heuristic",
+        "hrb=RB(dag=%s, extract_plan=true)" % col,
+        "--heuristic",
+        "hn=novelty(eval=hrb)",
+        "--heuristic",
+        "hlm=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=ONE))", 
+        "--search", 
+        "lazy(open=alt([tiebreaking([hn, hrb]), single(hrb,pref_only=true), single(hlm), single(hlm,pref_only=true)], boost=1000), preferred=[hrb,hlm])",
+        "--if-non-unit-cost",
+        "--heuristic",
+        "hrb1=RB(dag=%s, extract_plan=true, transform=adapt_costs(one))" % col,
+        "--heuristic",
+        "hn=novelty(eval=hrb1)",
+        "--heuristic",
+        "hlm1=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=one),transform=adapt_costs(one))",
+        "--search", 
+        "lazy(open=alt([tiebreaking([hn, hrb1]), single(hrb1,pref_only=true), single(hlm1), single(hlm1,pref_only=true)], boost=1000), preferred=[hrb1,hlm1], cost_type=one,reopen_closed=false)",
+        "--always"]
+
+def get_cerberus_sat(col="from_coloring"):
+    return [
+        "--if-unit-cost",
+        "--heuristic",
+        "hrb=RB(dag=%s, extract_plan=true)" % col,
+        "--heuristic",
+        "hn=novelty(eval=hrb)",
+        "--heuristic",
+        "hlm=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=ONE))",
+        "--search", 
+        """iterated([
+                lazy(open=alt([tiebreaking([hn, hrb]), single(hrb,pref_only=true), single(hlm), single(hlm,pref_only=true)], boost=1000),preferred=[hrb,hlm]),
+                lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=5),
+                lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=3),
+                lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=2),
+                lazy_wastar([hrb,hlm],preferred=[hrb,hlm],w=1)
+                ], repeat_last=true, continue_on_fail=true)""",
+        "--if-non-unit-cost",
+        "--heuristic",
+        "hrb1=RB(dag=%s, extract_plan=true, transform=adapt_costs(one))" % col,
+        "--heuristic",
+        "hn=novelty(eval=hrb1)",
+        "--heuristic",
+        "hlm1=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=one),transform=adapt_costs(one))",
+        "--heuristic",
+        "hrb2=RB(dag=%s, extract_plan=true, transform=adapt_costs(plusone))" % col,
+        "--heuristic",
+        "hlm2=lmcount(lm_rhw(reasonable_orders=true,lm_cost_type=plusone),transform=adapt_costs(plusone))",
+        "--search", 
+        """iterated([
+                lazy(open=alt([tiebreaking([hn, hrb1]), single(hrb1,pref_only=true), single(hlm1), single(hlm1,pref_only=true)], boost=1000), preferred=[hrb1,hlm1],
+                            cost_type=one,reopen_closed=false),
+                lazy_greedy([hrb2,hlm2],preferred=[hrb2,hlm2],
+                            reopen_closed=false),
+                lazy_wastar([hrb2,hlm2],preferred=[hrb2,hlm2],w=5),
+                lazy_wastar([hrb2,hlm2],preferred=[hrb2,hlm2],w=3),
+                lazy_wastar([hrb2,hlm2],preferred=[hrb2,hlm2],w=2),
+                lazy_wastar([hrb2,hlm2],preferred=[hrb2,hlm2],w=1)
+                ], repeat_last=true, continue_on_fail=true)""",
+        "--always"]
+
+
+ALIASES["seq-agl-cerberus2018"] = get_cerberus_agl(col="from_coloring")
+ALIASES["seq-agl-cerberus2018-gl"] = get_cerberus_agl(col="greedy_level")
+
+ALIASES["seq-sat-cerberus2018"] = get_cerberus_sat(col="from_coloring")
+ALIASES["seq-sat-cerberus2018-gl"] = get_cerberus_sat(col="greedy_level")
+
 PORTFOLIOS = {}
 for portfolio in os.listdir(PORTFOLIO_DIR):
     name, ext = os.path.splitext(portfolio)

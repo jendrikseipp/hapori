@@ -44,12 +44,25 @@ Stage: run
     CONFIG=$4
 
     ## Call your planner.
-    /planner/plan.py $DOMAINFILE $PROBLEMFILE $PLANFILE $CONFIG
-
+    #/planner/plan.py $DOMAINFILE $PROBLEMFILE $PLANFILE $CONFIG
+    if [[ "$CONFIG" == "sat" ]]; then
+        /planner/fast-downward.py --build=release64 --plan-file $PLANFILE --transform-task /planner/builds/release64/bin/preprocess \
+            --alias seq-sat-cerberus2018 --overall-time-limit 30m $DOMAINFILE $PROBLEMFILE
+    elif [[ "$CONFIG" == "sat-gl" ]]; then
+        /planner/fast-downward.py --build=release64 --plan-file $PLANFILE --transform-task /planner/builds/release64/bin/preprocess \
+            --alias seq-sat-cerberus2018-gl --overall-time-limit 30m $DOMAINFILE $PROBLEMFILE
+    elif [[ "$CONFIG" == "agl" ]]; then
+        /planner/fast-downward.py --build=release64 --plan-file $PLANFILE \
+            --alias seq-agl-cerberus2018 --overall-time-limit 30m $DOMAINFILE $PROBLEMFILE
+    elif [[ "$CONFIG" == "agl-gl" ]]; then
+        /planner/fast-downward.py --build=release64 --plan-file $PLANFILE \
+            --alias seq-agl-cerberus2018-gl --overall-time-limit 30m $DOMAINFILE $PROBLEMFILE
+    fi
+    
 ## Update the following fields with meta data about your submission.
 ## Please use the same field names and use only one line for each value.
 %labels
-Name        Cerberus
+Name        Cerberus 
 Description Red-black planning heuristic with native support for conditional effects, h^2 mutexes, novelty heuristic for search guidance
 Authors     Michael Katz <michael.katz1@ibm.com>
 SupportsDerivedPredicates no
