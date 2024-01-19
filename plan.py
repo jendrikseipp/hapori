@@ -297,9 +297,9 @@ def main():
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile]
             if "sat" in config:
                 cmd.extend(["--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/release64/bin/preprocess"])
-                time_limit = "30"
+                time_limit = "30m"
             elif "agl" in config:
-                time_limit = "10"
+                time_limit = "5m"
             else:
                 sys.exit("unknown config for Cerberus")
             alias = "seq-%s-cerberus2018%s" % ("sat" if "sat" in config else "agl", "-gl" if "-gl" in config else "")
