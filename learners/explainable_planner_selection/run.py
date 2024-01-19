@@ -53,6 +53,7 @@ def generate_features(domain, problem):
 
 def query_model(f_model, features):
     base_name = os.path.basename(f_model)
+    # TODO: modify this to support all three tracks
     is_opt = base_name.startswith("opt_")
     is_sat = base_name.startswith("sat_")
     assert is_opt ^ is_sat
@@ -61,6 +62,7 @@ def query_model(f_model, features):
         planner_order = json.load(f)
     if features is None:
         print("WARNING: Features not generated. Using fallback planner.")
+        # TODO: use sensible default planners based on training data
         return "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:default'
 
     is_linear_regression = base_name.find("linear_regression") > -1

@@ -136,6 +136,7 @@ def main(args):
     plan = args.plan_file
     model = args.model_name
 
+    # TODO: adapt this to three models, one per track
     assert model in ["optimal", "satisficing", "agile"]
     is_opt = model == "optimal"
     file_planner_names = os.path.join(DIR_SCRIPT, "opt_planners.json" if is_opt else "sat_planners.json")
@@ -151,7 +152,7 @@ def main(args):
     sys.stdout.flush()
 
     if image_file is None:
-        # TODO: why these defaults? Verify that these are the best planners from the training set
+        # TODO: use sensible default planners based on training data
         planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:agl-config01'
         print("Could not compute image. Use default planner.")
     else:
