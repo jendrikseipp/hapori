@@ -98,10 +98,18 @@ def run_translate(args):
 
 def transform_task(args):
     logging.info("Run task transformation (%s)." % args.transform_task)
+    time_limit = limits.get_time_limit(
+        args.translate_time_limit, args.overall_time_limit)
+    memory_limit = limits.get_memory_limit(
+        args.translate_memory_limit, args.overall_memory_limit)
+    print_component_settings(
+        "transform-task", args.translate_inputs, args.translate_options,
+        time_limit, memory_limit)
+
+    transform = get_executable(args.build, args.transform_task)
+    logging.info("Absolute path: %s" % transform)
     try:
-        transform = get_executable(args.build, args.transform_task)
-        logging.info("Absolute path: %s" % transform)
-        call_component(transform, [], stdin="output.sas")
+        call_component(transform, [], stdin="output.sas", time_limit=time_limit, memory_limit=memory_limit)
 
     except OSError as err:
         if err.errno == errno.ENOENT:
