@@ -1,0 +1,75 @@
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: build-ipc2018-cerberus
+
+%files
+    planners/ipc2018-cerberus /planner/planners/ipc2018-cerberus
+
+%post
+    ## Install all necessary dependencies.
+    apt-get update
+    apt-get -y install --no-install-recommends cmake g++ g++-multilib make python
+
+    ## Build your planner
+    cd /planner/planners/ipc2018-cerberus
+    ./build.py release64 -j4
+
+    ## Strip binaries.
+    strip --strip-all /planner/planners/ipc2018-cerberus/builds/release64/bin/downward \
+        /planner/planners/ipc2018-cerberus/builds/release64/bin/preprocess
+
+Bootstrap: docker
+From: ubuntu:18.04
+Stage: run
+
+%files from build-ipc2018-cerberus
+    /planner/planners/ipc2018-cerberus/fast-downward.py
+    /planner/planners/ipc2018-cerberus/plan.py
+    /planner/planners/ipc2018-cerberus/builds/release64/bin/
+    /planner/planners/ipc2018-cerberus/driver
+
+%files
+    configs /planner/configs
+    plan.py /planner/plan.py
+
+%post
+    apt-get update
+
+    # combined requirements of all component planners
+    apt-get -y install --no-install-recommends python
+
+    # requirements of the plan.py driver
+    apt-get -y install --no-install-recommends python3
+
+    # clean up
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    #! /bin/bash
+    set -euo pipefail
+
+    DOMAINFILE="$1"
+    PROBLEMFILE="$2"
+    PLANFILE="$3"
+    PLANNER="$4"
+    CONFIG="$5"
+    shift
+    shift
+    shift
+    shift
+    shift
+
+    python3 /planner/plan.py \
+        "$PLANNER" \
+        "$DOMAINFILE" \
+        "$PROBLEMFILE" \
+        "$PLANFILE" \
+        --configs "$CONFIG" "$@"
+
+%labels
+Name        Hapori Components
+Description Use this to run any component planner individually.
+Authors     Jendrik Seipp <jendrik.seipp@liu.se>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Alberto Pozanco <alberto.pozanco@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Silvan Sievers <silvan.sievers@unibas.ch>
+License     GPL 3
+Tracks      optimal,satisficing,agile
