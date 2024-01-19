@@ -13,7 +13,7 @@ PLANNERS = [
         (37, ['ipc2018-olcff', 'default']),
         (32, ['ipc2018-cerberus', 'agl']),
         (25, ['ipc2018-fd-2018', 'config32']),
-        (24, ['ipc2018-agl-merwin', 'agl']),
+        (24, ['ipc2018-merwin', 'agl']),
         (23, ['ipc2018-opt-delfi', 'h2-simpless-oss-cpdbshc900']),
         (23, ['ipc2018-fd-2018', 'config11']),
         (22, ['ipc2018-fd-2018', 'config00']),

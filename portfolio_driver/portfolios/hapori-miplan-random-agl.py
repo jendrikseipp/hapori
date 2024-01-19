@@ -29,5 +29,5 @@ PLANNERS = [
         (23, ['ipc2018-lapkt-bfws', 'dual-bfws-agl']),
         (2, ['ipc2018-fd-2018', 'config39']),
         (2, ['ipc2018-fd-2018', 'config16']),
-        (6, ['ipc2018-agl-merwin', 'agl']),
+        (6, ['ipc2018-merwin', 'agl']),
 ]

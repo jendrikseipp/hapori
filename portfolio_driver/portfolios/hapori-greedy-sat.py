@@ -137,8 +137,8 @@ PLANNERS = [
     (69, ['ipc2018-fd-2018', 'config32']),
     # ipc2018-lapkt-bfws:poly-bfws
     (7, ['ipc2018-lapkt-bfws', 'poly-bfws']),
-    # ipc2018-agl-merwin:agl
-    (1, ['ipc2018-agl-merwin', 'agl']),
+    # ipc2018-merwin:agl
+    (1, ['ipc2018-merwin', 'agl']),
     # ipc2018-fd-2018:config29
     (7, ['ipc2018-fd-2018', 'config29']),
     # ipc2018-fd-2018:config25

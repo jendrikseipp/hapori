@@ -27,7 +27,7 @@ PLANNERS =[
         (2, ['ipc2018-fd-2018', 'config39']),
         (7, ['ipc2018-freelunch-madagascar', 'default']),
         (3, ['ipc2018-fd-2018', 'config35']),
-        (7, ['ipc2018-agl-merwin', 'agl']),
+        (7, ['ipc2018-merwin', 'agl']),
         (4, ['ipc2018-fd-2018', 'config12']),
         (2, ['ipc2018-fd-2018', 'config42']),
         (2, ['ipc2018-fd-2018', 'config30']),
