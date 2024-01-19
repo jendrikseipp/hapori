@@ -31,12 +31,21 @@ with open("domain_properties.csv") as f:
 for expname in [
     '2023-11-27+ipc2014-agl-mpc-eval',
     '2023-11-27+ipc2014-agl-probe-eval',
-    '2023-11-27+ipc2014-jasper-eval',
+    '2024-01-17-ipc2014-jasper-eval',
     '2023-11-27+ipc2014-opt-symba1-eval',
-    '2023-11-27+ipc2018-cerberus-eval',
-    '2023-11-27+ipc2018-decstar-eval',
-    '2023-11-27+ipc2018-fd-2018+agl-eval',
-    '2023-11-27+ipc2018-fd-2018+sat-eval',
+    #'2024-01-19-ipc2018-cerberus-eval',
+    '2023-11-27+ipc2018-decstar+opt-eval',
+    '2023-11-27+ipc2018-decstar+sat-agl-eval',
+    '2023-11-27+ipc2018-fd-2018+agl+A-eval',
+    '2023-11-27+ipc2018-fd-2018+agl+B-eval',
+    '2023-11-27+ipc2018-fd-2018+agl+C-eval',
+    '2023-11-27+ipc2018-fd-2018+agl+D-eval',
+    '2023-11-27+ipc2018-fd-2018+agl+E-eval',
+    '2023-11-27+ipc2018-fd-2018+sat+A-eval',
+    '2023-11-27+ipc2018-fd-2018+sat+B-eval',
+    '2023-11-27+ipc2018-fd-2018+sat+C-eval',
+    '2023-11-27+ipc2018-fd-2018+sat+D-eval',
+    '2023-11-27+ipc2018-fd-2018+sat+E-eval',
     '2023-11-27+ipc2018-freelunch-madagascar-eval',
     '2023-11-27+ipc2018-lapkt-bfws-eval',
     '2023-11-27+ipc2018-lapkt-dfs-plus-eval',
@@ -82,9 +91,20 @@ class ProcessRuns:
 
 for track in ["opt", "sat", "agl"]:
     process_runs = ProcessRuns(track)
+    quality_filter = project.QualityFilters()
+    properties_full = Path(exp.eval_dir) / f"properties-full-{track}.json"
+    exp.add_report(
+        FilterReport(filter=[quality_filter.store_costs,quality_filter.add_quality,process_runs]),
+        outfile=properties_full,
+        name=f"properties-full-{track}")
+    exp.add_step(f"compress-properties-full-{track}", project.compress, properties_full)
+
+for track in ["opt", "sat", "agl"]:
+    process_runs = ProcessRuns(track)
+    quality_filter = project.QualityFilters()
     properties_hardest = Path(exp.eval_dir) / f"properties-hardest-{track}.json"
     exp.add_report(
-        project.Hardest30Report(filter=[process_runs]),
+        project.Hardest30Report(filter=[quality_filter.store_costs,quality_filter.add_quality,process_runs]),
         outfile=properties_hardest,
         name=f"properties-hardest-{track}")
     exp.add_step(f"compress-properties-hardest-{track}", project.compress, properties_hardest)
