@@ -297,8 +297,13 @@ def main():
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile]
             if "sat" in config:
                 cmd.extend(["--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/release64/bin/preprocess"])
+                time_limit = "30"
+            elif "agl" in config:
+                time_limit = "10"
+            else:
+                sys.exit("unknown config for Cerberus")
             alias = "seq-%s-cerberus2018%s" % ("sat" if "sat" in config else "agl", "-gl" if "-gl" in config else "")
-            cmd.extend(["--alias", alias, "--overall-time-limit", "30m", args.domainfile, args.problemfile])
+            cmd.extend(["--alias", alias, "--overall-time-limit", time_limit, args.domainfile, args.problemfile])
             run_planner(args, cmd)
         elif planner == "ipc2018-opt-scorpion":
             cmd = ["python2", f"{CONTAINER_PLANNER_DIR}/{planner}/fast-downward.py", "--build=release64", "--plan-file", args.planfile, "--transform-task", f"{CONTAINER_PLANNER_DIR}/{planner}/builds/h2-mutexes/bin/preprocess", "--alias", "seq-opt-scorpion", "--overall-time-limit", "30m", args.domainfile, args.problemfile]
