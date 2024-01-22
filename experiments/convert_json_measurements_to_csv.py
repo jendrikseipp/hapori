@@ -4,10 +4,11 @@ from collections import defaultdict
 import json
 import lzma
 
-#cpu_time, error, cost,plan_length, used_memory
+# cpu_time, error, cost, used_memory, quality
 
 
 parser = argparse.ArgumentParser()
+# use this on properties for a *single* track; otherwise there would be duplicate planner+config pairs
 parser.add_argument("file_properties")
 parser.add_argument("property_key")
 parser.add_argument("out_file")
@@ -20,17 +21,22 @@ def main(args):
     all_tasks = set()
     all_algorithms = set()
     for props in properties.values():
-        algorithm = props["algorithm"]
+        algorithm = props["algorithm"][4:]
         all_algorithms.add(algorithm)
         domain = props["domain"]
         task = props["problem"]
         all_tasks.add((domain, task))
-        time = props.get(args.property_key)
-        if time is None:
-            time = "-"
-        data[domain][task][algorithm] = time
+        value = props.get(args.property_key)
+        if value is None:
+            value = "-"
+        data[domain][task][algorithm] = value
     all_algorithms = sorted(all_algorithms)
     all_tasks = sorted(all_tasks)
+
+    # decstar config01 finds a suboptimal solution on these two problems
+    # for algo in all_algorithms:
+        # print(f"quality of {algo} on barman-strips.0-p02.pddl: {data['barman-strips']['0-p02.pddl'][algo]}")
+        # print(f"quality of {algo} on barman-strips.0-p22.pddl: {data['barman-strips']['0-p22.pddl'][algo]}")
 
     with open(args.out_file, "w") as f:
         f.write(",".join([""] + all_algorithms))

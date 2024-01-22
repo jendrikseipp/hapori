@@ -3,6 +3,7 @@
 import csv
 from pathlib import Path
 
+from downward.reports import PlanningReport
 from lab.experiment import Experiment
 from lab.reports.filter import FilterReport
 
@@ -33,7 +34,7 @@ for expname in [
     '2023-11-27+ipc2014-agl-probe-eval',
     '2024-01-17-ipc2014-jasper-eval',
     '2023-11-27+ipc2014-opt-symba1-eval',
-    #'2024-01-19-ipc2018-cerberus-eval',
+    '2024-01-19-ipc2018-cerberus-eval',
     '2023-11-27+ipc2018-decstar+opt-eval',
     '2023-11-27+ipc2018-decstar+sat-agl-eval',
     '2023-11-27+ipc2018-fd-2018+agl+A-eval',
@@ -75,7 +76,16 @@ HTML_ATTRIBUTES = [
     "error",
     "used_memory",
 ]
-project.add_absolute_report(exp, attributes=HTML_ATTRIBUTES, name=f"{exp.name}-full")
+class PrintStatisticsReport(PlanningReport):
+    def get_text(self):
+        assert len(self.algorithms) == 191
+        return ""
+
+exp.add_report(
+    PrintStatisticsReport(
+            attributes=HTML_ATTRIBUTES,
+        ),
+        name=f"{exp.name}-statistics")
 exp.add_step("compress-properties", project.compress, Path(exp.eval_dir) / "properties")
 
 class ProcessRuns:
