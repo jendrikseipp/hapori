@@ -93,6 +93,10 @@ class ProcessRuns:
         self.track = track
 
     def __call__(self, run):
+        if run["algorithm"] == "opt+ipc2018-decstar+opt-config01":
+            # this algorithm found suboptimal solutions on instances
+            # 0-p02.pddl and 0-p22.pddl of barman-strips.
+            return False
         track, planner, config = run["algorithm"].split('+')
         if self.track != track:
             return False
