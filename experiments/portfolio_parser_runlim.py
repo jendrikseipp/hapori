@@ -52,7 +52,7 @@ def set_outcome(content, props):
             props["error"] = "error_and_out_of_time_and_memory"
         case _:
             props.add_unexplained_error(f"unknown-portfolio-returncode {exit_code}")
-            props["error"] = "unknown-portfolio-returncode"
+            props["error"] = "unknown_portfolio_returncode"
     return props
 
 
