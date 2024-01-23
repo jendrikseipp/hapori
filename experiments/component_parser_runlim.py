@@ -1,15 +1,29 @@
 import os
+from pathlib import Path
 import re
 import sys
 
+from lab import tools
 from lab.parser import Parser
+
+
+def collect_plans(content, props):
+    properties_file = props.path
+    run_dir = properties_file.parent
+    plan_files = []
+    for element in run_dir.iterdir():
+        if element.is_file() and element.name.startswith("sas_plan"):
+            plan_files.append(element.name)
+    props["plan_files"] = plan_files
 
 
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
-    props["claimed_coverage"] = int(any("Solution found" in line for line in content.splitlines()))
-    if not props["coverage"] and props["claimed_coverage"]:
-        props.add_unexplained_error(f"solver claims solution; we found no plan")
+    if props["coverage"]:
+        assert props["plan_files"]
+    # props["claimed_coverage"] = int(any("Solution found" in line for line in content.splitlines()))
+    # if not props["coverage"] and props["claimed_coverage"]:
+        # props.add_unexplained_error(f"solver claims solution; we found no plan")
 
 def invalid_plan(content, props):
     props["invalid_plan"] = (content.find("Plan failed to execute") > -1 or
@@ -171,8 +185,7 @@ def get_parser():
         required=True
     )
 
-    # parser.add_pattern("plan_length", r"\nFinal value: (\S+)(?: \S+)?\n", type=int)
-    # parser.add_pattern("plan_length", r"\nFinal value: (.+?) (?:.+)?\n", type=int)
+    parser.add_function(collect_plans)
     parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
@@ -187,11 +200,9 @@ def get_parser():
 
 # facility to test parsing files in the directory the script is called from
 if __name__ == "__main__":
-    from lab import tools
-    from pathlib import Path
     parser = get_parser()
     props = tools.Properties("properties")
-    run_dir = Path(".").resolve()
+    run_dir = pathlib.Path(".").resolve()
     parser.parse(run_dir, props)
     print(props)
     props.write()
