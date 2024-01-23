@@ -76,16 +76,79 @@ HTML_ATTRIBUTES = [
     "error",
     "used_memory",
 ]
-class PrintStatisticsReport(PlanningReport):
+
+cavediving_adl_instances_val_does_not_like = [
+    '1-p-2_2-2-0.4.pddl', '1-p-2_2-2-0.5.pddl', '1-p-2_2-2-0.6.pddl',
+    '1-p-2_2-2-0.45.pddl', '1-p-2_2-2_2-0.4.pddl',
+    '1-p-2_2-2_2-0.5.pddl', '1-p-2_2-2_2-0.6.pddl',
+    '1-p-2_2-2_2-0.45.pddl', '1-p-2_2-2_2-0.55.pddl',
+    '1-p-2_2_2-2-0.4.pddl', '1-p-2_2_2-2-0.5.pddl',
+    '1-p-2_2_2-2-0.6.pddl', '1-p-2_2_2-2-0.45.pddl',
+    '1-p-2_2_2-2-0.55.pddl', '1-p-2_2_2-2_2-0.4.pddl',
+    '1-p-2_2_2-2_2-0.5.pddl', '1-p-2_2_2-2_2-0.6.pddl',
+    '1-p-2_2_2-2_2-0.45.pddl', '1-p-2_2_2-2_2-0.55.pddl',
+    '1-p-2_2_2-2_2_2-0.4.pddl', '1-p-2_2_2-2_2_2-0.5.pddl',
+    '1-p-2_2_2-2_2_2-0.6.pddl', '1-p-2_2_2-2_2_2-0.45.pddl',
+    '1-p-2_2_2-2_2_2-0.55.pddl', '1-p-2_2_2_2-2-0.4.pddl',
+    '1-p-2_2_2_2-2-0.5.pddl', '1-p-2_2_2_2-2-0.6.pddl',
+    '1-p-2_2_2_2-2-0.45.pddl', '1-p-2_2_2_2-2-0.55.pddl',
+    '1-p-2_2_2_2-2_2-0.4.pddl', '1-p-2_2_2_2-2_2-0.5.pddl',
+    '1-p-2_2_2_2-2_2-0.6.pddl', '1-p-2_2_2_2-2_2-0.45.pddl',
+    '1-p-2_2_2_2-2_2-0.55.pddl', '1-p-3_2-2-0.5.pddl',
+    '1-p-3_2-2-0.6.pddl', '1-p-3_2-2-0.55.pddl',
+    '1-p-3_2-3_2-0.4.pddl', '1-p-3_2-3_2-0.5.pddl',
+    '1-p-3_2-3_2-0.6.pddl', '1-p-3_2-3_2-0.45.pddl',
+    '1-p-3_2-3_2-0.55.pddl', '1-p-3_2_2-2-0.4.pddl',
+    '1-p-3_2_2-2-0.5.pddl', '1-p-3_2_2-2-0.6.pddl',
+    '1-p-3_2_2-2-0.45.pddl', '1-p-3_2_2-2-0.55.pddl',
+    '1-p-3_2_2-2_2-0.4.pddl', '1-p-3_2_2-2_2-0.5.pddl',
+    '1-p-3_2_2-2_2-0.6.pddl', '1-p-3_2_2-2_2-0.45.pddl',
+    '1-p-3_2_2-2_2-0.55.pddl', '1-p-3_2_2-3_2_2-0.4.pddl',
+    '1-p-3_2_2-3_2_2-0.5.pddl', '1-p-3_2_2-3_2_2-0.6.pddl',
+    '1-p-3_2_2-3_2_2-0.45.pddl', '1-p-3_2_2-3_2_2-0.55.pddl',
+    '1-p-3_3-3-0.4.pddl', '1-p-3_3-3-0.5.pddl', '1-p-3_3-3-0.6.pddl',
+    '1-p-3_3-3-0.45.pddl', '1-p-3_3-3-0.55.pddl',
+    '1-p-3_3-3_3-0.4.pddl', '1-p-3_3-3_3-0.5.pddl',
+    '1-p-3_3-3_3-0.6.pddl', '1-p-3_3-3_3-0.45.pddl',
+    '1-p-3_3-3_3-0.55.pddl', '1-p-3_3_2-2-0.4.pddl',
+    '1-p-3_3_2-2-0.5.pddl', '1-p-3_3_2-2-0.6.pddl',
+    '1-p-3_3_2-2-0.45.pddl', '1-p-3_3_2-2-0.55.pddl',
+    '1-p-3_3_2-3_2-0.4.pddl', '1-p-3_3_2-3_2-0.5.pddl',
+    '1-p-3_3_2-3_2-0.6.pddl', '1-p-3_3_2-3_2-0.45.pddl',
+    '1-p-3_3_2-3_2-0.55.pddl', '1-p-3_3_2-3_3_2-0.4.pddl',
+    '1-p-3_3_2-3_3_2-0.5.pddl', '1-p-3_3_2-3_3_2-0.6.pddl',
+    '1-p-3_3_2-3_3_2-0.45.pddl', '1-p-3_3_2-3_3_2-0.55.pddl',
+    '1-p-3_3_3-3-0.4.pddl', '1-p-3_3_3-3-0.5.pddl',
+    '1-p-3_3_3-3-0.6.pddl', '1-p-3_3_3-3-0.45.pddl',
+    '1-p-3_3_3-3-0.55.pddl', '1-p-3_3_3-3_3-0.4.pddl',
+    '1-p-3_3_3-3_3-0.5.pddl', '1-p-3_3_3-3_3-0.6.pddl',
+    '1-p-3_3_3-3_3-0.45.pddl', '1-p-3_3_3-3_3-0.55.pddl',
+    '1-p-3_3_3-3_3_3-0.4.pddl', '1-p-3_3_3-3_3_3-0.5.pddl',
+    '1-p-3_3_3-3_3_3-0.6.pddl', '1-p-3_3_3-3_3_3-0.45.pddl',
+    '1-p-3_3_3-3_3_3-0.55.pddl',
+]
+def filter_invalid_cavediving(run):
+    return run['domain'] != 'cavediving-adl' or run['problem'] not in cavediving_adl_instances_val_does_not_like
+
+class VerifyDataReport(PlanningReport):
     def get_text(self):
         assert len(self.algorithms) == 191
+        for run in self.props.values():
+            if run["error"] == "invalid_plan":
+                assert run["invalid_plan"]
+                # print(run)
+            if run["claimed_coverage"] and not run["coverage"]:
+                if not run["invalid_plan"]:
+                    print("claimed coverage, no coverage, and no invalid plan")
+                    print(run)
         return ""
 
 exp.add_report(
-    PrintStatisticsReport(
+    VerifyDataReport(
             attributes=HTML_ATTRIBUTES,
+            filter=[filter_invalid_cavediving],
         ),
-        name=f"{exp.name}-statistics")
+        name=f"{exp.name}-verify")
 exp.add_step("compress-properties", project.compress, Path(exp.eval_dir) / "properties")
 
 class ProcessRuns:
@@ -96,6 +159,8 @@ class ProcessRuns:
         if run["algorithm"] == "opt+ipc2018-decstar+opt-config01":
             # this algorithm found suboptimal solutions on instances
             # 0-p02.pddl and 0-p22.pddl of barman-strips.
+            return False
+        if run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like:
             return False
         track, planner, config = run["algorithm"].split('+')
         if self.track != track:
