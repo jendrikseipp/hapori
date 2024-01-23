@@ -16,7 +16,6 @@ def collect_plans(content, props):
             plan_files.append(element.name)
     props["plan_files"] = plan_files
 
-
 def coverage(content, props):
     props["coverage"] = int("cost" in props)
     if props["coverage"]:
@@ -26,9 +25,12 @@ def coverage(content, props):
         # props.add_unexplained_error(f"solver claims solution; we found no plan")
 
 def invalid_plan(content, props):
-    props["invalid_plan"] = (content.find("Plan failed to execute") > -1 or
-        content.find("Bad operator in plan!") > -1 or
-        content.find("Bad plan description") > -1)
+    props["invalid_plan"] = (
+        content.find("Plan failed to execute") > -1 or
+        content.find("Bad operator in plan!") > -1)
+
+def plan_too_long(content, props):
+    props["plan_too_long"] = content.find("Bad plan description") > -1
 
 def custom_errors_stdout(content, props):
     lines = content.splitlines()
@@ -78,13 +80,15 @@ def set_outcome(content, props):
             out_of_memory = 1
     out_of_time_or_memory = 0
     invalid_plan = props["invalid_plan"]
-    # print(solved, out_of_time, out_of_memory, unsupported, invalid_plan)
+    plan_too_long = props["plan_too_long"]
+    # print(solved, out_of_time, out_of_memory, unsupported, invalid_plan, plan_too_long)
     if (
         not solved
         and not out_of_time
         and not out_of_memory
         and not unsupported
-        and not invalid_plan):
+        and not invalid_plan
+        and not plan_too_long):
         if props["cpu_time"] > props["time_limit"]:
             out_of_time = 1
         elif props["cpu_time"]  > 1750 and props["used_memory"] > 7000:
@@ -111,7 +115,7 @@ def set_outcome(content, props):
         props["wall_time"] = None
 
     # print(solved, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
-    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan:
+    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan ^ plan_too_long:
         if solved:
             props["error"] = "solved"
         elif out_of_time:
@@ -124,6 +128,8 @@ def set_outcome(content, props):
             props["error"] = "unsupported"
         elif invalid_plan:
             props["error"] = "invalid_plan"
+        elif plan_too_long:
+            props["error"] = "plan_too_long"
     else:
         props.add_unexplained_error(f"could not determine outcome")
         props["error"] = "unknown-outcome"
@@ -189,6 +195,7 @@ def get_parser():
     parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
     parser.add_function(coverage)
     parser.add_function(invalid_plan)
+    parser.add_function(plan_too_long)
     parser.add_function(custom_errors_stdout)
     parser.add_function(custom_errors_stderr, file="run.err")
     # also parse errors removed by fitler-stderr.py
