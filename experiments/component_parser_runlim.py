@@ -1,36 +1,56 @@
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 from lab import tools
 from lab.parser import Parser
 
 
-def collect_plans(content, props):
+def val_plan_too_long(content, props):
+    props["val_plan_too_long"] = content.find("Bad plan description") > -1
+
+def val_invalid_plan(content, props):
+    props["val_invalid_plan"] = (
+        content.find("Plan failed to execute") > -1 or
+        content.find("Bad operator in plan!") > -1)
+
+def collect_plans_and_run_upv(content, props):
+    props["upv_cost"] = None
+    props["upv_invalid_plan"] = False
     properties_file = props.path
     run_dir = properties_file.parent
     plan_files = []
     for element in run_dir.iterdir():
         if element.is_file() and element.name.startswith("sas_plan"):
             plan_files.append(element.name)
+    plan_files = sorted(plan_files)
+    if plan_files:
+        # print(f"running upv on {plan_files[-1]} in {run_dir}")
+        completed_process = subprocess.run(["validate.bin", "domain.pddl", "problem.pddl", plan_files[-1]], cwd=run_dir, text=True, capture_output=True)
+        for line in completed_process.stdout.splitlines():
+            # upv uses colored output
+            pattern = re.compile("\\x1b\[1;32mValue: (\d+)\.0*")
+            match = pattern.match(line)
+            if match:
+                cost = int(match.group(1))
+                props["upv_cost"] = cost
+        for line in completed_process.stderr.splitlines():
+            if "Error: Plan failed to execute" in line:
+                props["upv_invalid_plan"] = True
     props["plan_files"] = plan_files
 
 def coverage(content, props):
-    props["coverage"] = int("cost" in props)
+    if "val_cost" in props and "upv_cost" in props and props["val_cost"] == props["upv_cost"]:
+        props["coverage"] = 1
+        props["cost"] = props["val_cost"]
+    else:
+        props.add_unexplained_error("mismatch between cost computed by VAL and UPV")
+        props["coverage"] = 0
+        props["cost"] = None
     if props["coverage"]:
         assert props["plan_files"]
-    # props["claimed_coverage"] = int(any("Solution found" in line for line in content.splitlines()))
-    # if not props["coverage"] and props["claimed_coverage"]:
-        # props.add_unexplained_error(f"solver claims solution; we found no plan")
-
-def invalid_plan(content, props):
-    props["invalid_plan"] = (
-        content.find("Plan failed to execute") > -1 or
-        content.find("Bad operator in plan!") > -1)
-
-def plan_too_long(content, props):
-    props["plan_too_long"] = content.find("Bad plan description") > -1
 
 def custom_errors_stdout(content, props):
     lines = content.splitlines()
@@ -79,16 +99,18 @@ def set_outcome(content, props):
         if props.get("error") == "out_of_memory":
             out_of_memory = 1
     out_of_time_or_memory = 0
-    invalid_plan = props["invalid_plan"]
-    plan_too_long = props["plan_too_long"]
-    # print(solved, out_of_time, out_of_memory, unsupported, invalid_plan, plan_too_long)
+    if props["val_invalid_plan"] ^ props["upv_invalid_plan"]:
+        props.add_unexplained_error("mismatch between invalid plan status determined by VAL and UPV")
+    invalid_plan = (props["val_invalid_plan"] or props["upv_invalid_plan"])
+    val_plan_too_long = props["val_plan_too_long"]
+    # print(solved, out_of_time, out_of_memory, unsupported, invalid_plan, val_plan_too_long)
     if (
         not solved
         and not out_of_time
         and not out_of_memory
         and not unsupported
         and not invalid_plan
-        and not plan_too_long):
+        and not val_plan_too_long):
         if props["cpu_time"] > props["time_limit"]:
             out_of_time = 1
         elif props["cpu_time"]  > 1750 and props["used_memory"] > 7000:
@@ -115,7 +137,7 @@ def set_outcome(content, props):
         props["wall_time"] = None
 
     # print(solved, out_of_time, out_of_memory, out_of_time_or_memory, unsupported, invalid_plan)
-    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan ^ plan_too_long:
+    if solved ^ out_of_time ^ out_of_memory ^ out_of_time_or_memory ^ unsupported ^ invalid_plan ^ val_plan_too_long:
         if solved:
             props["error"] = "solved"
         elif out_of_time:
@@ -128,8 +150,8 @@ def set_outcome(content, props):
             props["error"] = "unsupported"
         elif invalid_plan:
             props["error"] = "invalid_plan"
-        elif plan_too_long:
-            props["error"] = "plan_too_long"
+        elif val_plan_too_long:
+            props["error"] = "val_plan_too_long"
     else:
         props.add_unexplained_error(f"could not determine outcome")
         props["error"] = "unknown-outcome"
@@ -191,11 +213,11 @@ def get_parser():
         required=True
     )
 
-    parser.add_function(collect_plans)
-    parser.add_pattern("cost", r"Final value: (\d+)", type=type_int_or_none)
+    parser.add_pattern("val_cost", r"Final value: (\d+)", type=type_int_or_none)
+    parser.add_function(val_plan_too_long)
+    parser.add_function(val_invalid_plan)
+    parser.add_function(collect_plans_and_run_upv)
     parser.add_function(coverage)
-    parser.add_function(invalid_plan)
-    parser.add_function(plan_too_long)
     parser.add_function(custom_errors_stdout)
     parser.add_function(custom_errors_stderr, file="run.err")
     # also parse errors removed by fitler-stderr.py

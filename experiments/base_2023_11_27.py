@@ -96,11 +96,14 @@ else:
 
 ATTRIBUTES = [
     # "claimed_coverage",
+    "val_cost",
+    "upv_cost",
     "cost",
     "coverage",
     "cpu_time",
     "error",
-    "invalid_plan",
+    "val_invalid_plan",
+    "upv_invalid_plan",
     # "memory_limit",
     # "node",
     # "planner_exit_code",
