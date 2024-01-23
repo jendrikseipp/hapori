@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from collections import defaultdict
 import csv
 from pathlib import Path
 
@@ -133,14 +134,28 @@ def filter_invalid_cavediving(run):
 class VerifyDataReport(PlanningReport):
     def get_text(self):
         assert len(self.algorithms) == 191
+        # tasks_with_problem = defaultdict(set)
+        # algos_with_problem = set()
+        algo_domain_tasks_with_problem = defaultdict(lambda: defaultdict(list))
         for run in self.props.values():
             if run["error"] == "invalid_plan":
                 assert run["invalid_plan"]
                 # print(run)
             if run["claimed_coverage"] and not run["coverage"]:
                 if not run["invalid_plan"]:
+                    # tasks_with_problem[run["domain"]].add(run["problem"])
+                    # algos_with_problem.add(run["algorithm"])
+                    algo_domain_tasks_with_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
                     print("claimed coverage, no coverage, and no invalid plan")
                     print(run)
+        for algo, domain_tasks in algo_domain_tasks_with_problem.items():
+            print(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                print(f"    {domain}:")
+                print("        ", end="")
+                # for task in tasks:
+                # print(f"   {tasks}")
+                print(*[" ".join(task) for task in tasks])
         return ""
 
 exp.add_report(
