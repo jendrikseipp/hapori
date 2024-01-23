@@ -128,40 +128,66 @@ cavediving_adl_instances_val_does_not_like = [
     '1-p-3_3_3-3_3_3-0.6.pddl', '1-p-3_3_3-3_3_3-0.45.pddl',
     '1-p-3_3_3-3_3_3-0.55.pddl',
 ]
-def filter_invalid_cavediving(run):
-    return run['domain'] != 'cavediving-adl' or run['problem'] not in cavediving_adl_instances_val_does_not_like
+instances_with_too_long_plans_for_val = [
+    # '0-p012.pddl', # all planners produce too long plans
+    # '0-p011.pddl', # all planners produce too long plans
+    # '0-p013.pddl', # all planners produce too long plans
+    # '0-p010.pddl', # all planners produce too long plans
+    # '0-p009.pddl', # some planners produce too long plans
+    # '0-p008.pddl', # some planners produce too long plans
+]
+def filter_invalid_instances(run):
+    if ((run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like) or
+        (run['domain'] == 'hanoi-strips' and run['problem'] in instances_with_too_long_plans_for_val)):
+        return False
+    return True
+
 
 class VerifyDataReport(PlanningReport):
     def get_text(self):
-        assert len(self.algorithms) == 191
-        # tasks_with_problem = defaultdict(set)
-        # algos_with_problem = set()
+        # assert len(self.algorithms) == 191
         algo_domain_tasks_with_problem = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_invalid_plan = defaultdict(lambda: defaultdict(list))
+        domain_tasks_with_invalid_plan = defaultdict(set)
+        domain_tasks_with_coverage = defaultdict(set)
         for run in self.props.values():
+            if run["invalid_plan"]:
+                algo_domain_tasks_with_invalid_plan[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+                domain_tasks_with_invalid_plan[run["domain"]].add(run["problem"])
+            if run["coverage"]:
+                domain_tasks_with_coverage[run["domain"]].add(run["problem"])
             if run["error"] == "invalid_plan":
                 assert run["invalid_plan"]
-                # print(run)
-            if run["claimed_coverage"] and not run["coverage"]:
+            if run["plan_files"] and not run["coverage"]:
                 if not run["invalid_plan"]:
-                    # tasks_with_problem[run["domain"]].add(run["problem"])
-                    # algos_with_problem.add(run["algorithm"])
                     algo_domain_tasks_with_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
-                    print("claimed coverage, no coverage, and no invalid plan")
-                    print(run)
+        lines = []
+        lines.append("algos on problems with claimed coverage but no recorded plan and no invalid plan")
         for algo, domain_tasks in algo_domain_tasks_with_problem.items():
-            print(f"{algo}:")
+            lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
-                print(f"    {domain}:")
-                print("        ", end="")
-                # for task in tasks:
-                # print(f"   {tasks}")
-                print(*[" ".join(task) for task in tasks])
-        return ""
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
+        lines.append("algos on problems with invalid plans")
+        for algo, domain_tasks in algo_domain_tasks_with_invalid_plan.items():
+            lines.append(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
+        lines.append(str(domain_tasks_with_invalid_plan.keys()))
+        for domain, tasks in domain_tasks_with_invalid_plan.items():
+            for task in tasks:
+                if task not in domain_tasks_with_coverage[domain]:
+                    lines.append(f"all plans for {task} of {domain} are invalid")
+        return "\n".join(lines)
 
 exp.add_report(
     VerifyDataReport(
             attributes=HTML_ATTRIBUTES,
-            filter=[filter_invalid_cavediving],
+            filter=[filter_invalid_instances],
+            format="txt",
         ),
         name=f"{exp.name}-verify")
 exp.add_step("compress-properties", project.compress, Path(exp.eval_dir) / "properties")
@@ -175,8 +201,6 @@ class ProcessRuns:
             # this algorithm found suboptimal solutions on instances
             # 0-p02.pddl and 0-p22.pddl of barman-strips.
             return False
-        if run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like:
-            return False
         track, planner, config = run["algorithm"].split('+')
         if self.track != track:
             return False
@@ -189,7 +213,7 @@ for track in ["opt", "sat", "agl"]:
     quality_filter = project.QualityFilters()
     properties_full = Path(exp.eval_dir) / f"properties-full-{track}.json"
     exp.add_report(
-        FilterReport(filter=[quality_filter.store_costs,quality_filter.add_quality,process_runs]),
+        FilterReport(filter=[filter_invalid_instances,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
         outfile=properties_full,
         name=f"properties-full-{track}")
     exp.add_step(f"compress-properties-full-{track}", project.compress, properties_full)
@@ -199,7 +223,7 @@ for track in ["opt", "sat", "agl"]:
     quality_filter = project.QualityFilters()
     properties_hardest = Path(exp.eval_dir) / f"properties-hardest-{track}.json"
     exp.add_report(
-        project.Hardest30Report(filter=[quality_filter.store_costs,quality_filter.add_quality,process_runs]),
+        project.Hardest30Report(filter=[filter_invalid_instances,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
         outfile=properties_hardest,
         name=f"properties-hardest-{track}")
     exp.add_step(f"compress-properties-hardest-{track}", project.compress, properties_hardest)
