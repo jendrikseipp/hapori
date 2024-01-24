@@ -104,6 +104,7 @@ ATTRIBUTES = [
     "error",
     "val_invalid_plan",
     "upv_invalid_plan",
+    "plan_files",
     # "memory_limit",
     # "node",
     # "planner_exit_code",
@@ -278,6 +279,7 @@ def main(planner, tracks=["opt", "sat", "agl"], part=None):
                 run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
                 # Remove temporary files from old Fast Downward versions.
                 run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
+                run.add_command("rm-more-tmp-files", ["rm", "-f", "downward.tmp.*"])
                 run.add_command("filter-stderr", [sys.executable, "{filter_stderr}"])
 
                 run.set_property("domain", task.domain)
