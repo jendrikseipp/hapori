@@ -146,41 +146,51 @@ def filter_invalid_instances(run):
 class VerifyDataReport(PlanningReport):
     def get_text(self):
         # assert len(self.algorithms) == 191
-        algo_domain_tasks_with_problem = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_val_problem = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_upv_problem = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_val_plan_too_long = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_invalid_plan = defaultdict(lambda: defaultdict(list))
         domain_tasks_with_invalid_plan = defaultdict(set)
-        domain_tasks_with_coverage = defaultdict(set)
         for run in self.props.values():
-            if run["invalid_plan"]:
+            if run["upv_invalid_plan"]:
                 algo_domain_tasks_with_invalid_plan[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
                 domain_tasks_with_invalid_plan[run["domain"]].add(run["problem"])
-            if run["coverage"]:
-                domain_tasks_with_coverage[run["domain"]].add(run["problem"])
-            if run["error"] == "invalid_plan":
-                assert run["invalid_plan"]
-            if run["plan_files"] and not run["coverage"]:
-                if not run["invalid_plan"]:
-                    algo_domain_tasks_with_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+            if run["val_plan_too_long"]: #and run["domain"] != "hanoi-strips" and run["domain"] != "visitall-strips":
+                algo_domain_tasks_with_val_plan_too_long[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+            if run["plan_files"] and "val_cost" not in run and not run["val_invalid_plan"]:
+                algo_domain_tasks_with_val_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+            if run["plan_files"] and "val_cost" not in run and not run["upv_invalid_plan"]:
+                algo_domain_tasks_with_upv_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
         lines = []
-        lines.append("algos on problems with claimed coverage but no recorded plan and no invalid plan")
-        for algo, domain_tasks in algo_domain_tasks_with_problem.items():
+        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to val")
+        for algo, domain_tasks in algo_domain_tasks_with_val_problem.items():
             lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
                 lines.append(f"    {domain}:")
                 line = [" ".join(task) for task in tasks]
                 lines.append("        " + " ".join(line))
-        lines.append("algos on problems with invalid plans")
-        for algo, domain_tasks in algo_domain_tasks_with_invalid_plan.items():
+        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to upv")
+        for algo, domain_tasks in algo_domain_tasks_with_upv_problem.items():
             lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
                 lines.append(f"    {domain}:")
                 line = [" ".join(task) for task in tasks]
                 lines.append("        " + " ".join(line))
-        lines.append(str(domain_tasks_with_invalid_plan.keys()))
-        for domain, tasks in domain_tasks_with_invalid_plan.items():
-            for task in tasks:
-                if task not in domain_tasks_with_coverage[domain]:
-                    lines.append(f"all plans for {task} of {domain} are invalid")
+        lines.append("algos on problems with too long val plan")
+        for algo, domain_tasks in algo_domain_tasks_with_val_plan_too_long.items():
+            lines.append(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
+        # lines.append("algos on problems with upv-invalid plans")
+        # for algo, domain_tasks in algo_domain_tasks_with_invalid_plan.items():
+            # lines.append(f"{algo}:")
+            # for domain, tasks in domain_tasks.items():
+                # lines.append(f"    {domain}:")
+                # line = [" ".join(task) for task in tasks]
+                # lines.append("        " + " ".join(line))
+        # lines.append(f"tasks with upv-invalid plans: {str(domain_tasks_with_invalid_plan.keys())}")
         return "\n".join(lines)
 
 exp.add_report(
