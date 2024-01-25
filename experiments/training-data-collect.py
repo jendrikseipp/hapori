@@ -144,7 +144,9 @@ class VerifyDataReport(PlanningReport):
         algo_domain_tasks_with_upv_problem = defaultdict(lambda: defaultdict(list))
         for run in self.props.values():
             """
-            the if below currently triggers on domains with non-unit cost because VAL outputs plan length instead of plan cost
+            the if below currently triggers on domains with non-unit cost because UPV seemingly ignores
+            missing "minimize total-cost metric" statements in problem files (which should probably not
+            be missing in the first place...)
             """
             # if "val_cost" in run and run["upv_cost"] is not None and run["val_cost"] != run["upv_cost"]:
                 # print("val and upv disagree")
