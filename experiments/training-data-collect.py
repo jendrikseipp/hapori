@@ -133,7 +133,20 @@ def filter_instances_which_val_cannot_handle(run):
         return False
     return True
 
+"""
+Check for inconsistencies in the training data.
 
+TODOs:
+- exclude planners from entire domains if they don't support the PDDL
+fragment or if they produce invalid plans.
+- for some outcomes of type crash (e.g., symba, mpc), it is pretty
+clear that they crash because they don't support the PDDL fragment.
+The outcome should be changed in that case (or the parser adapted
+when running it again).
+- if using a different validator than VAL, check if the above
+cavediving-adl instances are parsed correctly and if so, stop excluding
+them.
+"""
 class VerifyDataReport(PlanningReport):
     def get_text(self):
         assert len(self.algorithms) == 191
