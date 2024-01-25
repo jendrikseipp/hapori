@@ -143,9 +143,7 @@ fragment or if they produce invalid plans.
 clear that they crash because they don't support the PDDL fragment.
 The outcome should be changed in that case (or the parser adapted
 when running it again).
-- if using a different validator than VAL, check if the above
-cavediving-adl instances are parsed correctly and if so, stop excluding
-them.
+- some planners crash due to not supporting the PDDL fragment
 """
 class VerifyDataReport(PlanningReport):
     def get_text(self):
@@ -155,6 +153,7 @@ class VerifyDataReport(PlanningReport):
         algo_domain_tasks_with_val_plan_too_long = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_val_problem = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_upv_problem = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_crash = defaultdict(lambda: defaultdict(list))
         for run in self.props.values():
             """
             the if below currently triggers on domains with non-unit cost because UPV seemingly ignores
@@ -185,6 +184,8 @@ class VerifyDataReport(PlanningReport):
                 algo_domain_tasks_with_val_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
             if run["plan_files"] and run["upv_cost"] is None and not run["upv_invalid_plan"]:
                 algo_domain_tasks_with_upv_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+            if run["error"] == "unknown-outcome":
+                algo_domain_tasks_with_crash[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
         lines = []
         lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to val, minus those for which we know that the plan files are too long for val")
         for algo, domain_tasks in algo_domain_tasks_with_val_problem.items():
@@ -193,20 +194,22 @@ class VerifyDataReport(PlanningReport):
                 lines.append(f"    {domain}:")
                 line = [" ".join(task) for task in tasks]
                 lines.append("        " + " ".join(line))
-        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to upv")
-        for algo, domain_tasks in algo_domain_tasks_with_upv_problem.items():
-            lines.append(f"{algo}:")
-            for domain, tasks in domain_tasks.items():
-                lines.append(f"    {domain}:")
-                line = [" ".join(task) for task in tasks]
-                lines.append("        " + " ".join(line))
-        lines.append("algos on problems with too long val plan")
-        for algo, domain_tasks in algo_domain_tasks_with_val_plan_too_long.items():
-            lines.append(f"{algo}:")
-            for domain, tasks in domain_tasks.items():
-                lines.append(f"    {domain}:")
-                line = [" ".join(task) for task in tasks]
-                lines.append("        " + " ".join(line))
+        """we do not use UPV standalone - it fails on too many domains"""
+        # lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to upv")
+        # for algo, domain_tasks in algo_domain_tasks_with_upv_problem.items():
+            # lines.append(f"{algo}:")
+            # for domain, tasks in domain_tasks.items():
+                # lines.append(f"    {domain}:")
+                # line = [" ".join(task) for task in tasks]
+                # lines.append("        " + " ".join(line))
+        """this is covered except the one task mentioned above"""
+        # lines.append("algos on problems with too long val plan")
+        # for algo, domain_tasks in algo_domain_tasks_with_val_plan_too_long.items():
+            # lines.append(f"{algo}:")
+            # for domain, tasks in domain_tasks.items():
+                # lines.append(f"    {domain}:")
+                # line = [" ".join(task) for task in tasks]
+                # lines.append("        " + " ".join(line))
         lines.append("algos on problems with val-invalid plans")
         for algo, domain_tasks in algo_domain_tasks_with_invalid_plan_val.items():
             lines.append(f"{algo}:")
@@ -216,6 +219,13 @@ class VerifyDataReport(PlanningReport):
                 lines.append("        " + " ".join(line))
         lines.append("algos on problems with upv-invalid plans")
         for algo, domain_tasks in algo_domain_tasks_with_invalid_plan_upv.items():
+            lines.append(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
+        lines.append("algos on problems with crashs")
+        for algo, domain_tasks in algo_domain_tasks_with_crash.items():
             lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
                 lines.append(f"    {domain}:")

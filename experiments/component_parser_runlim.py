@@ -16,8 +16,9 @@ def val_plan_too_long(content, props):
 def val_invalid_plan(content, props):
     props["val_invalid_plan"] = (
         content.find("Plan failed to execute") > -1 or
-        content.find("Bad operator in plan!") > -1)
-        content.find("Plan invalid") > -1)
+        content.find("Bad operator in plan!") > -1 or
+        content.find("Plan invalid") > -1
+        )
 
 def collect_plans_and_run_upv(content, props):
     props["upv_cost"] = None
@@ -73,7 +74,9 @@ def unsupported(content, props):
         content.find("WARNING: unsupported :requirement :derived-predicates") > -1 or # mpc
         content.find("Error: Parser failed to read file") > -1 or # VAL on some cavediving-adl tasks
         content.find("Planning task not solvable") > -1 or # probe
-        content.find("currently does not support axioms") > -1 # complementary2
+        content.find("currently does not support axioms") > -1 or # complementary2
+        content.find("problem definitions on line") > -1 or # mpc
+        content.find("syntax error") > -1 # mpc
         ):
         props["unsupported"] = True
     else:
