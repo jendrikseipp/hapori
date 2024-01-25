@@ -128,41 +128,50 @@ cavediving_adl_instances_val_does_not_like = [
     '1-p-3_3_3-3_3_3-0.6.pddl', '1-p-3_3_3-3_3_3-0.45.pddl',
     '1-p-3_3_3-3_3_3-0.55.pddl',
 ]
-instances_with_too_long_plans_for_val = [
-    # '0-p012.pddl', # all planners produce too long plans
-    # '0-p011.pddl', # all planners produce too long plans
-    # '0-p013.pddl', # all planners produce too long plans
-    # '0-p010.pddl', # all planners produce too long plans
-    # '0-p009.pddl', # some planners produce too long plans
-    # '0-p008.pddl', # some planners produce too long plans
-]
-def filter_invalid_instances(run):
-    if ((run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like) or
-        (run['domain'] == 'hanoi-strips' and run['problem'] in instances_with_too_long_plans_for_val)):
+def filter_instances_which_val_cannot_handle(run):
+    if (run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like):
         return False
     return True
 
 
 class VerifyDataReport(PlanningReport):
     def get_text(self):
-        # assert len(self.algorithms) == 191
+        assert len(self.algorithms) == 191
+        algo_domain_tasks_with_invalid_plan_val = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_invalid_plan_upv = defaultdict(lambda: defaultdict(list))
+        algo_domain_tasks_with_val_plan_too_long = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_val_problem = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_upv_problem = defaultdict(lambda: defaultdict(list))
-        algo_domain_tasks_with_val_plan_too_long = defaultdict(lambda: defaultdict(list))
-        algo_domain_tasks_with_invalid_plan = defaultdict(lambda: defaultdict(list))
-        domain_tasks_with_invalid_plan = defaultdict(set)
         for run in self.props.values():
+            """
+            the if below currently triggers on domains with non-unit cost because VAL outputs plan length instead of plan cost
+            """
+            # if "val_cost" in run and run["upv_cost"] is not None and run["val_cost"] != run["upv_cost"]:
+                # print("val and upv disagree")
+                # print(run)
+            if run["val_invalid_plan"]:
+                algo_domain_tasks_with_invalid_plan_val[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
             if run["upv_invalid_plan"]:
-                algo_domain_tasks_with_invalid_plan[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
-                domain_tasks_with_invalid_plan[run["domain"]].add(run["problem"])
-            if run["val_plan_too_long"]: #and run["domain"] != "hanoi-strips" and run["domain"] != "visitall-strips":
+                algo_domain_tasks_with_invalid_plan_upv[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
+            if run["val_plan_too_long"]:
                 algo_domain_tasks_with_val_plan_too_long[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
-            if run["plan_files"] and "val_cost" not in run and not run["val_invalid_plan"]:
+                """
+                the if below only triggers for one task of termes-strips, maybe upv cannot deal with negative preconditions?
+                /infai/sieverss/repos/hapori/experiments/data/2023-11-27+ipc2018-fd-2018+sat+E/runs-43001-43100/43074
+                validate.bin domain.pddl problem.pddl sas_plan
+                terminate called after throwing an instance of 'parser::pddl::UnknownToken'
+                  what():  NOT does not name a known token
+                Line 156, column 6: Aborted
+                """
+                if not run["coverage"] and not run["invalid_plan"]:
+                    print("val cannot handle plan; upv apparently neither")
+                    print(run)
+            if run["plan_files"] and "val_cost" not in run and not run["val_invalid_plan"] and not run["val_plan_too_long"]:
                 algo_domain_tasks_with_val_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
-            if run["plan_files"] and "val_cost" not in run and not run["upv_invalid_plan"]:
+            if run["plan_files"] and run["upv_cost"] is None and not run["upv_invalid_plan"]:
                 algo_domain_tasks_with_upv_problem[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
         lines = []
-        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to val")
+        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan according to val, minus those for which we know that the plan files are too long for val")
         for algo, domain_tasks in algo_domain_tasks_with_val_problem.items():
             lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
@@ -183,20 +192,26 @@ class VerifyDataReport(PlanningReport):
                 lines.append(f"    {domain}:")
                 line = [" ".join(task) for task in tasks]
                 lines.append("        " + " ".join(line))
-        # lines.append("algos on problems with upv-invalid plans")
-        # for algo, domain_tasks in algo_domain_tasks_with_invalid_plan.items():
-            # lines.append(f"{algo}:")
-            # for domain, tasks in domain_tasks.items():
-                # lines.append(f"    {domain}:")
-                # line = [" ".join(task) for task in tasks]
-                # lines.append("        " + " ".join(line))
-        # lines.append(f"tasks with upv-invalid plans: {str(domain_tasks_with_invalid_plan.keys())}")
+        lines.append("algos on problems with val-invalid plans")
+        for algo, domain_tasks in algo_domain_tasks_with_invalid_plan_val.items():
+            lines.append(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
+        lines.append("algos on problems with upv-invalid plans")
+        for algo, domain_tasks in algo_domain_tasks_with_invalid_plan_upv.items():
+            lines.append(f"{algo}:")
+            for domain, tasks in domain_tasks.items():
+                lines.append(f"    {domain}:")
+                line = [" ".join(task) for task in tasks]
+                lines.append("        " + " ".join(line))
         return "\n".join(lines)
 
 exp.add_report(
     VerifyDataReport(
             attributes=HTML_ATTRIBUTES,
-            filter=[filter_invalid_instances],
+            filter=[filter_instances_which_val_cannot_handle],
             format="txt",
         ),
         name=f"{exp.name}-verify")
@@ -223,7 +238,7 @@ for track in ["opt", "sat", "agl"]:
     quality_filter = project.QualityFilters()
     properties_full = Path(exp.eval_dir) / f"properties-full-{track}.json"
     exp.add_report(
-        FilterReport(filter=[filter_invalid_instances,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
+        FilterReport(filter=[filter_instances_which_val_cannot_handle,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
         outfile=properties_full,
         name=f"properties-full-{track}")
     exp.add_step(f"compress-properties-full-{track}", project.compress, properties_full)
@@ -233,7 +248,7 @@ for track in ["opt", "sat", "agl"]:
     quality_filter = project.QualityFilters()
     properties_hardest = Path(exp.eval_dir) / f"properties-hardest-{track}.json"
     exp.add_report(
-        project.Hardest30Report(filter=[filter_invalid_instances,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
+        project.Hardest30Report(filter=[filter_instances_which_val_cannot_handle,quality_filter.store_costs,quality_filter.add_quality,process_runs]),
         outfile=properties_hardest,
         name=f"properties-hardest-{track}")
     exp.add_step(f"compress-properties-hardest-{track}", project.compress, properties_hardest)

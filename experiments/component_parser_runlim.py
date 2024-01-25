@@ -9,12 +9,15 @@ from lab.parser import Parser
 
 
 def val_plan_too_long(content, props):
-    props["val_plan_too_long"] = content.find("Bad plan description") > -1
+    props["val_plan_too_long"] = (
+        content.find("Bad plan description") > -1 or
+        content.find("Error occurred in validation attempt:\n  std::bad_alloc"))
 
 def val_invalid_plan(content, props):
     props["val_invalid_plan"] = (
         content.find("Plan failed to execute") > -1 or
         content.find("Bad operator in plan!") > -1)
+        content.find("Plan invalid") > -1)
 
 def collect_plans_and_run_upv(content, props):
     props["upv_cost"] = None
@@ -156,8 +159,7 @@ def set_outcome(content, props):
         elif invalid_plan:
             props["error"] = "invalid_plan"
     else:
-        props.add_unexplained_error(f"could not determine outcome")
-        props["error"] = "unknown-outcome"
+        props["error"] = "crash"
 
 
 def type_int_or_none(elem):
