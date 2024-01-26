@@ -11,7 +11,7 @@ from lab.parser import Parser
 def val_plan_too_long(content, props):
     props["val_plan_too_long"] = (
         content.find("Bad plan description") > -1 or
-        content.find("Error occurred in validation attempt:\n  std::bad_alloc"))
+        content.find("Error occurred in validation attempt:\n  std::bad_alloc") > -1)
 
 def val_invalid_plan(content, props):
     props["val_invalid_plan"] = (
