@@ -296,8 +296,8 @@ def exclude_planners_from_domains(run):
       because it found suboptimal solutions on instances 0-p02.pddl and
       0-p22.pddl.
     """
-    if ((run["algorithm"] in invalid_plans and
-        run["domain"] in invalid_plans[run["algorithm"]]) or
+    if ((run["algorithm"] in planners_to_invalid_domains and
+        run["domain"] in planners_to_invalid_domains[run["algorithm"]]) or
         (run["algorithm"] == "opt+ipc2018-decstar+opt-config01" and
         run["domain"] == "barman-strips")):
         run["cost"] = None
