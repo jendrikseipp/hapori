@@ -128,6 +128,7 @@ cavediving_adl_instances_val_does_not_like = [
     '1-p-3_3_3-3_3_3-0.6.pddl', '1-p-3_3_3-3_3_3-0.45.pddl',
     '1-p-3_3_3-3_3_3-0.55.pddl',
 ]
+
 unsolvable_instances = [
     'mystery-strips:0-prob04.pddl',
     'mystery-strips:0-prob05.pddl',
@@ -153,14 +154,21 @@ unsolvable_instances = [
     'no-mystery-strips:0-prob24.pddl',
 ]
 
+tasks_with_unhandable_plans = {
+    'psr-large-adl': ['0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p40-s199-n55-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p42-s203-n60-l3-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p43-s205-n70-l2-f30.pddl', '0-p44-s207-n70-l3-f30.pddl', '0-p44-s207-n70-l3-f30.pddl', '0-p44-s207-n70-l3-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p45-s209-n80-l2-f30.pddl', '0-p47-s213-n90-l2-f30.pddl', '0-p47-s213-n90-l2-f30.pddl', '0-p47-s213-n90-l2-f30.pddl', '0-p47-s213-n90-l2-f30.pddl', '0-p47-s213-n90-l2-f30.pddl', '0-p48-s215-n90-l3-f30.pddl', '0-p49-s217-n100-l2-f30.pddl', '0-p49-s217-n100-l2-f30.pddl', '0-p49-s217-n100-l2-f30.pddl'],
+    'termes-strips': ['3-p17.pddl'],
+}
+
 def filter_instances(run):
     if (run['domain'] == 'cavediving-adl' and run['problem'] in cavediving_adl_instances_val_does_not_like):
         return False
     if f"{run['domain']}:{run['problem']}" in unsolvable_instances:
         return False
+    if run['domain'] in tasks_with_unhandable_plans and run['problem'] in tasks_with_unhandable_plans[run['domain']]:
+        return False
     return True
 
-invalid_plans = {
+planners_to_invalid_domains = {
     'agl+ipc2014-jasper+default': ['optical-telegraphs-adl', 'philosophers-adl', 'settlers-adl'],
     'agl+ipc2018-decstar+agl-config02': ['optical-telegraphs-adl', 'philosophers-adl'],
     'agl+ipc2018-fd-2018+config00': ['optical-telegraphs-adl', 'philosophers-adl'],
@@ -312,7 +320,6 @@ class VerifyDataReport(PlanningReport):
     def get_text(self):
         assert len(self.algorithms) == 191
         algo_domains_with_invalid_plan = defaultdict(set)
-        algo_domain_tasks_with_val_plan_too_long = defaultdict(lambda: defaultdict(list))
         algo_domain_tasks_with_unhandled_plan = defaultdict(lambda: defaultdict(list))
         domain_tasks_with_unhandled_plan = defaultdict(list)
         for run in self.props.values():
@@ -326,51 +333,32 @@ class VerifyDataReport(PlanningReport):
                 # print(run)
             if run["invalid_plan"]:
                 algo_domains_with_invalid_plan[run["algorithm"]].add(run["domain"])
-            if run["val_plan_too_long"]:
-                algo_domain_tasks_with_val_plan_too_long[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
-                """
-                the if below only triggers for one task of termes-strips, maybe upv cannot deal with negative preconditions?
-                /infai/sieverss/repos/hapori/experiments/data/2023-11-27+ipc2018-fd-2018+sat+E/runs-43001-43100/43074
-                validate.bin domain.pddl problem.pddl sas_plan
-                terminate called after throwing an instance of 'parser::pddl::UnknownToken'
-                  what():  NOT does not name a known token
-                Line 156, column 6: Aborted
-                """
-                #if not run["coverage"] and not run["invalid_plan"]:
-                #    print("val cannot handle plan; upv apparently neither")
-                #    print(run)
             if run["plan_files"] and not run["coverage"] and not run["invalid_plan"]:
+                # tasks for which neither val nor upv was able to validate (large) plans
+                assert run["val_plan_too_long"]
                 algo_domain_tasks_with_unhandled_plan[run["algorithm"]][run["domain"]].append((run["problem"], run["run_dir"]))
                 domain_tasks_with_unhandled_plan[run["domain"]].append(run["problem"])
         lines = []
-        lines.append("algos on problems with found plan files but no recorded coverage and no invalid plan")
+        """this was used to generate above dict tasks_with_unhandable_plans"""
+        lines.append("algos on problems with found plan files but no recorded coverage nor invalid plan")
         for algo, domain_tasks in algo_domain_tasks_with_unhandled_plan.items():
             lines.append(f"{algo}:")
             for domain, tasks in domain_tasks.items():
                 lines.append(f"    {domain}:")
                 line = [" ".join(task) for task in tasks]
                 lines.append("        " + " ".join(line))
-        lines.append("as list of domains with tasks:")
+        lines.append("as dict of domains to tasks:")
         for domain, tasks in domain_tasks_with_unhandled_plan.items():
-            lines.append(f"{domain}: {sorted(tasks)},")
-        """this is covered except the one task mentioned above"""
-        # lines.append("algos on problems with too long val plan")
-        # for algo, domain_tasks in algo_domain_tasks_with_val_plan_too_long.items():
-            # lines.append(f"{algo}:")
-            # for domain, tasks in domain_tasks.items():
-                # lines.append(f"    {domain}:")
-                # line = [" ".join(task) for task in tasks]
-                # lines.append("        " + " ".join(line))
-        """this was used to generate above dict invalid_plans"""
-        # lines.append("algos on domains with invalid plans (val or upv)")
-        # for algo, domains in algo_domains_with_invalid_plan.items():
-            # lines.append(f"'{algo}': {sorted(domains)},")
+            lines.append(f"'{domain}': {sorted(tasks)},")
+        """this was used to generate above dict planners_to_invalid_domains"""
+        lines.append("algos on domains with invalid plans (val or upv)")
+        for algo, domains in algo_domains_with_invalid_plan.items():
+            lines.append(f"'{algo}': {sorted(domains)},")
         return "\n".join(lines)
 
 exp.add_report(
     VerifyDataReport(
             attributes=HTML_ATTRIBUTES,
-            filter=[filter_instances],
             format="txt",
         ),
         name=f"{exp.name}-verify")
