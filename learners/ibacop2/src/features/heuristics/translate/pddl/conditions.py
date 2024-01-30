@@ -284,6 +284,10 @@ class Literal(Condition):
     def rename_variables(self, renamings):
         new_args = [renamings.get(arg, arg) for arg in self.args]
         return self.__class__(self.predicate, new_args)
+    def replace_argument(self, position, new_arg):
+        new_args = list(self.args)
+        new_args[position] = new_arg
+        return self.__class__(self.predicate, new_args)
     def free_variables(self):
         return set(arg for arg in self.args if arg[0] == "?")
 

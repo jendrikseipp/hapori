@@ -123,10 +123,11 @@ class Rule:
             if var_name[0] == "?":
                 if var_name in used_variables:
                     new_var_name = "%s@%d" % (var_name, len(new_conditions))
-                    atom = atom.rename_variables({var_name: new_var_name})
+                    atom = atom.replace_argument(i, new_var_name)
                     new_conditions.append(pddl.Atom("=", [var_name, new_var_name]))
                 else:
                     used_variables.add(var_name)
+        
         return atom
     def rename_duplicate_variables(self):
         new_conditions = []
