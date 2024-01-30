@@ -60,4 +60,5 @@ TODOs:
     - since we merged these domains, existing features (e.g., by delfi and eps) need to be updated accordingly
     - EPS features: it is not clear how features_opt.csv and features_sat.csv in learners/explainable_planner_selection/ were created; possibly from the data (json) created with experiments/2023-03-07-A-fawcett-features.py; the data is still checked in under experiments/data/2023-03-07-A-fawcett-features-eval
     - for reproducibility, we should include scripts for generating features, possibly directly in the learner subdirs
+* for all three learners: decide on a common fallback planner for the case where the planner selection (delfi, eps) or the schedule computation fails.
 * update this file
