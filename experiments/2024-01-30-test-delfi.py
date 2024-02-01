@@ -71,14 +71,14 @@ if RUNNING_ON_CLUSTER:
     # SUITE = ["satellite-strips:2-p36-HC-pfile16.pddl"]
     SUITE = project.SUITE_IPC23
     ENVIRONMENT = BaselSlurmEnvironment(
-        partition="infai_2",
+        partition="infai_3",
         email="silvan.sievers@unibas.ch",
         # The limit of 3947 MiB is a virtual memory size limit set
         # externally (by slurm?). This can be observed using
         # resource.getrlimit(resource.RLIMIT_AS). So it seems
         # reasonable to use this as a default limit.
-        memory_per_cpu="6354M",
-        cpus_per_task=2,
+        memory_per_cpu="3947M",
+        cpus_per_task=3,
         # paths obtained via:
         # $ module purge
         # $ module -q load Python/3.10.4-GCCcore-11.3.0
