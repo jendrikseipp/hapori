@@ -52,7 +52,7 @@ to generate training data, use the following scripts in experiments:
 * training-data-generate-csv.py generates one csv file for each attribute of interest from the training data generated with training-data-collect.py
 
 to test the portfolios:
-* built portfolio images using the recipes (except Apptainer.hapori_components) in main dir and use scripts 2024-01-30-* in experiments
+* build portfolio images using the recipes in the main directory (except Apptainer.hapori_components) and use scripts 2024-01-30-* in experiments
 
 TODOs:
 * it is not clear how domain_properties.csv was generated for the IPC; I adapted it to reflect the merged t0 and fsc domains
