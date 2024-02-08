@@ -60,7 +60,7 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-IMAGE = REPO / "images" / "2024-01-30-hapori_sequential_portfolios.sif"
+IMAGE = REPO / "images" / "2024-01-30-hapori_ibacop.sif"
 assert IMAGE.is_file(), IMAGE
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR

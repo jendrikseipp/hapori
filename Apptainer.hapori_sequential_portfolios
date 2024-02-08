@@ -740,7 +740,7 @@ Stage: run
     PORTFOLIO="$6"
 
     python3 /planner/run-portfolio.py \
-        --alias "$PORTFOLIO" \
+        --portfolio "$PORTFOLIO" \
         --overall-time-limit "$TIME" \
         --overall-memory-limit "$MEMORY" \
         --plan-file "$PLANFILE" \
