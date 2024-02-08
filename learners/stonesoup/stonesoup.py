@@ -33,7 +33,7 @@ def dump_portfolio(track, configs, timeouts, results, **kwargs):
     print('"""')
     print()
     print("TRACK = \"{}\"".format(track))
-    print("CONFIGS = [")
+    print("PLANNERS = [")
 
     assert len(configs) == len(timeouts)
     for config, timeout in zip(configs, timeouts):
@@ -123,12 +123,12 @@ class Results(object):
                 time = None
                 cost = None
         else:
-            assert "cost" not in entry, entry
+            assert entry.get("cost") is None, entry
             time = None
             cost = None
         return dict(
             config=config,
-            options=[entry["image"], entry["config"]],
+            options=[entry["planner"], entry["config"]],
             problem="%s:%s" % (domain, problem),
             time=time,
             cost=cost)
