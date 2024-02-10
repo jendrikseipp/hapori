@@ -40,8 +40,8 @@ class Portfolio(PlanningReport):
         # Standard derivation of variations of runtime
         self.variations_stddev = kwargs.get("variations-stddev", 30)
 
-        # for output information - this should be redefined by the subclasses
-        self.portfolio_name = "Portfolio"
+        # for output information - this can be overwritten by subclasses
+        self.portfolio_name = type(self).__name__
 
         # for the portfolio file - additional information can be added in the
         # subclasses
@@ -223,6 +223,12 @@ class Portfolio(PlanningReport):
                     runtimes[id_] += granularity
                     break
 
+    def get_mapping_from_algorithm_to_planner_config(self):
+        mapping = {}
+        for run in self.runs.values():
+            mapping[run["algorithm"]] = (run["planner"], run["config"])
+        return mapping
+
     def print_portfolio(self):
         """Print the generated portfolio."""
         domain_quotas = []
@@ -252,12 +258,13 @@ class Portfolio(PlanningReport):
             rows.append("   %s" % setting)
         rows.append('"""\n')
 
+        planner_configs = self.get_mapping_from_algorithm_to_planner_config()
         rows.append("PLANNERS = [")
         params = []
         schedule = self.schedule()
         for algo_id, runtime in schedule:
             algo = self.algorithms[algo_id]
-            planner, config = algo.split(":")
+            planner, config = planner_configs[algo]
             params.append("    # " + algo)
             params.append(f"    ({int(runtime)}, ['{planner}', '{config}']),")
         rows.append("\n".join(params))

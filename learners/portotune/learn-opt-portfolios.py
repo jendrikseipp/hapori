@@ -26,7 +26,7 @@ ATTRIBUTES = [
 
 TRACK = Track.OPT
 SUFFIX = "opt"
-DATA = "../../experiments/data/01-opt-planners-eval/properties-hardest.json.xz"
+DATA = "../../experiments/data/training-data-collect-eval/properties-hardest-opt.json.xz"
 
 exp = Experiment()
 exp.add_step(
@@ -34,7 +34,7 @@ exp.add_step(
 )
 
 
-exp.add_fetcher(src=DATA)
+exp.add_fetcher(src=DATA, merge=True)
 
 project.add_absolute_report(
     exp, attributes=ATTRIBUTES, filter=[], name=f"{exp.name}-full"
