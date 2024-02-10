@@ -1,6 +1,7 @@
 import contextlib
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import traceback
@@ -117,6 +118,10 @@ def get_repo_base() -> Path:
 def remove_file(path: Path):
     with contextlib.suppress(FileNotFoundError):
         path.unlink()
+
+
+def remove_dir(path: Path):
+    shutil.rmtree(path)
 
 
 def remove_properties(eval_dir: Path):

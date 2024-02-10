@@ -37,7 +37,7 @@ NUM_PLANNERS = {
 
 exp = Experiment(path=DIR / "data" / f"learn-{SUFFIX}-portfolios")
 exp.add_step(
-    "remove-combined-properties", project.remove_properties, Path(exp.eval_dir)
+    "remove-eval-dir", project.remove_dir, Path(exp.eval_dir)
 )
 
 exp.add_fetcher(src=DATA, merge=True)
