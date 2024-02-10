@@ -18,6 +18,7 @@ __all__ = ["run"]
 from pathlib import Path
 import itertools
 import random
+import re
 import shutil
 import string
 import subprocess
@@ -31,28 +32,43 @@ from . import util
 
 DIR = Path(__file__).resolve().parent
 REPO = DIR.parent
-PLAN_FILE_NAME_LENGTH = 10
 
 
-def run_search(image, planner, domain_file, problem_file, plan_file, time, memory):
+def run_search(planner, config, pos, domain_file, problem_file, plan_file, time, memory):
     dispatch = REPO / "plan.py"
-    complete_args = [sys.executable, str(dispatch), image, domain_file, problem_file, plan_file]
-    if planner:
-        complete_args += ["--config", planner]
-    print("args: %s" % complete_args)
+    complete_args = []
+    assert time is not None or memory is not None
+    runlim_file = f"runlim-pos{pos}-{planner}-{config}.txt"
+    complete_args.extend(["runlim", f"--output-file={runlim_file}", "--propagate"])
+    if time is not None:
+        complete_args.append(f"--time-limit={time}")
+    if memory is not None:
+        complete_args.append(f"--space-limit={int(limits.convert_to_mb(memory))}")
+    complete_args += [sys.executable, str(dispatch), planner, domain_file, problem_file, plan_file, "--config", config]
+    print("Hapori component args: %s" % complete_args)
 
     try:
         exitcode = call.check_call(
-            "search", complete_args, time_limit=time, memory_limit=memory)
+            "search", complete_args, time_limit=None, memory_limit=None)
     except subprocess.CalledProcessError as err:
         exitcode = err.returncode
-    print("exitcode: %d" % exitcode)
+    print("Hapori component exitcode: %d" % exitcode)
+    runlim_run_time = 0.0
+    assert Path(runlim_file).exists(), f"{runlim_file} not found"
+    with open(runlim_file, "r") as f:
+        pattern = re.compile(r"\[runlim\] time:\t*(.+) seconds")
+        match = pattern.search(f.read())
+        if match:
+            runlim_run_time = float(match.group(1))
+            print(f"Hapori component runlim run time: {runlim_run_time}")
+        else:
+            sys.exit(f"Could not determine runlim run time from runlim file {runlim_run_time}")
     print()
-    return exitcode
+    return exitcode, runlim_run_time
 
 
-def compute_run_time(timeout, configs, pos):
-    remaining_time = timeout - util.get_elapsed_time()
+def compute_run_time(timeout, configs, pos, run_time_so_far):
+    remaining_time = timeout - util.get_elapsed_time() - run_time_so_far
     print("remaining time: {}".format(remaining_time))
     relative_time = configs[pos][0]
     remaining_relative_time = sum(config[0] for config in configs[pos:])
@@ -60,7 +76,6 @@ def compute_run_time(timeout, configs, pos):
     print("config {}: relative time {}, remaining time {}, absolute time {}".format(
           pos, relative_time, remaining_relative_time, absolute_time_limit))
     return absolute_time_limit
-
 
 
 def get_random_string(length):
@@ -71,12 +86,16 @@ def get_random_string(length):
 
 def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
     plan_counter = 1
-    for pos, (relative_time, (image, planner)) in enumerate(configs):
-        next_plan_prefix = f"config.{pos}.{image}"
-        run_time = compute_run_time(timeout, configs, pos)
-        if run_time <= 0:
+    runlim_run_time_so_far = 0.0
+    for pos, (relative_time, (planner, config)) in enumerate(configs):
+        next_plan_prefix = f"config.{pos}.{planner}"
+        run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
+        if run_time <= 0: # skip over portfolio components with too low time limit
             continue
-        exitcode = run_search(image, planner, domain_file, problem_file, next_plan_prefix, run_time, memory)
+        exitcode, used_run_time = run_search(
+            planner, config, pos, domain_file, problem_file,
+            next_plan_prefix, run_time, memory)
+        runlim_run_time_so_far += used_run_time
 
         existing_plan_files = [str(plan) for plan in get_existing_plans(next_plan_prefix) ]
         # print(f"Component computed the following plan(s): {existing_plan_files}")
@@ -89,12 +108,15 @@ def run_multi_plan_portfolio(configs, domain_file, problem_file, plan_manager, t
 
 
 def run_single_plan_portfolio(configs, domain_file, problem_file, plan_manager, timeout, memory):
-    for pos, (relative_time, (image, planner)) in enumerate(configs):
-        run_time = compute_run_time(timeout, configs, pos)
-        if run_time <= 0:
+    runlim_run_time_so_far = 0.0
+    for pos, (relative_time, (planner, config)) in enumerate(configs):
+        run_time = compute_run_time(timeout, configs, pos, runlim_run_time_so_far)
+        if run_time <= 0: # skip over portfolio components with too low time limit
             continue
-        exitcode = run_search(image, planner, domain_file, problem_file, plan_manager.get_plan_prefix(),
-                              run_time, memory)
+        exitcode, used_run_time = run_search(
+            planner, config, pos, domain_file, problem_file,
+            plan_manager.get_plan_prefix(), run_time, memory)
+        runlim_run_time_so_far += used_run_time
         yield exitcode
 
         if exitcode == returncodes.SUCCESS:
@@ -122,6 +144,8 @@ def get_portfolio_attributes(portfolio):
             print(e)
             returncodes.exit_with_driver_critical_error(
                 f"The portfolio {portfolio} could not be loaded: {e}.")
+    if "TRACK" in attributes:
+        returncodes.exit_with_driver_critical_error("portfolios must not define TRACK")
     if "PLANNERS" not in attributes:
         returncodes.exit_with_driver_critical_error("portfolios must define PLANNERS")
     return attributes

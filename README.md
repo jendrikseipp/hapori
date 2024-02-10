@@ -37,3 +37,28 @@ Please follow the naming and path convention for new portfolios. This also allow
     ./build-all-hapori-images.sh
 
 This can take a while since the Scorpion planner always uses 200s of preprocessing time.
+
+
+
+
+
+# Notes from Silvan
+to build apptainer images:
+* apptainer build <image-name>.sif <recipe-name>
+
+to generate training data, use the following scripts in experiments:
+* 2023-11-27+*py, 2024-01-17-ipc2014-jasper.py and 2024-01-19-ipc2018-cerberus.py to run each component planner, using the image built with Apptainer.hapori_components
+* training-data-collect.py collects all properties of component planners, performs some analysis, filters problematic runs and creates separate properties files for each track, both the full training data and the "reduced" one (at most 30 tasks per domain)
+* training-data-generate-csv.py generates one csv file for each attribute of interest from the training data generated with training-data-collect.py
+
+to test the portfolios:
+* build portfolio images using the recipes in the main directory (except Apptainer.hapori_components) and use scripts 2024-01-30-* in experiments
+
+TODOs:
+* it is not clear how domain_properties.csv was generated for the IPC; I adapted it to reflect the merged t0 and fsc domains
+* features:
+    - since we merged these domains, existing features (e.g., by delfi and eps) need to be updated accordingly
+    - EPS features: it is not clear how features_opt.csv and features_sat.csv in learners/explainable_planner_selection/ were created; possibly from the data (json) created with experiments/2023-03-07-A-fawcett-features.py; the data is still checked in under experiments/data/2023-03-07-A-fawcett-features-eval
+    - for reproducibility, we should include scripts for generating features, possibly directly in the learner subdirs
+* for all three learners: decide on a common fallback planner for the case where the planner selection (delfi, eps) or the schedule computation fails.
+* update this file

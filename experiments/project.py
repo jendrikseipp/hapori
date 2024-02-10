@@ -60,13 +60,31 @@ EVALUATIONS_PER_TIME = Attribute(
 # fmt: off
 SUITE_STRIPS = ['agricola-strips', 'airport-strips', 'barman-strips', 'blocksworld-strips', 'childsnack-strips', 'data-network-strips', 'depots-strips', 'driverlog-strips', 'elevators-strips', 'ferry-strips', 'floortile-strips', 'freecell-strips', 'ged-strips', 'goldminer-strips', 'grid-strips', 'gripper-strips', 'hanoi-strips', 'hiking-strips', 'logistics-strips', 'miconic-strips', 'movie-strips', 'mprime-strips', 'mystery-strips', 'no-mprime-strips', 'no-mystery-strips', 'nomystery-strips', 'npuzzle-strips', 'openstacks-strips', 'organic-synthesis-split-strips', 'organic-synthesis-strips', 'parcprinter-strips', 'parking-strips', 'pathways-strips', 'pegsol-strips', 'petri-net-alignment-strips', 'pipesworld-notankage-strips', 'pipesworld-tankage-strips', 'psr-small-strips', 'rovers-strips', 'satellite-strips', 'scanalyzer-strips', 'snake-strips', 'sokoban-strips', 'spanner-strips', 'spider-strips', 'storage-strips', 'termes-strips', 'tetris-strips', 'thoughtful-strips', 'tidybot-strips', 'tpp-strips', 'transport-strips', 'trucks-strips', 'visitall-strips', 'woodworking-strips', 'zenotravel-strips']
 
-# IMPORTANT: the fsc-*-strips tasks actually contain conditional effects. We keep the old names for data integrity.
-SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-blocks-strips', 'fsc-grid-a-strips', 'fsc-grid-r-strips', 'fsc-hall-strips', 'fsc-visualmarker-strips', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adder-adl', 't0-coins-adl', 't0-comm-adl', 't0-grid-dispose-adl', 't0-grid-push-adl', 't0-grid-trash-adl', 't0-sortnet-adl', 't0-sortnet-alt-adl', 't0-uts-adl', 'trucks-adl']
+SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-adl', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adl', 'trucks-adl']
+# fmt: on
 
-SUITE_IPC23 = ["folding-opt23-adl", "folding-sat23-adl", "labyrinth-opt23-adl", "labyrinth-sat23-adl", "quantum-layout-opt23-strips", "quantum-layout-sat23-strips", "recharging-robots-opt23-adl", "recharging-robots-sat23-adl", "ricochet-robots-opt23-adl", "ricochet-robots-sat23-adl", "rubiks-cube-opt23-adl", "rubiks-cube-sat23-adl", "slitherlink-opt23-adl", "slitherlink-sat23-adl"]
+SUITE_IPC23_OPT = [
+    "folding-opt23-adl",
+    "labyrinth-opt23-adl",
+    "quantum-layout-opt23-strips",
+    "recharging-robots-opt23-adl",
+    "ricochet-robots-opt23-adl",
+    "rubiks-cube-opt23-adl",
+    "slitherlink-opt23-adl",
+]
+
+SUITE_IPC23_SAT_AGL = [
+    "folding-sat23-adl",
+    "labyrinth-sat23-adl",
+    "quantum-layout-sat23-strips",
+    "recharging-robots-sat23-adl",
+    "ricochet-robots-sat23-adl",
+    "rubiks-cube-sat23-adl",
+    "slitherlink-sat23-adl",
+]
 
 SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
-# fmt: on
+
 
 def get_portfolio_attributes(portfolio):
     attributes = {}
@@ -257,6 +275,45 @@ def add_scatter_plot_reports(exp, algorithm_pairs, attributes, *, filter=None):
                     format="tex" if TEX else "png",
                 ),
                 name=f"{exp.name}-{algo1}-{algo2}-{attribute}{'-relative' if RELATIVE else ''}")
+
+
+class QualityFilters:
+    """Compute the IPC quality score.
+
+    >>> from downward.reports.absolute import AbsoluteReport
+    >>> filters = QualityFilters()
+    >>> report = AbsoluteReport(filter=[filters.store_costs, filters.add_quality])
+
+    """
+
+    def __init__(self):
+        self.tasks_to_costs = defaultdict(list)
+
+    def _get_task(self, run):
+        return (run["domain"], run["problem"])
+
+    def _compute_quality(self, cost, all_costs):
+        if cost is None:
+            return 0.0
+        assert all_costs
+        min_cost = min(all_costs)
+        if cost == 0:
+            assert min_cost == 0
+            return 1.0
+        return min_cost / cost
+
+    def store_costs(self, run):
+        cost = run.get("cost")
+        if cost is not None:
+            assert run["coverage"]
+            self.tasks_to_costs[self._get_task(run)].append(cost)
+        return True
+
+    def add_quality(self, run):
+        run["quality"] = self._compute_quality(
+            run.get("cost"), self.tasks_to_costs[self._get_task(run)]
+        )
+        return run
 
 
 class Hardest30Report(PlanningReport):

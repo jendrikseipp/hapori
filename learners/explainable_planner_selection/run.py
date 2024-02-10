@@ -10,10 +10,10 @@ import joblib
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("model")
-parser.add_argument("domain")
-parser.add_argument("problem")
-parser.add_argument("plan")
+parser.add_argument("model", type=str)
+parser.add_argument("domain", type=str)
+parser.add_argument("problem", type=str)
+parser.add_argument("plan", type=str)
 
 DIR_CURR_FILE = Path(__file__).parent
 FILE_PLAN_PY = DIR_CURR_FILE / "plan.py" if (DIR_CURR_FILE / "plan.py").exists() else DIR_CURR_FILE.resolve().parent.parent / "plan.py"
@@ -23,24 +23,24 @@ FILE_PLANNER_ORDER_OPT = DIR_CURR_FILE / "models" / "opt_planners.json"
 FILE_PLANNER_ORDER_SAT = DIR_CURR_FILE / "models" / "sat_planners.json"
 
 
-def generate_features(d, f_domain, f_problem):
-    f_features = d / "tmp_features"
+def generate_features(domain, problem):
+    f_features = Path("/tmp/tmp_features")
     try:
         subprocess.call([
             sys.executable, FILE_FEATURE_EXTRACTOR,
-            "--domain-file", f_domain,
-            "--instance-file", f_problem,
+            "--domain-file", domain,
+            "--instance-file", problem,
             "--json-output-file", f_features,
             "--no-extract-sas", "--no-extract-lpg-probing",
             "--no-extract-fd-probing", "--no-extract-sat", "--no-extract-torchlight",
-        ], cwd=d)
+        ])
     except subprocess.SubprocessError:
         return None
 
-    if os.path.exists(f_features):
+    if f_features.exists():
         with open(f_features) as f:
             features = json.load(f)
-        f_features.unlink()
+        f_features.unlink(missing_ok=True)
         tmp = list(features["instance_features"].values())
         assert len(tmp) == 1
         features = tmp[0]
@@ -53,6 +53,7 @@ def generate_features(d, f_domain, f_problem):
 
 def query_model(f_model, features):
     base_name = os.path.basename(f_model)
+    # TODO: modify this to support all three tracks
     is_opt = base_name.startswith("opt_")
     is_sat = base_name.startswith("sat_")
     assert is_opt ^ is_sat
@@ -61,6 +62,7 @@ def query_model(f_model, features):
         planner_order = json.load(f)
     if features is None:
         print("WARNING: Features not generated. Using fallback planner.")
+        # TODO: use sensible default planners based on training data
         return "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:default'
 
     is_linear_regression = base_name.find("linear_regression") > -1
@@ -78,13 +80,13 @@ def query_model(f_model, features):
         return planner_order[prediction]
 
 
-def execute_planner(d, f_domain, f_problem, f_plan, planner):
+def execute_planner(f_domain, f_problem, f_plan, planner):
     planner_name, planner_config = planner.rsplit(":", 1)
     subprocess.call([
         sys.executable, FILE_PLAN_PY,
         planner_name, "--configs", planner_config,
         f_domain, f_problem, f_plan
-    ], cwd=d)
+    ])
 
 
 def main(args):
@@ -92,16 +94,11 @@ def main(args):
     assert os.path.exists(args.problem), args.problem
     assert os.path.exists(args.model), args.model
     assert not os.path.exists(args.plan), args.plan
-    args.domain = os.path.abspath(args.domain)
-    args.problem = os.path.abspath(args.problem)
-    args.model = os.path.abspath(args.model)
-    args.plan = os.path.abspath(args.plan)
 
-    d = DIR_CURR_FILE
-    features = generate_features(d, args.domain, args.problem)
+    features = generate_features(args.domain, args.problem)
     planner = query_model(args.model, features)
     print(f"Selected Planner: {planner}")
-    execute_planner(d, args.domain, args.problem, args.plan, planner)
+    execute_planner(args.domain, args.problem, args.plan, planner)
 
 
 

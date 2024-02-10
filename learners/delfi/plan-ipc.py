@@ -111,7 +111,7 @@ def select_algorithm_from_model(json_model, h5_model, image, planner_names):
     assert len(priorities) == len(planner_names)
     best_planner_idx = np.argmin(priorities)
     best_planner = planner_names[best_planner_idx]
-    print("Chose %s" % best_planner)
+    print("Model chose %s" % best_planner)
     return best_planner
 
 
@@ -136,6 +136,7 @@ def main(args):
     plan = args.plan_file
     model = args.model_name
 
+    # TODO: adapt this to three models, one per track
     assert model in ["optimal", "satisficing", "agile"]
     is_opt = model == "optimal"
     file_planner_names = os.path.join(DIR_SCRIPT, "opt_planners.json" if is_opt else "sat_planners.json")
@@ -151,12 +152,14 @@ def main(args):
     sys.stdout.flush()
 
     if image_file is None:
-        # TODO: why these defaults? Verify that these are the best planners from the training set
+        # TODO: use sensible default planners based on training data
         planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:agl-config01'
+        print("Could not compute image. Use default planner.")
     else:
         json_model = os.path.join(DIR_SCRIPT, 'models', args.model_name + ".json")
         h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
         planner = select_algorithm_from_model(json_model, h5_model, image_file, planner_names)
+    print("Selected Planner: %s" % planner)
     sys.stdout.flush()
     execute_planner(pwd, domain, problem, plan, planner)
 

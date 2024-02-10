@@ -5,8 +5,9 @@ SUFFIX="agl"
 FNAME="output_agl"
 RUNTIMEDATA='runtimes_sat.csv'
 SPLIT="split_sat.txt"
+SPLIT="split_agl_notest.txt"
 TIMEOUT="300"
-IMAGES='images22'
+IMAGES='images23'
 
 
 LABEL_TYPE=discrete  # choices: binary discrete, normalized, time

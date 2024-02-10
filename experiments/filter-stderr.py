@@ -16,6 +16,7 @@ IGNORE_PATTERNS = [
     "underlay of /etc/localtime required more than",
     "sched_setaffinity failed: : Invalid argument",
     "warning: error reading memory from procfile",
+    "Using TensorFlow backend.", # delfi
     "ls: cannot access", # Somewhere symple1 calls an ls, symple2 doesn;t
     # Older planners that use the src/downward bash script print their
     # command line to stderr if terminated. We catch all lines of

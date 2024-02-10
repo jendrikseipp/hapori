@@ -26,10 +26,10 @@ Stage: build-ipc2018-opt-scorpion
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-saarplan
+Stage: build-ipc2018-saarplan
 
 %files
-    planners/ipc2018-saarplan /planner/planners/ipc2018-agl-saarplan
+    planners/ipc2018-saarplan /planner/planners/ipc2018-saarplan
 
 %post
     ## Install all necessary dependencies.
@@ -37,12 +37,12 @@ Stage: build-ipc2018-agl-saarplan
     apt-get -y install python cmake make libboost-dev clang
 
     ## Build your planner
-    cd /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions
+    cd /planner/planners/ipc2018-saarplan/fast-downward-conjunctions
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    strip --strip-all /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 Bootstrap: docker
 From: ubuntu:18.04
@@ -152,7 +152,7 @@ From: ubuntu:18.04
 Stage: build-ipc2018-fd-2018
 
 %files
-    planners/ipc2018-agl-fdss-2018 /planner/planners/ipc2018-fd-2018
+    planners/ipc2018-fd-2018 /planner/planners/ipc2018-fd-2018
 
 %post
     ## Install all necessary dependencies.
@@ -175,10 +175,10 @@ Stage: build-ipc2018-fd-2018
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-merwin
+Stage: build-ipc2018-merwin
 
 %files
-    planners/ipc2018-agl-merwin /planner/planners/ipc2018-agl-merwin
+    planners/ipc2018-merwin /planner/planners/ipc2018-merwin
 
 %post
     ## Install all necessary dependencies.
@@ -186,21 +186,21 @@ Stage: build-ipc2018-agl-merwin
     apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
 
     ## Build planner.
-    cd /planner/planners/ipc2018-agl-merwin
+    cd /planner/planners/ipc2018-merwin
     ./build DOWNWARD_BITWIDTH=64
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-merwin/src/search/downward-1 \
-        /planner/planners/ipc2018-agl-merwin/src/search/downward-2 \
-        /planner/planners/ipc2018-agl-merwin/src/search/downward-4 \
-        /planner/planners/ipc2018-agl-merwin/src/preprocess/preprocess
+    strip --strip-all /planner/planners/ipc2018-merwin/src/search/downward-1 \
+        /planner/planners/ipc2018-merwin/src/search/downward-2 \
+        /planner/planners/ipc2018-merwin/src/search/downward-4 \
+        /planner/planners/ipc2018-merwin/src/preprocess/preprocess
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-mercury2014
+Stage: build-ipc2018-mercury2014
 
 %files
-    planners/ipc2018-agl-mercury2014 /planner/planners/ipc2018-agl-mercury2014
+    planners/ipc2018-mercury2014 /planner/planners/ipc2018-mercury2014
 
 %post
     ## Install all necessary dependencies.
@@ -209,14 +209,14 @@ Stage: build-ipc2018-agl-mercury2014
     apt-get -y install --no-install-recommends cmake g++ make python time gawk ca-certificates
 
     ## Build planner.
-    cd /planner/planners/ipc2018-agl-mercury2014
+    cd /planner/planners/ipc2018-mercury2014
     ./build DOWNWARD_BITWIDTH=64
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-mercury2014/src/search/downward-1 \
-        /planner/planners/ipc2018-agl-mercury2014/src/search/downward-2 \
-        /planner/planners/ipc2018-agl-mercury2014/src/search/downward-4 \
-        /planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
+    strip --strip-all /planner/planners/ipc2018-mercury2014/src/search/downward-1 \
+        /planner/planners/ipc2018-mercury2014/src/search/downward-2 \
+        /planner/planners/ipc2018-mercury2014/src/search/downward-4 \
+        /planner/planners/ipc2018-mercury2014/src/preprocess/preprocess
 
 Bootstrap: docker
 From: ubuntu:18.04
@@ -240,10 +240,10 @@ Stage: build-ipc2018-opt-metis
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-cerberus
+Stage: build-ipc2018-cerberus
 
 %files
-    planners/ipc2018-agl-cerberus /planner/planners/ipc2018-agl-cerberus
+    planners/ipc2018-cerberus /planner/planners/ipc2018-cerberus
 
 %post
     ## Install all necessary dependencies.
@@ -251,19 +251,19 @@ Stage: build-ipc2018-agl-cerberus
     apt-get -y install --no-install-recommends cmake g++ g++-multilib make python
 
     ## Build your planner
-    cd /planner/planners/ipc2018-agl-cerberus
+    cd /planner/planners/ipc2018-cerberus
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/downward \
-        /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-cerberus/builds/release64/bin/downward \
+        /planner/planners/ipc2018-cerberus/builds/release64/bin/preprocess
 
 Bootstrap: docker
 From: ubuntu:18.04
 Stage: build-ipc2018-lapkt-dfs-plus
 
 %files
-    planners/ipc2018-agl-lapkt-dfs-plus /planner/planners/ipc2018-lapkt-dfs-plus
+    planners/ipc2018-lapkt-dfs-plus /planner/planners/ipc2018-lapkt-dfs-plus
 
 %post
     ## Install all necessary dependencies.
@@ -312,7 +312,7 @@ From: ubuntu:18.04
 Stage: build-ipc2018-lapkt-bfws
 
 %files
-    planners/ipc2018-agl-lapkt-dual-bfws /planner/planners/ipc2018-lapkt-bfws
+    planners/ipc2018-lapkt-bfws /planner/planners/ipc2018-lapkt-bfws
 
 %post
     ## Install all necessary dependencies.
@@ -387,10 +387,10 @@ Stage: build-ipc2018-decstar
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-freelunch-madagascar
+Stage: build-ipc2018-freelunch-madagascar
 
 %files
-    planners/ipc2018-agl-freelunch-madagascar /planner/planners/ipc2018-agl-freelunch-madagascar
+    planners/ipc2018-freelunch-madagascar /planner/planners/ipc2018-freelunch-madagascar
 
 %post
     ## Install all necessary dependencies.
@@ -398,10 +398,10 @@ Stage: build-ipc2018-agl-freelunch-madagascar
     apt-get -y install cmake g++ gcc make bison flex zlib1g-dev ca-certificates git
 
     ## Build the planner
-    cd /planner/planners/ipc2018-agl-freelunch-madagascar
+    cd /planner/planners/ipc2018-freelunch-madagascar
     make
-    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
-    strip --strip-all /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
+    strip --strip-all /planner/planners/ipc2018-freelunch-madagascar/incplan-lgl
+    strip --strip-all /planner/planners/ipc2018-freelunch-madagascar/MpC
 
 Bootstrap: docker
 From: ubuntu:18.04
@@ -427,7 +427,7 @@ From: ubuntu:18.04
 Stage: build-ipc2014-agl-mpc
 
 %files
-    planners/ipc2014-agl-madagascar /planner/planners/ipc2014-agl-mpc
+    planners/ipc2014-agl-mpc /planner/planners/ipc2014-agl-mpc
 
 %post
     ## Install all dependencies.
@@ -449,10 +449,10 @@ Stage: build-ipc2014-agl-mpc
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2014-agl-jasper
+Stage: build-ipc2014-jasper
 
 %files
-    planners/ipc2014-agl-jasper /planner/planners/ipc2014-agl-jasper
+    planners/ipc2014-jasper /planner/planners/ipc2014-jasper
 
 %post
     ## Install all dependencies.
@@ -460,14 +460,14 @@ Stage: build-ipc2014-agl-jasper
     apt-get -y install bison flex make g++ g++-multilib python gawk
 
     ## Build the planner.
-    cd /planner/planners/ipc2014-agl-jasper
+    cd /planner/planners/ipc2014-jasper
     ./build
 
     ## Strip binary.
-    strip --strip-all /planner/planners/ipc2014-agl-jasper/preprocess/preprocess
-    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-1
-    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-2
-    strip --strip-all /planner/planners/ipc2014-agl-jasper/search/downward-4
+    strip --strip-all /planner/planners/ipc2014-jasper/preprocess/preprocess
+    strip --strip-all /planner/planners/ipc2014-jasper/search/downward-1
+    strip --strip-all /planner/planners/ipc2014-jasper/search/downward-2
+    strip --strip-all /planner/planners/ipc2014-jasper/search/downward-4
 
 
 Bootstrap: docker
@@ -493,10 +493,10 @@ Stage: build-ipc2014-agl-probe
 
 Bootstrap: docker
 From: ubuntu:18.04
-Stage: build-ipc2018-agl-olcff
+Stage: build-ipc2018-olcff
 
 %files
-    planners/ipc2018-agl-olcff /planner/planners/ipc2018-agl-olcff
+    planners/ipc2018-olcff /planner/planners/ipc2018-olcff
 
 %post
     ## Install all necessary dependencies.
@@ -504,12 +504,12 @@ Stage: build-ipc2018-agl-olcff
     apt-get -y install python cmake make libboost-dev clang
 
     ## Build your planner
-    cd /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions
+    cd /planner/planners/ipc2018-olcff/fast-downward-conjunctions
     ./build.py release64 -j4
 
     ## Strip binaries.
-    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin/preprocess
-    strip --strip-all /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin/downward
+    strip --strip-all /planner/planners/ipc2018-olcff/fast-downward-conjunctions/builds/release64/bin/preprocess
+    strip --strip-all /planner/planners/ipc2018-olcff/fast-downward-conjunctions/builds/release64/bin/downward
 
 
 Bootstrap: docker
@@ -522,13 +522,13 @@ Stage: run
     /planner/planners/ipc2018-opt-scorpion/builds/release64/bin
     /planner/planners/ipc2018-opt-scorpion/builds/h2-mutexes/bin/preprocess
 
-%files from build-ipc2018-agl-saarplan
-    /planner/planners/ipc2018-agl-saarplan/fast-downward.py
-    /planner/planners/ipc2018-agl-saarplan/driver
-    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/driver
-    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
-    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
-    /planner/planners/ipc2018-agl-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
+%files from build-ipc2018-saarplan
+    /planner/planners/ipc2018-saarplan/fast-downward.py
+    /planner/planners/ipc2018-saarplan/driver
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/translate
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/preprocess
+    /planner/planners/ipc2018-saarplan/fast-downward-conjunctions/builds/release64/bin/downward
 
 %files from build-ipc2018-opt-complementary2
     /planner/planners/ipc2018-opt-complementary2/driver
@@ -585,44 +585,44 @@ Stage: run
     /planner/planners/ipc2018-fd-2018/builds/release64/bin
     /planner/planners/ipc2018-fd-2018/builds/h2-mutexes/bin/preprocess
 
-%files from build-ipc2018-agl-merwin
-    /planner/planners/ipc2018-agl-merwin/src/search/downward
-    /planner/planners/ipc2018-agl-merwin/src/search/downward-1
-    /planner/planners/ipc2018-agl-merwin/src/search/downward-2
-    /planner/planners/ipc2018-agl-merwin/src/search/downward-4
-    /planner/planners/ipc2018-agl-merwin/src/search/dispatch
-    /planner/planners/ipc2018-agl-merwin/src/search/unitcost
-    /planner/planners/ipc2018-agl-merwin/src/preprocess/
-    /planner/planners/ipc2018-agl-merwin/src/translate/
-    /planner/planners/ipc2018-agl-merwin/src/prepare
-    /planner/planners/ipc2018-agl-merwin/src/plan
-    /planner/planners/ipc2018-agl-merwin/src/plan-ipc
-    /planner/planners/ipc2018-agl-merwin/plan-agl
-    /planner/planners/ipc2018-agl-merwin/plan-sat
+%files from build-ipc2018-merwin
+    /planner/planners/ipc2018-merwin/src/search/downward
+    /planner/planners/ipc2018-merwin/src/search/downward-1
+    /planner/planners/ipc2018-merwin/src/search/downward-2
+    /planner/planners/ipc2018-merwin/src/search/downward-4
+    /planner/planners/ipc2018-merwin/src/search/dispatch
+    /planner/planners/ipc2018-merwin/src/search/unitcost
+    /planner/planners/ipc2018-merwin/src/preprocess/
+    /planner/planners/ipc2018-merwin/src/translate/
+    /planner/planners/ipc2018-merwin/src/prepare
+    /planner/planners/ipc2018-merwin/src/plan
+    /planner/planners/ipc2018-merwin/src/plan-ipc
+    /planner/planners/ipc2018-merwin/plan-agl
+    /planner/planners/ipc2018-merwin/plan-sat
 
-%files from build-ipc2018-agl-mercury2014
-    /planner/planners/ipc2018-agl-mercury2014/src/search/downward
-    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-1
-    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-2
-    /planner/planners/ipc2018-agl-mercury2014/src/search/downward-4
-    /planner/planners/ipc2018-agl-mercury2014/src/search/dispatch
-    /planner/planners/ipc2018-agl-mercury2014/src/search/unitcost
-    /planner/planners/ipc2018-agl-mercury2014/src/preprocess/preprocess
-    /planner/planners/ipc2018-agl-mercury2014/src/translate/
-    /planner/planners/ipc2018-agl-mercury2014/src/plan
-    /planner/planners/ipc2018-agl-mercury2014/src/plan-ipc
-    /planner/planners/ipc2018-agl-mercury2014/plan
+%files from build-ipc2018-mercury2014
+    /planner/planners/ipc2018-mercury2014/src/search/downward
+    /planner/planners/ipc2018-mercury2014/src/search/downward-1
+    /planner/planners/ipc2018-mercury2014/src/search/downward-2
+    /planner/planners/ipc2018-mercury2014/src/search/downward-4
+    /planner/planners/ipc2018-mercury2014/src/search/dispatch
+    /planner/planners/ipc2018-mercury2014/src/search/unitcost
+    /planner/planners/ipc2018-mercury2014/src/preprocess/preprocess
+    /planner/planners/ipc2018-mercury2014/src/translate/
+    /planner/planners/ipc2018-mercury2014/src/plan
+    /planner/planners/ipc2018-mercury2014/src/plan-ipc
+    /planner/planners/ipc2018-mercury2014/plan
 
 %files from build-ipc2018-opt-metis
     /planner/planners/ipc2018-opt-metis/fast-downward.py
     /planner/planners/ipc2018-opt-metis/builds/release64/bin/
     /planner/planners/ipc2018-opt-metis/driver
 
-%files from build-ipc2018-agl-cerberus
-    /planner/planners/ipc2018-agl-cerberus/fast-downward.py
-    /planner/planners/ipc2018-agl-cerberus/plan.py
-    /planner/planners/ipc2018-agl-cerberus/builds/release64/bin/
-    /planner/planners/ipc2018-agl-cerberus/driver
+%files from build-ipc2018-cerberus
+    /planner/planners/ipc2018-cerberus/fast-downward.py
+    /planner/planners/ipc2018-cerberus/plan.py
+    /planner/planners/ipc2018-cerberus/builds/release64/bin/
+    /planner/planners/ipc2018-cerberus/driver
 
 %files from build-ipc2018-lapkt-dfs-plus
     /planner/planners/ipc2018-lapkt-dfs-plus/dfs_plus
@@ -656,10 +656,10 @@ Stage: run
     /planner/planners/ipc2018-decstar/src/translate
     /planner/planners/ipc2018-decstar/src/search/downward-release
 
-%files from build-ipc2018-agl-freelunch-madagascar
-    /planner/planners/ipc2018-agl-freelunch-madagascar/MpC
-    /planner/planners/ipc2018-agl-freelunch-madagascar/incplan-lgl
-    /planner/planners/ipc2018-agl-freelunch-madagascar/plan.sh
+%files from build-ipc2018-freelunch-madagascar
+    /planner/planners/ipc2018-freelunch-madagascar/MpC
+    /planner/planners/ipc2018-freelunch-madagascar/incplan-lgl
+    /planner/planners/ipc2018-freelunch-madagascar/plan.sh
 
 %files from build-ipc2018-opt-planning-pdbs
     /planner/planners/ipc2018-opt-planning-pdbs/fast-downward.py
@@ -669,25 +669,25 @@ Stage: run
 %files from build-ipc2014-agl-mpc
     /planner/planners/ipc2014-agl-mpc/MpC
 
-%files from build-ipc2014-agl-jasper
-    /planner/planners/ipc2014-agl-jasper/translate
-    /planner/planners/ipc2014-agl-jasper/preprocess/preprocess
-    /planner/planners/ipc2014-agl-jasper/search/downward*
-    /planner/planners/ipc2014-agl-jasper/search/unitcost
-    /planner/planners/ipc2014-agl-jasper/search/dispatch
-    /planner/planners/ipc2014-agl-jasper/plan
-    /planner/planners/ipc2014-agl-jasper/plan-ipc
-    /planner/planners/ipc2014-agl-jasper/one_plan_aras_bfmrw_codes
+%files from build-ipc2014-jasper
+    /planner/planners/ipc2014-jasper/translate
+    /planner/planners/ipc2014-jasper/preprocess/preprocess
+    /planner/planners/ipc2014-jasper/search/downward*
+    /planner/planners/ipc2014-jasper/search/unitcost
+    /planner/planners/ipc2014-jasper/search/dispatch
+    /planner/planners/ipc2014-jasper/plan
+    /planner/planners/ipc2014-jasper/plan-ipc
+    /planner/planners/ipc2014-jasper/one_plan_aras_bfmrw_codes
 
 %files from build-ipc2014-agl-probe
     /planner/planners/ipc2014-agl-probe/probe
     /planner/planners/ipc2014-agl-probe/src/parser-ff/libff.a
     /planner/planners/ipc2014-agl-probe/plan
 
-%files from build-ipc2018-agl-olcff
-    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/driver
-    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/fast-downward.py
-    /planner/planners/ipc2018-agl-olcff/fast-downward-conjunctions/builds/release64/bin
+%files from build-ipc2018-olcff
+    /planner/planners/ipc2018-olcff/fast-downward-conjunctions/driver
+    /planner/planners/ipc2018-olcff/fast-downward-conjunctions/fast-downward.py
+    /planner/planners/ipc2018-olcff/fast-downward-conjunctions/builds/release64/bin
 
 %files
     configs /planner/configs
@@ -696,12 +696,12 @@ Stage: run
 %post
     apt-get update
 
-    # requirements of all component planners
+    # combined requirements of all component planners
     apt-get -y install --no-install-recommends python software-properties-common time gawk python-pip
     pip2 install -U wheel setuptools
     pip2 install networkx
 
-    # requirements of drivers
+    # requirements of the plan.py driver
     apt-get -y install --no-install-recommends python3
 
     # clean up
@@ -715,7 +715,7 @@ Stage: run
     DOMAINFILE="$1"
     PROBLEMFILE="$2"
     PLANFILE="$3"
-    IMAGE="$4"
+    PLANNER="$4"
     CONFIG="$5"
     shift
     shift
@@ -724,7 +724,7 @@ Stage: run
     shift
 
     python3 /planner/plan.py \
-        "$IMAGE" \
+        "$PLANNER" \
         "$DOMAINFILE" \
         "$PROBLEMFILE" \
         "$PLANFILE" \
@@ -732,4 +732,7 @@ Stage: run
 
 %labels
 Name        Hapori Components
-Description Used to test all component planners.
+Description Use this to run any component planner individually.
+Authors     Jendrik Seipp <jendrik.seipp@liu.se>, Patrick Ferber <patrick.ferber@unibas.ch>, Michael Katz <michael.katz1@ibm.com>, Daniel Borrajo <dborrajo@ia.uc3m.es>, Alberto Pozanco <alberto.pozanco@gmail.com>, Tomas de la Rosa <tomdelarosa@gmail.com>, Silvan Sievers <silvan.sievers@unibas.ch>
+License     GPL 3
+Tracks      optimal,satisficing,agile

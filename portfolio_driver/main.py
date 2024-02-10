@@ -43,7 +43,7 @@ def main():
     print()
 
     exitcode = None
-    (exitcode, continue_execution) = run_portfolio(args)
+    exitcode = run_portfolio(args)
 
     try:
         logging.info(f"Planner time: {util.get_elapsed_time():.2f}s")
