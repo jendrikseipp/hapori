@@ -3,7 +3,7 @@ import logging
 import numpy as np
 
 import config_selector
-from portfolio import Portfolio, Track
+from portfolio import Portfolio
 
 
 class SelectorPortfolio(Portfolio):
@@ -17,21 +17,11 @@ class SelectorPortfolio(Portfolio):
         IncreasingTimeslotPortfolio.
         """
         if self.subset_size == "auto":
-            if self.track == Track.SAT:
-                score, subset = self.auto_configs_score()
-            elif self.track == Track.OPT:
-                runtime, subset = self.auto_configs_coverage()
-            else:
-                raise ValueError(f"Unknown track {self.track}")
+            score, subset = self.auto_configs_score()
             self.settings.append('Subset size: "auto" (best: %i)' % len(subset))
         elif str(self.subset_size).isdigit():
             subset_size = int(self.subset_size)
-            if self.track == Track.SAT:
-                score, subset = self.select_configs_score(subset_size)
-            elif self.track == Track.OPT:
-                runtime, subset = self.select_configs_coverage(subset_size)
-            else:
-                raise ValueError(f"Unknown track {self.track}")
+            score, subset = self.select_configs_score(subset_size)
             self.settings.append("Subset size: %i" % subset_size)
         else:
             raise ValueError('subset_size can only be a number or "auto"')
@@ -40,18 +30,6 @@ class SelectorPortfolio(Portfolio):
         self.schedule_runtimes = np.array(
             [self.plantime / len(subset)] * len(subset)
         )
-
-    def auto_configs_coverage(self):
-        """Tries all possible subset sizes and returns the subset for
-        the best one.
-        """
-
-        def configs_iter():
-            for subset_size in self._auto_subset_sizes():
-                logging.info("Calculating subsets for subset size %d" % subset_size)
-                yield self.select_configs_coverage(subset_size)
-
-        return max(configs_iter(), key=lambda candidate: candidate[0])
 
     def auto_configs_score(self):
         """Tries all possible subset sizes and returns the subset for
@@ -82,18 +60,6 @@ class SelectorPortfolio(Portfolio):
         times = np.where(times == None, unsolved_value, times)
         # filter times according to the uniform plan time for each config
         return np.where(times > plantime_single, unsolved_value, times)
-
-    def select_configs_coverage(self, subset_size):
-        """Chooses a subset of size subset_size that minimizes runtime as
-        described in config_selector.min_subset. This way the coverage is
-        maximized. Problems that would not be solved in plantime_single will
-        be treated as unsolved.
-        Returns a tuple (accumulated runtime, subset indices).
-        """
-        plantime_single = self.plantime / subset_size
-        times = self.filter_unsolved_problems(self.runtimes, plantime_single)
-        logging.info("Calculating subset of configurations.")
-        return config_selector.min_subset(times, subset_size)
 
     def select_configs_score(self, subset_size):
         """Chooses a subset of size subset_size  that maximizes score as
