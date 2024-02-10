@@ -7,6 +7,7 @@ from lab.experiment import Experiment
 import project
 from portfolio import Track
 from cluster import ClusterPortfolio
+from domainwise import DomainwisePortfolio
 from ranitsearch import RanitSearchPortfolio
 from selector import SelectorPortfolio, UniformPortfolio
 
@@ -49,5 +50,7 @@ exp.add_report(ClusterPortfolio(track=TRACK, clusters=3), name=f"cluster-{SUFFIX
 exp.add_report(
     RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-{SUFFIX}"
 )
+
+exp.add_report(DomainwisePortfolio(track=TRACK), name=f"domainwise-{SUFFIX}")
 
 exp.run_steps()

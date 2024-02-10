@@ -51,8 +51,6 @@ class DomainwisePortfolio(Portfolio):
     def __init__(self, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
 
-        self.portfolio_name = "Domain-wise portfolio"
-
     def compute_portfolio(self):
         # replace missing times with infinity for the evaluator
         all_times = np.where(self.runtimes is None, np.inf, self.runtimes).astype(
