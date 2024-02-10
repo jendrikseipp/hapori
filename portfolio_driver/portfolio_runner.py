@@ -134,13 +134,8 @@ def get_track(portfolio):
     return track
 
 
-def get_portfolio_attributes(portfolio, domain, problem, time):
-    attributes = {
-        'DOMAIN': domain,
-        'PROBLEM': problem,
-        'TRACK': get_track(portfolio),
-        'AVAIL_TIME': time
-    }
+def get_portfolio_attributes(portfolio):
+    attributes = {}
     with open(portfolio, "rb") as portfolio_file:
         content = portfolio_file.read()
         try:
@@ -149,6 +144,8 @@ def get_portfolio_attributes(portfolio, domain, problem, time):
             print(e)
             returncodes.exit_with_driver_critical_error(
                 f"The portfolio {portfolio} could not be loaded: {e}.")
+    if "TRACK" in attributes:
+        returncodes.exit_with_driver_critical_error("portfolios must not define TRACK")
     if "PLANNERS" not in attributes:
         returncodes.exit_with_driver_critical_error("portfolios must define PLANNERS")
     return attributes
@@ -174,7 +171,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     The portfolio is allowed to run for at most *time* seconds and may
     use a maximum of *memory* bytes.
     """
-    attributes = get_portfolio_attributes(portfolio, domain_file, problem_file, time)
+    attributes = get_portfolio_attributes(portfolio)
     configs = attributes["PLANNERS"]
     track = get_track(portfolio)
 

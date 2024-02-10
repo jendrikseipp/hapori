@@ -1,0 +1,5 @@
+Compilation instructions:
+
+$ sudo apt install cmake libblitz0-dev libboost-numpy-dev libboost-python-dev
+$ cmake .
+$ make
