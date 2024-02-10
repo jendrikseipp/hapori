@@ -26,8 +26,8 @@ ATTRIBUTES = [
     "cpu_time",
 ]
 
-TRACK = Track.OPT
-SUFFIX = "opt"
+SUFFIX = project.TRACKNAME
+TRACK = Track[SUFFIX.upper()]
 DATA = "../../experiments/data/training-data-collect-eval/properties-hardest-opt.json.xz"
 NUM_PLANNERS = 30
 
@@ -42,7 +42,7 @@ exp.add_fetcher(src=DATA, merge=True)
 
 exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-{SUFFIX}")
 
-exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"selector-{SUFFIX}")
+#exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"selector-{SUFFIX}")
 
 for clusters in range(1, NUM_PLANNERS + 1):
     exp.add_report(ClusterPortfolio(track=TRACK, clusters=clusters), name=f"cluster-{clusters:02d}-{SUFFIX}")

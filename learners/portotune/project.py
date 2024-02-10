@@ -37,6 +37,7 @@ REMOTE = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch")) or re.match(
 
 
 def parse_args():
+    ARGPARSER.add_argument("--track", choices=["opt", "sat", "agl"], required=True, help="IPC track")
     ARGPARSER.add_argument("--tex", action="store_true", help="produce LaTeX output")
     ARGPARSER.add_argument(
         "--relative", action="store_true", help="make relative scatter plots"
@@ -45,6 +46,7 @@ def parse_args():
 
 
 ARGS = parse_args()
+TRACKNAME = ARGS.track
 TEX = ARGS.tex
 RELATIVE = ARGS.relative
 
