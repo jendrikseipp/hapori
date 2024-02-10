@@ -1,4 +1,3 @@
-import os
 from collections import defaultdict
 from enum import Enum, auto
 
@@ -71,8 +70,6 @@ class Portfolio(PlanningReport):
 
         self.runtimes = []  # runtime for each problem-config pair
         self.scores = []  # score (coverage, quality or agile score) for each problem-config pair
-        # True if the specific config was trained on the domain (resp. problem)
-        self.trained = []
 
         self._retrieve_information()
 
@@ -83,10 +80,7 @@ class Portfolio(PlanningReport):
 
         # transform data matrices to np matrices for easier handling
         self.runtimes = np.array(self.runtimes)
-        self.orig_scores = np.array(self.scores)
-        self.trained = np.array(self.trained)
-        # filter scores of trained domains
-        self.scores = np.where(self.trained, 0, self.orig_scores)
+        self.scores = np.array(self.scores)
 
         # replace missing times with infty for the evaluator
         times = np.where(np.equal(self.runtimes, None), np.inf, self.runtimes).astype(
@@ -163,7 +157,6 @@ class Portfolio(PlanningReport):
         for domain, problem in sorted(self.problem_runs.keys()):
             self.runtimes.append([])
             self.scores.append([])
-            self.trained.append([])
             num_problems = len(solved_problems_per_domain[domain])
             for config in self.algorithms:
                 runtime, cost, score = data[(domain, problem)][config]
@@ -177,8 +170,6 @@ class Portfolio(PlanningReport):
                     else:
                         normalized_score = float(score) / num_problems
                     self.scores[-1].append(normalized_score)
-                # True if the config was trained on the domain otherwise False
-                self.trained[-1].append(same_domain(domain, config))
 
     def get_domain_score(self, domain, runtimes):
         problem_numbers = self.domain_to_problem_indices[domain]
