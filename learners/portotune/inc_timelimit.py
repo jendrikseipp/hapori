@@ -7,11 +7,7 @@ class IncreasingTimelimitPortfolio(Portfolio):
     def __init__(self, stepsize, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
         self.stepsize = stepsize
-
-        self.settings.append("Timeslot size: %i" % self.stepsize)
-
-        self.portfolio_name = "Increasing Timeslots Portfolio"
-        self.settings.append(f"Stepsize: {self.stepsize}")
+        self.settings.append(f"Step size: {self.stepsize}")
 
     def compute_portfolio(self):
         schedule_runtimes = []
@@ -20,10 +16,10 @@ class IncreasingTimelimitPortfolio(Portfolio):
         overall_runtime = 0
         current_timeslot = self.stepsize
 
-        # retrieve total_times incl. missing values
-        times = self.runtimes
+        # retrieve total_times and replace missing values with infinity
+        times = np.where(self.runtimes == None, np.inf, self.runtimes)
         # at the beginning all problems are unsolved by the empty schedule
-        unsolved_problems = set(range(len(self.problems)))
+        unsolved_problems = set(range(len(self.problem_runs)))
         # iterate while there's still time left or until all problems are solved
         while overall_runtime < self.plantime and unsolved_problems:
             # try to retrieve the scores for each config in the current
@@ -38,17 +34,17 @@ class IncreasingTimelimitPortfolio(Portfolio):
                 continue
             best_config = np.argmax(configs_scores)
 
-            # retreive all the problems ids for the best config;
+            # retrieve all the problems ids for the best config;
             # problems_within_timeslot is always a 1d array
             problems_within_timeslot = np.where(
                 (times[:, best_config] < current_timeslot + EPSILON)
                 * (np.not_equal(times[:, best_config], None))
             )[0]
-            # retreive all the problems solved in this timeslot
+            # retrieve all the problems solved in this timeslot
             solved_within_timeslot = unsolved_problems.intersection(
                 problems_within_timeslot
             )
-            # retreive the max runtime of the solved problems in this timeslot
+            # retrieve the max runtime of the solved problems in this timeslot
             max_runtime = np.max(times[list(solved_within_timeslot), best_config])
             max_runtime = int(max_runtime + 1)
 

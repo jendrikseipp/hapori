@@ -8,6 +8,7 @@ import project
 from portfolio import Track
 from cluster import ClusterPortfolio
 from domainwise import DomainwisePortfolio
+from inc_timelimit import IncreasingTimelimitPortfolio
 from ranitsearch import RanitSearchPortfolio
 from selector import SelectorPortfolio, UniformPortfolio
 
@@ -47,10 +48,11 @@ exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"select
 exp.add_report(ClusterPortfolio(track=TRACK, clusters=3), name=f"cluster-{SUFFIX}")
 
 # TODO: run this n times and choose portfolio with highest score.
-exp.add_report(
-    RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-{SUFFIX}"
-)
+exp.add_report(RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-{SUFFIX}")
 
 exp.add_report(DomainwisePortfolio(track=TRACK), name=f"domainwise-{SUFFIX}")
+
+# TODO: run this multiple times and choose portfolio with highest score.
+exp.add_report(IncreasingTimelimitPortfolio(stepsize=100, track=TRACK), name=f"increasing-timelimit-{SUFFIX}")
 
 exp.run_steps()
