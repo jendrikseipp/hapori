@@ -7,8 +7,10 @@ from portfolio import EPSILON, Portfolio
 
 
 class RanitSearchPortfolio(Portfolio):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, random_seed, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
+        self.random_seed = random_seed
+        self.settings.append(f"Random seed: {self.random_seed}")
         self.max_tries = 20000
         self.use_reduce = False
 
@@ -16,6 +18,7 @@ class RanitSearchPortfolio(Portfolio):
         """Implementation of compute_portfolio method as it is implemented in
         IncreasingTimeslotPortfolio.
         """
+        random.seed(self.random_seed)
         self.schedule_runtimes = np.zeros(len(self.algorithms))
         self.schedule_config_ids = list(range(len(self.algorithms)))
         num_configs = len(self.algorithms)

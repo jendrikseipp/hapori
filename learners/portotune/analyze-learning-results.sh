@@ -27,4 +27,8 @@ function analyze {
 }
 
 analyze uniform
+analyze selector
 analyze cluster
+analyze increasing-time-limit
+analyze domain-wise
+analyze randomized-iterative-search

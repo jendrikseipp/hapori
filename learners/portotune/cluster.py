@@ -12,6 +12,11 @@ class ClusterPortfolio(Portfolio):
         self.settings.append(f"Clusters: {self.clusters}")
 
     def compute_portfolio(self):
+        if self.clusters > len(self.algorithms):
+            raise ValueError(
+                f"Number of clusters ({self.clusters}) must be less than "
+                f"or equal to the number of algorithms ({len(self.algorithms)})"
+            )
         self.schedule_runtimes = [0 for _ in self.algorithms]
         self.schedule_config_ids = list(range(len(self.algorithms)))
 

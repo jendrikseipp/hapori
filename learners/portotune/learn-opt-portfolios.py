@@ -47,12 +47,12 @@ exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"select
 for clusters in range(1, NUM_PLANNERS + 1):
     exp.add_report(ClusterPortfolio(track=TRACK, clusters=clusters), name=f"cluster-{clusters:02d}-{SUFFIX}")
 
-# TODO: run this multiple times and choose portfolio with highest score.
-exp.add_report(IncreasingTimelimitPortfolio(stepsize=100, track=TRACK), name=f"increasing-timelimit-{SUFFIX}")
+for stepsize in [1, 5, 10, 30, 60, 120, 180, 240, 300, 600, 900, 1800]:
+    exp.add_report(IncreasingTimelimitPortfolio(stepsize=stepsize, track=TRACK), name=f"increasing-time-limit-{stepsize}-{SUFFIX}")
 
 exp.add_report(DomainwisePortfolio(track=TRACK), name=f"domain-wise-{SUFFIX}")
 
-# TODO: run this n times and choose portfolio with highest score.
-exp.add_report(RanitSearchPortfolio(track=TRACK), name=f"randomized-iterated-search-{SUFFIX}")
+for random_seed in range(10):
+    exp.add_report(RanitSearchPortfolio(track=TRACK, random_seed=random_seed), name=f"randomized-iterative-search-{random_seed}-{SUFFIX}")
 
 exp.run_steps()

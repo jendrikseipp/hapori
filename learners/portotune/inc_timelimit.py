@@ -6,6 +6,8 @@ from portfolio import EPSILON, Portfolio
 class IncreasingTimelimitPortfolio(Portfolio):
     def __init__(self, stepsize, *args, **kwargs):
         Portfolio.__init__(self, *args, **kwargs)
+        if not 0 <= stepsize <= self.plantime:
+            raise ValueError(f"Step size ({stepsize}) must be between 0 and {self.plantime}")
         self.stepsize = stepsize
         self.settings.append(f"Step size: {self.stepsize}")
 
