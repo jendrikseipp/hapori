@@ -11,7 +11,6 @@ class SelectorPortfolio(Portfolio):
         """*subset_size* can be a number or "auto"."""
         Portfolio.__init__(self, track, **kwargs)
         self.subset_size = subset_size
-        self.settings.append(f"Subset size: {self.subset_size}")
 
     def compute_portfolio(self):
         """Implementation of compute_portfolio method as it is implemented in

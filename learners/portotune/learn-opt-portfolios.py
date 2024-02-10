@@ -29,6 +29,7 @@ ATTRIBUTES = [
 TRACK = Track.OPT
 SUFFIX = "opt"
 DATA = "../../experiments/data/training-data-collect-eval/properties-hardest-opt.json.xz"
+NUM_PLANNERS = 30
 
 exp = Experiment()
 exp.add_step(
@@ -43,8 +44,8 @@ exp.add_report(UniformPortfolio(track=TRACK), name=f"uniform-{SUFFIX}")
 
 exp.add_report(SelectorPortfolio(track=TRACK, subset_size="auto"), name=f"selector-{SUFFIX}")
 
-# TODO: Try all cluster sizes.
-exp.add_report(ClusterPortfolio(track=TRACK, clusters=3), name=f"cluster-{SUFFIX}")
+for clusters in range(1, NUM_PLANNERS + 1):
+    exp.add_report(ClusterPortfolio(track=TRACK, clusters=clusters), name=f"cluster-{clusters:02d}-{SUFFIX}")
 
 # TODO: run this multiple times and choose portfolio with highest score.
 exp.add_report(IncreasingTimelimitPortfolio(stepsize=100, track=TRACK), name=f"increasing-timelimit-{SUFFIX}")

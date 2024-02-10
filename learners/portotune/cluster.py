@@ -9,8 +9,6 @@ class ClusterPortfolio(Portfolio):
     def __init__(self, track, clusters, **kwargs):
         Portfolio.__init__(self, track, **kwargs)
         self.clusters = clusters
-
-        self.portfolio_name = "Cluster portfolio"
         self.settings.append(f"Clusters: {self.clusters}")
 
     def compute_portfolio(self):
