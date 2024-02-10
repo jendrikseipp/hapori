@@ -1,5 +1,6 @@
 from collections import defaultdict
 from enum import Enum, auto
+import time
 
 import numpy as np
 from downward.reports import PlanningReport
@@ -61,7 +62,10 @@ class Portfolio(PlanningReport):
             self.portfolio_file = self.outfile.replace(".html", ".py")
         else:
             self.portfolio_file = self.outfile + ".html"
+        start_time = time.process_time()
         self.compute_portfolio()
+        end_time = time.process_time()
+        self.time_for_computing_portfolio = end_time - start_time
         PlanningReport.write(self)
         self.print_portfolio()
 
@@ -235,7 +239,8 @@ class Portfolio(PlanningReport):
         rows = []
         rows.append('"""')
         rows.append("Portfolio generator: %s\n" % self.portfolio_name)
-        rows.append("Score: %.2f" % self.evaluator.score(self.sorted_runtimes()))
+        rows.append(f"Time for computing portfolio: {self.time_for_computing_portfolio:.2f}s")
+        rows.append(f"Score: {self.evaluator.score(self.sorted_runtimes()):.2f}")
         rows.append(
             "Average score quota: %.2f" % np.mean(domain_quotas, dtype=np.float64)
         )
