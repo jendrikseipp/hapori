@@ -1,5 +1,6 @@
 from collections import defaultdict
 from enum import Enum, auto
+import math
 import time
 
 import numpy as np
@@ -112,7 +113,7 @@ class Portfolio(PlanningReport):
             if run["coverage"]:
                 cost = run["cost"]
                 assert cost is not None
-                if problem not in best_costs:
+                if (domain, problem) not in best_costs:
                     best_costs[(domain, problem)] = cost
                 else:
                     best_costs[(domain, problem)] = min(
@@ -126,16 +127,23 @@ class Portfolio(PlanningReport):
             runtime = run.get("cpu_time")
             if runtime is not None:
                 if self.track == Track.AGL:
-                    raise NotImplementedError
-                elif self.track == Track.SAT:
-                    cost = run["cost"]
-                    best_cost = best_costs[(domain, problem)]
-                    assert best_cost <= cost
-                    if cost == 0:
-                        assert best_cost == 0
+                    if runtime <= 1.0:
                         score = 1.0
                     else:
-                        score = float(best_cost) / cost
+                        score = 1.0 - (math.log10(runtime) / math.log10(1800))
+                elif self.track == Track.SAT:
+                    quality = run.get("quality")
+                    if quality is None:
+                        cost = run["cost"]
+                        best_cost = best_costs[(domain, problem)]
+                        assert best_cost <= cost, (best_cost, run)
+                        if cost == 0:
+                            assert best_cost == 0
+                            score = 1.0
+                        else:
+                            score = float(best_cost) / cost
+                    else:
+                        score = run["quality"]
                 elif self.track == Track.OPT:
                     cost = run["cost"]
                     assert cost == best_costs[(domain, problem)], (problem, config)

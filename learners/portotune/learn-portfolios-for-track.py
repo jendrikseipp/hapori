@@ -28,10 +28,14 @@ ATTRIBUTES = [
 
 SUFFIX = project.TRACKNAME
 TRACK = Track[SUFFIX.upper()]
-DATA = "../../experiments/data/training-data-collect-eval/properties-hardest-opt.json.xz"
-NUM_PLANNERS = 30
+DATA = f"../../experiments/data/training-data-collect-eval/properties-hardest-{SUFFIX}.json.xz"
+NUM_PLANNERS = {
+    "agl": 100,
+    "opt": 30,
+    "sat": 80,
+}[SUFFIX]
 
-exp = Experiment()
+exp = Experiment(path=DIR / "data" / f"learn-{SUFFIX}-portfolios")
 exp.add_step(
     "remove-combined-properties", project.remove_properties, Path(exp.eval_dir)
 )
