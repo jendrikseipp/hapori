@@ -4,7 +4,7 @@ From: ubuntu:18.04
 
 # Copy planner binary and required files from Stage 1.
 %files 
-    . /planner
+    . 
        
 %post
     ## Install only dependencies for running the planner.
@@ -26,13 +26,13 @@ From: ubuntu:18.04
 	python-sklearn
 
     ## Build the planner
-    cd /planner
+    ## cd /planner
     MAKE_FLAGS="-j 6"
     export MAKE_FLAGS
-    # ./build
+    ./build
 
-    strip --strip-all /planner/src/search-mercury/downward-4
-    strip --strip-all /planner/src/features/heuristics/search/downward-4
+    # strip --strip-all /planner/src/search-mercury/downward-4
+    # strip --strip-all /planner/src/features/heuristics/search/downward-4
     
     rm -rf /var/lib/apt/lists/*
     # apt-get -y autoremove bison flex make g++
@@ -52,7 +52,8 @@ From: ubuntu:18.04
     echo $FEATUREFILE
     # echo $RESTARGS
 
-    python2.7 /planner/src/launcher/genfeatures.py "$@"
+    python2.7 src/launcher/genfeatures.py "$@"
+    
     ## Gemeral feature calculator
     ## Include extra args to produce model output and schedule
     #  python2.7 /planner/src/launcher/genfeatures.py \
