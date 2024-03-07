@@ -1,0 +1,18 @@
+PLANNERS = [
+(119.0, ["ipc2014-jasper", "default"]),
+(73.0, ["ipc2018-fd-2018", "config01"]),
+(33.0, ["ipc2018-fd-2018", "config06"]),
+(5.0, ["ipc2018-fd-2018", "config08"]),
+(49.0, ["ipc2018-fd-2018", "config22"]),
+(13.0, ["ipc2018-fd-2018", "config23"]),
+(20.0, ["ipc2018-fd-2018", "config29"]),
+(4.0, ["ipc2018-fd-2018", "config32"]),
+(17.0, ["ipc2018-fd-2018", "config40"]),
+(15.0, ["ipc2018-fd-2018", "config42"]),
+(587.0, ["ipc2018-fd-2018", "config45"]),
+(66.0, ["ipc2018-fd-2018", "config55"]),
+(134.0, ["ipc2018-freelunch-madagascar", "default"]),
+(180.0, ["ipc2018-lapkt-bfws", "poly-bfws"]),
+(87.0, ["ipc2018-lapkt-dfs-plus", "default"]),
+(398.0, ["ipc2018-olcff", "default"]),
+]
