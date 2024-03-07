@@ -134,8 +134,12 @@ def get_track(portfolio):
     return track
 
 
-def get_portfolio_attributes(portfolio):
-    attributes = {}
+def get_portfolio_attributes(portfolio, domain, problem, time):
+    attributes = {
+        'DOMAIN': domain,
+        'PROBLEM': problem,
+        'AVAIL_TIME': time,
+    }
     with open(portfolio, "rb") as portfolio_file:
         content = portfolio_file.read()
         try:
@@ -171,7 +175,7 @@ def run(portfolio, domain_file, problem_file, plan_manager, time, memory):
     The portfolio is allowed to run for at most *time* seconds and may
     use a maximum of *memory* bytes.
     """
-    attributes = get_portfolio_attributes(portfolio)
+    attributes = get_portfolio_attributes(portfolio, domain_file, problem_file, time)
     configs = attributes["PLANNERS"]
     track = get_track(portfolio)
 
