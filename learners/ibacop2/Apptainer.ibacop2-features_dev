@@ -2,74 +2,47 @@ Bootstrap: docker
 From: ubuntu:18.04
 # Stage: build
 
-# Copy planner binary and required files from Stage 1.
 %files 
     . 
        
-%post
-    ## Install only dependencies for running the planner.
-    ## apt-get update
-    ## apt-get -y install python3-minimal
-    ## Remove unnecessary files to keep the image small.
-
+%post    
     apt-get update
     apt-get install --no-install-recommends -y \
-	make\
-	cmake\
+	make \
+	cmake \
 	gcc-multilib \
 	flex \
 	bison \
 	g++-multilib \
     	gawk \
-	pypy\
-	python-pandas\
+	pypy \
+	python-pandas \
 	python-sklearn
 
     ## Build the planner
-    ## cd /planner
-    MAKE_FLAGS="-j 6"
-    export MAKE_FLAGS
+    export MAKE_FLAGS="-j6"
     ./build
 
-    # strip --strip-all /planner/src/search-mercury/downward-4
-    # strip --strip-all /planner/src/features/heuristics/search/downward-4
-    
+    ## Remove unnecessary files to keep the image small.
     rm -rf /var/lib/apt/lists/*
     # apt-get -y autoremove bison flex make g++
 
-
-# The runscript is called whenever the container is used to solve an instance.
 %runscript
     DOMAINFILE="$1"
     PROBLEMFILE="$2"
     FEATUREFILE="$3"
-    # RESTARGS="${@:4}"
     
     ROOT=$PWD
      
     echo $DOMAINFILE
     echo $PROBLEMFILE
     echo $FEATUREFILE
-    # echo $RESTARGS
 
     python2.7 src/launcher/genfeatures.py "$@"
-    
-    ## Gemeral feature calculator
-    ## Include extra args to produce model output and schedule
-    #  python2.7 /planner/src/launcher/genfeatures.py \
-    #   -d "$DOMAINFILE" \
-    #   -p "$PROBLEMFILE" \
-    #   -f "$FEATUREFILE" \
-    #   "$RESTARGS"
 
-		
-## Update the following fields with meta data about your submission.
-## Please use the same field names and use only one line for each value.
 %labels
 Name        IBaCoP2-2018
-Description New version IBaCoP2 Sat  Dynamic portfolio. The selection of planner changes per instance.
+Description New version IBaCoP2 Dynamic portfolio. The planner selection changes per instance.
 Authors     Isabel Cenamor <icenamorg@gmail.com>, Tomas de la Rosa <tomas.delarosaturbides@jpmorgan.com and Fernando Fernandez <ffernand@inf.uc3m.es>
 SupportsDerivedPredicates yes
 SupportsQuantifiedPreconditions no
-
-
