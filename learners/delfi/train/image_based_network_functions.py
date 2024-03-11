@@ -23,7 +23,8 @@ LABEL_TYPE_NORMALIZED  = "normalized"
 LABEL_TYPE_DISCRETE = "discrete"
 LABEL_TYPE_BINARY = "binary"
 LABEL_TYPE_AGILE = "agile"
-LABEL_TYPES = [LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE, LABEL_TYPE_BINARY, LABEL_TYPE_AGILE]
+LABEL_TYPE_SATISFICING = "sat"
+LABEL_TYPES = [LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE, LABEL_TYPE_BINARY, LABEL_TYPE_AGILE, LABEL_TYPE_SATISFICING]
 
 
 
@@ -250,6 +251,9 @@ def convert_labels(type, labels, timeout):
            filter = labels[row_id] < min(min_value * 5, timeout)
            labels[row_id][:] = 0
            labels[row_id][filter] = 1
+    elif type == LABEL_TYPE_SATISFICING:
+        # Similar to normalize
+        labels = (1.0 - labels)
     else:
         assert False
 

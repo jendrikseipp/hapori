@@ -6,11 +6,11 @@ FNAME="output_sat"
 RUNTIMEDATA='runtimes_sat.csv'
 SPLIT="split_sat.txt"
 TIMEOUT="1800"
-IMAGES='images22'
+IMAGES='images23'
 
 
 
-LABEL_TYPE=discrete  # choices: binary discrete, normalized, time
+LABEL_TYPE=sat  # choices: binary discrete, normalized, time
 
 python image_based_network.py \
   --input data --output $FNAME \
