@@ -17,7 +17,7 @@ print("START TIME", start_time)
 from image_based_network_classes import HPOCallback, SubmodelCheckpoint, DataGenerator, dump_accuracy
 from image_based_network_functions import clean_instance_name, readCSV, readCSVS, readSplits, readData, convert_labels, get_sample_weight
 from image_based_network_functions import get_callbacks, get_data_folds
-from image_based_network_functions import LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE, LABEL_TYPE_BINARY, LABEL_TYPE_AGILE, LABEL_TYPES
+from image_based_network_functions import LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE, LABEL_TYPE_BINARY, LABEL_TYPE_AGILE, LABEL_TYPE_SATISFICING, LABEL_TYPES
 from image_based_network_functions import SAVE_MODEL_CHOICES, SAVE_METRIC_CHOICES
 
 from keras import regularizers
@@ -63,7 +63,8 @@ DEFAULT_ACTIVATION_FUNCTIONS = {
     LABEL_TYPE_NORMALIZED: "linear",
     LABEL_TYPE_DISCRETE: "sigmoid",
     LABEL_TYPE_BINARY: "sigmoid",
-    LABEL_TYPE_AGILE: "sigmoid"
+    LABEL_TYPE_AGILE: "sigmoid",
+    LABEL_TYPE_SATISFICING:  "linear"
 }
 DEFAULT_LOSS_FUNCTIONS = {
     LABEL_TYPE_TIME: "mean_squared_error",
@@ -71,7 +72,8 @@ DEFAULT_LOSS_FUNCTIONS = {
     LABEL_TYPE_NORMALIZED: "mean_squared_error",
     LABEL_TYPE_DISCRETE: "binary_crossentropy",
     LABEL_TYPE_BINARY: "binary_crossentropy",
-    LABEL_TYPE_AGILE: "binary_crossentropy"
+    LABEL_TYPE_AGILE: "binary_crossentropy",
+    LABEL_TYPE_SATISFICING:  "mean_squared_error"
 }
 
 OPTIMIZERS = ["adam", "sgd"]
@@ -81,9 +83,10 @@ DEFAULT_OPTIMIZERS = {
     LABEL_TYPE_NORMALIZED: "adam",
     LABEL_TYPE_DISCRETE: "sgd",
     LABEL_TYPE_BINARY: "sgd",
-    LABEL_TYPE_AGILE: "sgd"
+    LABEL_TYPE_AGILE: "sgd",
+    LABEL_TYPE_SATISFICING: "adam"
 }
-MINIMIZING_LABELS = set([LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE])
+MINIMIZING_LABELS = set([LABEL_TYPE_TIME, LABEL_TYPE_LOG, LABEL_TYPE_NORMALIZED, LABEL_TYPE_DISCRETE, LABEL_TYPE_SATISFICING])
 
 
 
