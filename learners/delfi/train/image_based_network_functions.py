@@ -391,10 +391,14 @@ def get_data_folds(options, list_instance_names, list_solver_names, features, la
     for n in range(0, y_train_times.shape[1]):
         list_solver_unsolved.append(0)
         for k in range(0, y_train_times.shape[0]):
-            if (y_train_times[k, n] > timeout):
-                list_solver_unsolved[n] += 1
+            if options.label_type == LABEL_TYPE_SATISFICING:
+                if (y_train_times[k, n] == 1.0):
+                    list_solver_unsolved[n] += 1
+            else:
+                if (y_train_times[k, n] > timeout):
+                    list_solver_unsolved[n] += 1
         list_solver_average.append(np.average(y_train_times[:, n]))
-    print("\nSolver Average Runtimes: ")
+    print(f'\nSolver Average {"Quality" if options.label_type == LABEL_TYPE_SATISFICING else "Runtimes"}: ')
     print(list_solver_average)
     print("\nSolver Unsolved Instances: ")
     print(list_solver_unsolved)
