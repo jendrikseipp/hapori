@@ -392,13 +392,13 @@ def get_data_folds(options, list_instance_names, list_solver_names, features, la
         list_solver_unsolved.append(0)
         for k in range(0, y_train_times.shape[0]):
             if options.label_type == LABEL_TYPE_SATISFICING:
-                if (y_train_times[k, n] == 1.0):
+                if (y_train_times[k, n] == 0.0):
                     list_solver_unsolved[n] += 1
             else:
                 if (y_train_times[k, n] > timeout):
                     list_solver_unsolved[n] += 1
         list_solver_average.append(np.average(y_train_times[:, n]))
-    print(f'\nSolver Average {"Quality" if options.label_type == LABEL_TYPE_SATISFICING else "Runtimes"}: ')
+    print('\nSolver Average ' + "Quality" if options.label_type == LABEL_TYPE_SATISFICING else "Runtimes" + ': ')
     print(list_solver_average)
     print("\nSolver Unsolved Instances: ")
     print(list_solver_unsolved)
@@ -406,9 +406,13 @@ def get_data_folds(options, list_instance_names, list_solver_names, features, la
     best_solver_solved = np.argmin(list_solver_unsolved)
     print("\nBest Solver-ID in terms of instances solved: " + str(best_solver_solved) + " = " + list_solver_names[
         best_solver_solved])
-    best_solver_average = np.argmin(list_solver_average)
-    print("Best Solver-ID in terms of best average runtime: " + str(best_solver_average) + " = " + list_solver_names[
-        best_solver_average])
+
+    if options.label_type == LABEL_TYPE_SATISFICING:
+        best_solver_average = np.argmax(list_solver_average)
+        print("Best Solver-ID in terms of best average quality: " + str(best_solver_average) + " = " + list_solver_names[best_solver_average])
+    else:
+        best_solver_average = np.argmin(list_solver_average)
+        print("Best Solver-ID in terms of best average runtime: " + str(best_solver_average) + " = " + list_solver_names[best_solver_average])
 
     return (x_train, y_train, y_train_times), (x_valid, y_valid, y_valid_times), (x_test, y_test, y_test_times), train_sample_weight
 
