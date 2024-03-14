@@ -3,8 +3,12 @@
 
 SUFFIX="sat"
 FNAME="output_sat"
-RUNTIMEDATA='runtimes_sat.csv'
-SPLIT="split_sat.txt"
+RUNTIMEDATA='full-sat-quality.csv'
+RUNTIMEDATA='hardest-sat-quality.csv'
+SPLIT="full-split_sat_notest.txt"
+SPLIT="full-split_sat.txt"
+SPLIT="hardest-split_sat_notest.txt"
+SPLIT="hardest-split_sat.txt"
 TIMEOUT="1800"
 IMAGES='images23'
 

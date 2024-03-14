@@ -11,6 +11,7 @@ from PIL import Image
 import os
 import pandas as pd
 from operator import add
+import statistics
 
 
 def load_model(json_model, h5_model, verbose=False):
@@ -46,7 +47,10 @@ def select_algorithm_from_model(args, model, image):
 
     # For each test data point compute predictions for each of the solvers
     preds = model.predict(data)
-    return np.argmin(preds[0])
+    #print(preds[0])
+    i = np.argmin(preds[0])
+    #print(i, preds[0][i])
+    return i
 
 
 def readCSV(path_csv, verbose=False):
@@ -136,12 +140,14 @@ if __name__ == "__main__":
             continue
         selected_index = select_algorithm_from_model(args, model, image)
         q = labels[list_instance_names.index(problem)]
+        #print(q)
         for index, x in enumerate(q):
             if x == '-':
                 q[index] = 0.0
             else:
                 q[index] = float(q[index])
-        score += q[index]
+        score += q[selected_index]
+        #print("selected", q[selected_index])
         if args.verbose:
             scores = map(add, scores, q)
             potential += max(q)
@@ -153,6 +159,7 @@ if __name__ == "__main__":
     if args.verbose:
         print("Score: %s (out of %s, random %s, minimally %s)" % (score, potential, random_score, all_solving))
         print([c for c in scores])
+        print("Best solver: %s, worst solver %s, median solver %s" % (max(scores), min(scores), statistics.median(scores)))
         # print(list_solver_names)
         # print(list_instance_names)
     else:
