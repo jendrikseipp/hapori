@@ -30,6 +30,7 @@ def load_model(json_model, h5_model, verbose=False):
     model.load_weights(h5_model)
     if verbose:
         print("Loaded model from disk")
+    model.save("model.keras")
     return model
 
 
