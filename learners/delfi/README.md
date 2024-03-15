@@ -1,3 +1,39 @@
+# Models 
+
+The following models were trained on the entire available data
+## Optimal 
+
+ * [main-binary] train/delfi2024_models/full/binary/output_opt_10_03_2024
+ * [main-discrete] train/delfi2024_models/full/discrete/output_opt_09_03_2024
+
+## Satisficing
+
+ * [main-sat] train/delfi2024_models/full/sat/output_sat_13_03_2024
+
+
+## Additional models (sanity check)
+The following models were trained on the entire available data minus a held out test set
+ * [binary] train/delfi2024_models/full/binary/output_opt_notest_10_03_2024
+ * [discrete] train/delfi2024_models/full/discrete/output_opt_notest_09_03_2024
+ * [sat] train/delfi2024_models/full/sat/output_sat_notest_13_03_2024
+
+## Additional models - restricted training set
+The following models were trained on the balanced set of instances across domains
+ * [binary] train/delfi2024_models/harderst/binary/output_opt_10_03_2024
+ * [discrete] train/delfi2024_models/harderst/discrete/output_opt_11_03_2024
+ * [sat] train/delfi2024_models/harderst/sat/output_sat_14_03_2023
+
+## Additional models - restricted training set (sanity check)
+The following models were trained on the balanced set of instances across domains minus a held out test set (same as above)
+ * [binary] train/delfi2024_models/harderst/binary/output_opt_notest_10_03_2024
+ * [discrete] train/delfi2024_models/harderst/discrete/output_opt_notest_11_03_2024
+ * [sat] train/delfi2024_models/harderst/sat/output_sat_notest_14_03_2023
+
+
+
+
+
+
 # Training:
 - change to /learners/delfi/train/
 - use python2.7
