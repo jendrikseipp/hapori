@@ -699,12 +699,26 @@ Stage: run
     learners/delfi/sat_planners.json /planner/sat_planners.json
     learners/delfi/timers.py /planner/timers.py
     learners/delfi/translate /planner/translate
-    learners/delfi/models/optimal.json /planner/models/optimal.json
-    learners/delfi/models/optimalmodel* /planner/models/
-    learners/delfi/models/satisficing.json /planner/models/satisficing.json
-    learners/delfi/models/satmodel* /planner/models/
-    learners/delfi/models/agile.json /planner/models/agile.json
-    learners/delfi/models/agilemodel* /planner/models/
+    #learners/delfi/models/optimal.json /planner/models/optimal.json
+    #learners/delfi/models/optimalmodel* /planner/models/
+    #learners/delfi/models/satisficing.json /planner/models/satisficing.json
+    #learners/delfi/models/satmodel* /planner/models/
+    #learners/delfi/models/agile.json /planner/models/agile.json
+    #learners/delfi/models/agilemodel* /planner/models/
+
+    learners/delfi/models2024/fullbinary.json /planner/models/fullbinary.json
+    learners/delfi/models2024/fullbinary.h5 /planner/models/fullbinary.h5
+    learners/delfi/models2024/fulldiscrete.json /planner/models/fulldiscrete.json
+    learners/delfi/models2024/fulldiscretex* /planner/models/
+    learners/delfi/models2024/fullsatisficing.json /planner/models/fullsatisficing.json
+    learners/delfi/models2024/fullsatisficingx* /planner/models/
+    
+    learners/delfi/models2024/hardestbinary.json /planner/models/hardestbinary.json
+    learners/delfi/models2024/hardestbinary.h5 /planner/models/hardestbinary.h5
+    learners/delfi/models2024/hardestdiscrete.json /planner/models/hardestdiscrete.json
+    learners/delfi/models2024/hardestdiscretex* /planner/models/
+    learners/delfi/models2024/hardestsatisficing.json /planner/models/hardestsatisficing.json
+    learners/delfi/models2024/hardestsatisficingx* /planner/models/
 
 %post
     apt-get update
@@ -725,15 +739,27 @@ Stage: run
     apt-get clean
     rm -rf /var/lib/apt/lists/*
 
+    #cat optimalmodel* > optimal.h5
+    #rm optimalmodel*
+    #cd /planner/models
+    #cat satmodel* > satisficing.h5
+    #rm satmodel*
+    #cd /planner/models
+    #cat agilemodel* > agile.h5
+    #rm agilemodel*
+
     cd /planner/models
-    cat optimalmodel* > optimal.h5
-    rm optimalmodel*
+    cat fulldiscretex* > fulldiscrete.h5
+    rm fulldiscretex*
     cd /planner/models
-    cat satmodel* > satisficing.h5
-    rm satmodel*
+    cat fullsatisficingx* > fullsatisficing.h5
+    rm fullsatisficingx*
     cd /planner/models
-    cat agilemodel* > agile.h5
-    rm agilemodel*
+    cat hardestdiscretex* > hardestdiscrete.h5
+    rm hardestdiscretex*
+    cd /planner/models
+    cat hardestsatisficingx* > hardestsatisficing.h5
+    rm hardestsatisficingx*
 
 %runscript
     #! /bin/bash
@@ -743,6 +769,7 @@ Stage: run
     PROBLEMFILE="$2"
     PLANFILE="$3"
     # track in {optimal, satisficing, agile}
+    # track in {fullbinary, fulldiscrete, fullsatisficing, hardestbinary, hardestdiscrete, hardestsatisficing}
     TRACK="$4"
 
     # fix unbound variable error in strict bash mode: https://github.com/pypa/virtualenv/issues/1029
