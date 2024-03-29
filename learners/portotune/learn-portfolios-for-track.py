@@ -30,7 +30,7 @@ SUFFIX = project.TRACKNAME
 TRACK = Track[SUFFIX.upper()]
 DATA = f"../../experiments/data/training-data-collect-eval/properties-hardest-{SUFFIX}.json.xz"
 NUM_PLANNERS = {
-    "agl": 81,
+    #"agl": 81,
     "opt": 30,
     "sat": 80,
 }[SUFFIX]
