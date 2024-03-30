@@ -73,6 +73,16 @@ SUITE_IPC23_OPT = [
     "slitherlink-opt23-adl",
 ]
 
+SUITE_IPC23_OPT_SMALL = [
+    "folding-opt23-adl:p01.pddl",
+    "labyrinth-opt23-adl:p01.pddl",
+    "quantum-layout-opt23-strips:p01.pddl",
+    "recharging-robots-opt23-adl:p01.pddl",
+    "ricochet-robots-opt23-adl:p01.pddl",
+    "rubiks-cube-opt23-adl:p01.pddl",
+    "slitherlink-opt23-adl:p01.pddl",
+]
+
 SUITE_IPC23_SAT_AGL = [
     "folding-sat23-adl",
     "labyrinth-sat23-adl",
@@ -81,6 +91,16 @@ SUITE_IPC23_SAT_AGL = [
     "ricochet-robots-sat23-adl",
     "rubiks-cube-sat23-adl",
     "slitherlink-sat23-adl",
+]
+
+SUITE_IPC23_SAT_SMALL = [
+    "folding-sat23-adl:p01.pddl",
+    "labyrinth-sat23-adl:p01.pddl",
+    "quantum-layout-sat23-strips:p01.pddl",
+    "recharging-robots-sat23-adl:p01.pddl",
+    "ricochet-robots-sat23-adl:p01.pddl",
+    "rubiks-cube-sat23-adl:p01.pddl",
+    "slitherlink-sat23-adl:p01.pddl",
 ]
 
 SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
