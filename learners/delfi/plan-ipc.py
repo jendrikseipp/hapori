@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import json
 import os
@@ -136,8 +138,6 @@ def main(args):
     plan = args.plan_file
     model = args.model_name
 
-    # TODO: adapt this to three models, one per track
-    # assert model in ["optimal", "satisficing", "agile"]
     assert model in ["fullbinary", "fulldiscrete", "fullsatisficing", "hardestbinary", "hardestdiscrete", "hardestsatisficing"]
     is_opt = "binary" in model or "discrete" in model
     file_planner_names = os.path.join(DIR_SCRIPT, "opt_planners.json" if is_opt else "sat_planners.json")
@@ -157,10 +157,10 @@ def main(args):
         # planner = "ipc2018-opt-scorpion:default" if is_opt else 'ipc2018-agl-saarplan:agl-config01'
         # optimal and satisficing configs only
         planner = "ipc2018-opt-scorpion:default" if is_opt else "ipc2018-decstar+sat-config03"
-        print("Could not compute image. Use default planner.")
+        print("Could not compute image. Use default planner.", file=sys.stderr)
     else:
-        json_model = os.path.join(DIR_SCRIPT, 'models2024', args.model_name + ".json")
-        h5_model = os.path.join(DIR_SCRIPT, "models2024",  args.model_name + ".h5")
+        json_model = os.path.join(DIR_SCRIPT, "models", args.model_name + ".json")
+        h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
         planner = select_algorithm_from_model(json_model, h5_model, image_file, planner_names)
     print("Selected Planner: %s" % planner)
     sys.stdout.flush()
