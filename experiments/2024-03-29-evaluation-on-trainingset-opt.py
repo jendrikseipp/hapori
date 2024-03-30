@@ -35,23 +35,30 @@ NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
-IMAGE = REPO / "2024-02-09-hapori_sequential_portfolios.sif"
-assert IMAGE.is_file(), IMAGE
-IBACOP_IMAGE = REPO / "2024-03-29-hapori_ibacop2.sif"
-assert IBACOP_IMAGE.is_file(), IBACOP_IMAGE
+IMAGES = {
+    "static_sequential_portfolios": REPO / "2024-02-09-hapori_sequential_portfolios.sif",
+    "delfi": REPO / "2024-03-30-hapori_delfi.sif",
+    "ibacop": REPO / "2024-03-29-hapori_ibacop2.sif",
+}
+for image in IMAGES.values():
+    assert image.is_file(), image
 BENCHMARKS_DIR = REPO / "benchmarks"
 assert BENCHMARKS_DIR.is_dir(), BENCHMARKS_DIR
-PORTFOLIOS_DIR = REPO / "sequential-portfolios"
-PORTFOLIOS = [
-    "hapori-cluster-opt",
-    "hapori-domain-wise-opt",
-    "hapori-greedy-opt",
-    "hapori-ibacop2-opt",
-    "hapori-increasing-time-limit-opt",
-    "hapori-miplan-hardest-opt",
-    "hapori-randomized-iterative-search-opt",
-    "hapori-stonesoup-opt",
-    "hapori-uniform-opt",
+SEQUENTIAL_PORTFOLIOS_DIR = REPO / "sequential-portfolios"
+SEQUENTIAL_PORTFOLIOS = [
+    "cluster-opt",
+    "domain-wise-opt",
+    "greedy-opt",
+    "ibacop2-opt",
+    "increasing-time-limit-opt",
+    "miplan-hardest-opt",
+    "randomized-iterative-search-opt",
+    "stonesoup-opt",
+    "uniform-opt",
+]
+ALGORITHM_SELECTORS = [
+    "delfi-binary",
+    "delfi-discrete",
 ]
 
 MEMORY_LIMIT = 8000  # MiB
@@ -59,7 +66,7 @@ if RUNNING_ON_CLUSTER:
     SUITE = project.SUITE_IPC23_OPT_SMALL
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
-        email="silvan.sievers@unibas.ch",
+        email="jendrik.seipp@liu.se",
         memory_per_cpu="3947M",
         cpus_per_task=3,
         # paths obtained via:
@@ -76,8 +83,8 @@ else:
         "miconic-strips:0-p01.pddl",
         "miconic-simpleadl-adl:0-s1-0.pddl",
     ]
-    ENVIRONMENT = LocalEnvironment(processes=8)
-    TIME_LIMIT = 15
+    ENVIRONMENT = LocalEnvironment(processes=12)
+    TIME_LIMIT = 60
 
 ATTRIBUTES = [
     "cost",
@@ -104,40 +111,48 @@ def main():
     exp.add_fetcher(name="fetch", merge=False)
 
     exp.add_parser(get_parser())
-    exp.add_resource("static_portfolios_image", IMAGE, symlink=True)
-    exp.add_resource("ibacop_image", IBACOP_IMAGE, symlink=True)
-    #exp.add_resource("run_plan", REPO / "plan.py")
-    #exp.add_resource("fd_2018_configs", REPO / "configs/fd_2018_configs.py")
+    for name, image in IMAGES.items():
+        exp.add_resource(name, image, symlink=True)
     exp.add_resource("filter_stderr", DIR / "filter-stderr.py")
     exp.add_resource("run_validate", "run-validate.sh")
 
-    for portfolio_name in PORTFOLIOS:
-        algorithm_name = portfolio_name
-        portfolio = PORTFOLIOS_DIR / f"{portfolio_name}.py"
-        for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+    for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+        for algorithm_name in SEQUENTIAL_PORTFOLIOS + ALGORITHM_SELECTORS:
             run = exp.add_run()
             run.add_resource("domain", task.domain_file, "domain.pddl")
             run.add_resource("problem", task.problem_file, "problem.pddl")
+            if "delfi" in algorithm_name:
+                image = "{delfi}"
+            elif "ibacop" in algorithm_name:
+                image = "{ibacop}"
+            else:
+                image = "{static_sequential_portfolios}"
             # Use runlim to limit time and memory. It must be on the system PATH.
-            internal_memory_limit = math.ceil(MEMORY_LIMIT * 0.9) # generously keep some memory for running the portfolio driver
-            internal_time_limit = math.ceil(TIME_LIMIT * 0.99) # use a slightly smaller runtime limit for the portfolio
-            run.add_command(
-                "run-planner",
-                [
-                    "runlim",
-                    "--output-file=runlim.txt",
-                    f"--time-limit={TIME_LIMIT}",
-                    f"--space-limit={MEMORY_LIMIT}",
-                    "--propagate",
-                    "{ibacop_image}" if "ibacop" in portfolio_name else "{static_portfolios_image}",
-                    "{domain}",
-                    "{problem}",
-                    "sas_plan",
-                    internal_memory_limit,
-                    internal_time_limit,
-                    portfolio,
-                ],
-            )
+            runlim_cmd = [
+                "runlim",
+                "--output-file=runlim.txt",
+                f"--time-limit={TIME_LIMIT}",
+                f"--space-limit={MEMORY_LIMIT}",
+                "--propagate",
+                image,
+                "{domain}",
+                "{problem}",
+                "sas_plan",
+            ]
+            if algorithm_name == "delfi-binary":
+                runlim_cmd.append("hardestbinary")
+            if algorithm_name == "delfi-discrete":
+                runlim_cmd.append("hardestdiscrete")
+            else:
+                internal_memory_limit = math.ceil(MEMORY_LIMIT * 0.9) # generously keep some memory for running the portfolio driver
+                internal_time_limit = math.ceil(TIME_LIMIT * 0.99) # use a slightly smaller runtime limit for the portfolio
+                runlim_cmd.extend([
+                    str(internal_memory_limit),
+                    str(internal_time_limit),
+                    str(SEQUENTIAL_PORTFOLIOS_DIR / f"hapori-{algorithm_name}.py"),
+                ])
+
+            run.add_command("run-planner", runlim_cmd)
             run.add_command("run-validate", ["{run_validate}", "{domain}", "{problem}", "sas_plan"])
             # Remove temporary files from old Fast Downward versions.
             run.add_command("rm-tmp-files", ["rm", "-f", "output.sas", "output"])
