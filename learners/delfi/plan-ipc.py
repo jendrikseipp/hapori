@@ -109,9 +109,18 @@ def select_algorithm_from_model(json_model, h5_model, image, planner_names):
     # For each test data point compute predictions for each of the solvers
     preds = model.predict(data)[0]
     assert len(preds) == len(planner_names)
-    priorities = (preds * np.array([1,2,3,4])).sum(axis=1)
-    assert len(priorities) == len(planner_names)
-    best_planner_idx = np.argmin(priorities)
+
+    if "discrete" in model:
+        priorities = (preds * np.array([1,2,3,4])).sum(axis=1)
+        assert len(priorities) == len(planner_names)
+        best_planner_idx = np.argmin(priorities)
+    elif "satisficing" in model:
+        best_planner_idx = np.argmin(preds)
+    elif "binary" in model:
+        best_planner_idx = np.argmax(preds)
+    else:
+        print("Should not happen - unrecognized model.", file=sys.stderr)
+
     best_planner = planner_names[best_planner_idx]
     print("Model chose %s" % best_planner)
     return best_planner
