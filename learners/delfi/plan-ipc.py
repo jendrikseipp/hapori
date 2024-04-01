@@ -79,7 +79,10 @@ def compute_image(pwd, graph_file):
     return os.path.abspath(image_path)
 
 
-def select_algorithm_from_model(json_model, h5_model, image, planner_names):
+def select_algorithm_from_model(model_name, image, planner_names):
+    json_model = os.path.join(DIR_SCRIPT, "models", model_name + ".json")
+    h5_model = os.path.join(DIR_SCRIPT, "models",  model_name + ".h5")
+
     print("Using json model file {}".format(json_model))
     print("Using h5 model file {}".format(h5_model))
 
@@ -110,13 +113,13 @@ def select_algorithm_from_model(json_model, h5_model, image, planner_names):
     preds = model.predict(data)[0]
     assert len(preds) == len(planner_names)
 
-    if "discrete" in model:
+    if "discrete" in model_name:
         priorities = (preds * np.array([1,2,3,4])).sum(axis=1)
         assert len(priorities) == len(planner_names)
         best_planner_idx = np.argmin(priorities)
-    elif "satisficing" in model:
+    elif "satisficing" in model_name:
         best_planner_idx = np.argmin(preds)
-    elif "binary" in model:
+    elif "binary" in model_name:
         best_planner_idx = np.argmax(preds)
     else:
         print("Should not happen - unrecognized model.", file=sys.stderr)
@@ -145,10 +148,10 @@ def main(args):
     domain = args.domain_file
     problem = args.problem_file
     plan = args.plan_file
-    model = args.model_name
+    model_name = args.model_name
 
-    assert model in ["fullbinary", "fulldiscrete", "fullsatisficing", "hardestbinary", "hardestdiscrete", "hardestsatisficing"]
-    is_opt = "binary" in model or "discrete" in model
+    assert model_name in ["fullbinary", "fulldiscrete", "fullsatisficing", "hardestbinary", "hardestdiscrete", "hardestsatisficing"]
+    is_opt = "binary" in model_name or "discrete" in model_name
     file_planner_names = os.path.join(DIR_SCRIPT, "opt_planners.json" if is_opt else "sat_planners.json")
     with open(file_planner_names, "r") as f:
         planner_names = json.load(f)
@@ -168,9 +171,7 @@ def main(args):
         planner = "ipc2018-opt-scorpion:default" if is_opt else "ipc2018-decstar+sat-config03"
         print("Could not compute image. Use default planner.", file=sys.stderr)
     else:
-        json_model = os.path.join(DIR_SCRIPT, "models", args.model_name + ".json")
-        h5_model = os.path.join(DIR_SCRIPT, "models",  args.model_name + ".h5")
-        planner = select_algorithm_from_model(json_model, h5_model, image_file, planner_names)
+        planner = select_algorithm_from_model(model_name, image_file, planner_names)
     print("Selected Planner: %s" % planner)
     sys.stdout.flush()
     execute_planner(pwd, domain, problem, plan, planner)
