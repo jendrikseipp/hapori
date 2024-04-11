@@ -1,9 +1,10 @@
 #! /usr/bin/env python3
 
 import math
-import os
 from pathlib import Path
 import platform
+import shutil
+import subprocess
 import sys
 
 from portfolio_parser_runlim import get_parser
@@ -14,9 +15,8 @@ from lab.environments import BaselSlurmEnvironment, LocalEnvironment
 from lab.experiment import Experiment
 
 import project
+import trainingset_opt_hardest
 
-sys.path.append(str(Path(__file__).parent.parent))
-import plan
 
 # Create custom report class with suitable info and error attributes.
 class BaseReport(AbsoluteReport):
@@ -33,11 +33,13 @@ class BaseReport(AbsoluteReport):
 
 NODE = platform.node()
 RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
+SCP_LOGIN = "nsc"
+REMOTE_REPOS_DIR = "/proj/dfsplan/users/x_jense/"
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
 IMAGES = {
     "static_sequential_portfolios": REPO / "2024-02-09-hapori_sequential_portfolios.sif",
-    "delfi": REPO / "2024-03-30-hapori_delfi.sif",
+    "delfi": REPO / "2024-04-01-hapori_delfi.sif",
     "ibacop": REPO / "2024-03-29-hapori_ibacop2.sif",
 }
 for image in IMAGES.values():
@@ -63,7 +65,19 @@ ALGORITHM_SELECTORS = [
 
 MEMORY_LIMIT = 8000  # MiB
 if RUNNING_ON_CLUSTER:
-    SUITE = project.SUITE_IPC23_OPT_SMALL
+    SUITE = trainingset_opt_hardest.TASKS
+    # Partition SUITE of "domain:problem" pairs by domain.
+    domains = {}
+    for task in SUITE:
+        domain, problem = task.split(":")
+        domains.setdefault(domain, []).append(problem)
+
+    # Only keep first and last problem per domain for testing.
+    SUITE = []
+    for domain, problems in domains.items():
+        SUITE.extend([f"{domain}:{problems[0]}", f"{domain}:{problems[-1]}"])
+    #print(f"SUITE: {SUITE}")
+
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="jendrik.seipp@liu.se",
@@ -110,6 +124,10 @@ def main():
     exp.add_step("parse", exp.parse)
     exp.add_fetcher(name="fetch", merge=False)
 
+    if not project.REMOTE:
+        exp.add_step("remove-eval-dir", shutil.rmtree, exp.eval_dir, ignore_errors=True)
+        project.add_scp_step(exp, SCP_LOGIN, REMOTE_REPOS_DIR)
+
     exp.add_parser(get_parser())
     for name, image in IMAGES.items():
         exp.add_resource(name, image, symlink=True)
@@ -144,8 +162,8 @@ def main():
             if algorithm_name == "delfi-discrete":
                 runlim_cmd.append("hardestdiscrete")
             else:
-                internal_memory_limit = math.ceil(MEMORY_LIMIT * 0.9) # generously keep some memory for running the portfolio driver
-                internal_time_limit = math.ceil(TIME_LIMIT * 0.99) # use a slightly smaller runtime limit for the portfolio
+                internal_memory_limit = math.ceil(MEMORY_LIMIT * 0.9)  # generously keep some memory for running the portfolio driver
+                internal_time_limit = math.ceil(TIME_LIMIT * 0.99)  # use a slightly smaller runtime limit for the portfolio
                 runlim_cmd.extend([
                     str(internal_memory_limit),
                     str(internal_time_limit),
@@ -165,6 +183,8 @@ def main():
 
     report = Path(exp.eval_dir) / f"{exp.name}.html"
     exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
+    if not project.REMOTE:
+        exp.add_step(f"open-{report.name}", subprocess.call, ["xdg-open", report])
     exp.run_steps()
 
 
