@@ -32,7 +32,6 @@ class BaseReport(AbsoluteReport):
 
 
 NODE = platform.node()
-RUNNING_ON_CLUSTER = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch"))
 SCP_LOGIN = "nsc"
 REMOTE_REPOS_DIR = "/proj/dfsplan/users/x_jense/"
 DIR = Path(__file__).resolve().parent
@@ -64,7 +63,7 @@ ALGORITHM_SELECTORS = [
 ]
 
 MEMORY_LIMIT = 8000  # MiB
-if RUNNING_ON_CLUSTER:
+if project.REMOTE:
     SUITE = trainingset_opt_hardest.TASKS
     # Partition SUITE of "domain:problem" pairs by domain.
     domains = {}
