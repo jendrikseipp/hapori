@@ -199,7 +199,7 @@ def add_scp_step(exp, login, repos_dir):
             "scp",
             "-r",  # Copy recursively.
             "-C",  # Compress files.
-            f"{login}:{remote_exp}-eval/.",
+            f"{login}:{remote_exp}-eval/*",
             f"{exp.path}-eval/",
         ],
     )
