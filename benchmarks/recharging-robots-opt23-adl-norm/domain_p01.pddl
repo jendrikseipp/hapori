@@ -5,8 +5,6 @@
     :negative-preconditions
     :disjunctive-preconditions
     :equality
-    :existential-preconditions
-    :universal-preconditions
     :conditional-effects
     :action-costs
 )
