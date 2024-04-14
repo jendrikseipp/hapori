@@ -63,47 +63,27 @@ SUITE_STRIPS = ['agricola-strips', 'airport-strips', 'barman-strips', 'blockswor
 SUITE_ADL = ['airport-adl', 'assembly-adl', 'briefcaseworld-adl', 'caldera-adl', 'caldera-split-adl', 'cavediving-adl', 'citycar-adl', 'flashfill-adl', 'fsc-adl', 'gedp-ds2ndp-adl', 'maintenance-adl', 'miconic-fulladl-adl', 'miconic-simpleadl-adl', 'nurikabe-adl', 'openstacks-adl', 'optical-telegraphs-adl', 'pathways-noneg-adl', 'philosophers-adl', 'psr-large-adl', 'psr-middle-adl', 'schedule-adl', 'settlers-adl', 't0-adl', 'trucks-adl']
 # fmt: on
 
+SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
+
 SUITE_IPC23_OPT = [
-    "folding-opt23-adl",
+    "folding-opt23-adl-norm",
     "labyrinth-opt23-adl",
     "quantum-layout-opt23-strips",
-    "recharging-robots-opt23-adl",
+    "recharging-robots-opt23-adl-norm",
     "ricochet-robots-opt23-adl",
-    "rubiks-cube-opt23-adl",
-    "slitherlink-opt23-adl",
+    "rubiks-cube-opt23-adl-norm",
+    "slitherlink-opt23-adl-norm",
 ]
 
-SUITE_IPC23_OPT_SMALL = [
-    "folding-opt23-adl:p01.pddl",
-    "labyrinth-opt23-adl:p01.pddl",
-    "quantum-layout-opt23-strips:p01.pddl",
-    "recharging-robots-opt23-adl:p01.pddl",
-    "ricochet-robots-opt23-adl:p01.pddl",
-    "rubiks-cube-opt23-adl:p01.pddl",
-    "slitherlink-opt23-adl:p01.pddl",
-]
-
-SUITE_IPC23_SAT_AGL = [
-    "folding-sat23-adl",
+SUITE_IPC23_SAT = [
+    "folding-sat23-adl-norm",
     "labyrinth-sat23-adl",
     "quantum-layout-sat23-strips",
-    "recharging-robots-sat23-adl",
+    "recharging-robots-sat23-adl-norm",
     "ricochet-robots-sat23-adl",
-    "rubiks-cube-sat23-adl",
-    "slitherlink-sat23-adl",
+    "rubiks-cube-sat23-adl-norm",
+    "slitherlink-sat23-adl-norm",
 ]
-
-SUITE_IPC23_SAT_SMALL = [
-    "folding-sat23-adl:p01.pddl",
-    "labyrinth-sat23-adl:p01.pddl",
-    "quantum-layout-sat23-strips:p01.pddl",
-    "recharging-robots-sat23-adl:p01.pddl",
-    "ricochet-robots-sat23-adl:p01.pddl",
-    "rubiks-cube-sat23-adl:p01.pddl",
-    "slitherlink-sat23-adl:p01.pddl",
-]
-
-SUITE_STRIPS_AND_ADL = sorted(SUITE_STRIPS + SUITE_ADL)
 
 
 def get_portfolio_attributes(portfolio):
@@ -219,8 +199,8 @@ def add_scp_step(exp, login, repos_dir):
             "scp",
             "-r",  # Copy recursively.
             "-C",  # Compress files.
-            f"{login}:{remote_exp}-eval",
-            f"{exp.path}-eval",
+            f"{login}:{remote_exp}-eval/.",
+            f"{exp.path}-eval/",
         ],
     )
 
