@@ -3,7 +3,6 @@
     :strips
     :typing
     :negative-preconditions
-    :disjunctive-preconditions
     :equality
     :conditional-effects
     :action-costs
