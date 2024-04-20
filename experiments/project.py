@@ -35,10 +35,28 @@ assert (
 
 DIR = Path(__file__).resolve().parent
 NODE = platform.node()
+SCP_LOGIN = "login-infai"
+#REMOTE_REPOS_DIR = "/proj/dfsplan/users/x_jense/"
+REMOTE_REPOS_DIR = "/infai/seipp/projects/"
 # Cover both the Basel and Linköping clusters for simplicity.
 REMOTE = NODE.endswith((".scicore.unibas.ch", ".cluster.bc2.ch")) or re.match(
     r"tetralith\d+\.nsc\.liu\.se|n\d+", NODE
 )
+ATTRIBUTES = [
+    "cost",
+    # "plan_length",
+    "coverage",
+    "error",
+    "run_dir",
+    "cpu_time",
+    "wall_time",
+    "used_memory",
+    "solver_status_str",
+    "solver_status_num",
+    "invalid_plan",
+    "memory_limit",
+    "time_limit",
+]
 
 
 def parse_args():
@@ -263,6 +281,23 @@ def add_absolute_report(exp, *, name=None, outfile=None, **kwargs):
     #exp.add_step(f"publish-{name}", subprocess.call, ["publish", outfile])
 
 
+def prune_unexplained_errors_for_solved_runs(run):
+    if run.get("error") == "solved":
+        run["unexplained_errors"] = []
+    return run
+
+
+def add_default_report_steps(exp):
+    output_format = "tex" if TEX else "html"
+    report = Path(exp.eval_dir) / f"{exp.name}.{output_format}"
+    exp.add_report(BaseReport(
+            attributes=ATTRIBUTES, format=output_format, filter=[prune_unexplained_errors_for_solved_runs]),
+        outfile=report)
+    if not REMOTE:
+        add_scp_step(exp, SCP_LOGIN, REMOTE_REPOS_DIR)
+        exp.add_step(f"open-{report.name}", subprocess.call, ["xdg-open", report])
+
+
 def add_scatter_plot_reports(exp, algorithm_pairs, attributes, *, filter=None):
     for algo1, algo2 in algorithm_pairs:
         for attribute in attributes:
@@ -314,6 +349,21 @@ class QualityFilters:
             run.get("cost"), self.tasks_to_costs[self._get_task(run)]
         )
         return run
+
+
+# Create custom report class with suitable info and error attributes.
+class BaseReport(AbsoluteReport):
+    INFO_ATTRIBUTES = []
+    ERROR_ATTRIBUTES = [
+        "algorithm",
+        "domain",
+        "problem",
+        "cpu_time",
+        "wall_time",
+        "used_memory",
+        "error",
+        "node",
+    ]
 
 
 class Hardest30Report(PlanningReport):

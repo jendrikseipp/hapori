@@ -3,7 +3,6 @@
 import math
 from pathlib import Path
 import platform
-import shutil
 import subprocess
 import sys
 
@@ -18,23 +17,6 @@ import project
 import trainingset_opt_hardest
 
 
-# Create custom report class with suitable info and error attributes.
-class BaseReport(AbsoluteReport):
-    INFO_ATTRIBUTES = []
-    ERROR_ATTRIBUTES = [
-        "domain",
-        "problem",
-        "algorithm",
-        "unexplained_errors",
-        "error",
-        "node",
-    ]
-
-
-NODE = platform.node()
-SCP_LOGIN = "login-infai"
-#REMOTE_REPOS_DIR = "/proj/dfsplan/users/x_jense/"
-REMOTE_REPOS_DIR = "/infai/seipp/projects/"
 DIR = Path(__file__).resolve().parent
 REPO = project.get_repo_base()
 IMAGES = {
@@ -105,22 +87,6 @@ else:
     ENVIRONMENT = LocalEnvironment(processes=12)
     TIME_LIMIT = 10
 
-ATTRIBUTES = [
-    "cost",
-    # "plan_length",
-    "coverage",
-    "error",
-    "run_dir",
-    "cpu_time",
-    "wall_time",
-    "used_memory",
-    "solver_status_str",
-    "solver_status_num",
-    "invalid_plan",
-    "memory_limit",
-    "time_limit",
-]
-
 
 def main():
     exp = Experiment(environment=ENVIRONMENT)
@@ -182,11 +148,7 @@ def main():
             run.set_property("algorithm", algorithm_name)
             run.set_property("id", [algorithm_name, task.domain, task.problem])
 
-    report = Path(exp.eval_dir) / f"{exp.name}.html"
-    exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile=report)
-    if not project.REMOTE:
-        project.add_scp_step(exp, SCP_LOGIN, REMOTE_REPOS_DIR)
-        exp.add_step(f"open-{report.name}", subprocess.call, ["xdg-open", report])
+    project.add_default_report_steps(exp)
     exp.run_steps()
 
 
