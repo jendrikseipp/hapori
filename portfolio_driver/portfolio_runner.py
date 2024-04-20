@@ -69,7 +69,7 @@ def run_search(planner, config, pos, domain_file, problem_file, plan_file, time,
 
 def compute_run_time(timeout, configs, pos, run_time_so_far):
     remaining_time = timeout - util.get_elapsed_time() - run_time_so_far
-    print("remaining time: {}".format(remaining_time))
+    print("remaining time: {:.2f}".format(remaining_time))
     relative_time = configs[pos][0]
     remaining_relative_time = sum(config[0] for config in configs[pos:])
     absolute_time_limit = limits.round_time_limit(remaining_time * relative_time / remaining_relative_time)

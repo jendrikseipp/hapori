@@ -267,6 +267,8 @@ class Portfolio(PlanningReport):
         params = []
         schedule = self.schedule()
         for algo_id, runtime in schedule:
+            if runtime == 0:
+                continue
             algo = self.algorithms[algo_id]
             planner, config = planner_configs[algo]
             params.append("    # " + algo)
