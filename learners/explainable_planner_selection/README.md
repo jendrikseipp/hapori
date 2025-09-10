@@ -4,7 +4,7 @@ Apply diff from `modifications.diff`
 
 Training Call:
  ./train_ml.py linear_regression --runtimes TRAINING_LABELS --features TRAINING_FEATURES SOME_NAME --merge-validation-data --split training --output-dir ipc
- ./train_ml.py decision_tree --runtimes TRANING_LABELS --features TRAINING_FEATURES SOME_NAME --merge-validation-data --split training --output-dir ipc --max-depth 5
+ ./train_ml.py decision_tree --runtimes TRAINING_LABELS --features TRAINING_FEATURES SOME_NAME --merge-validation-data --split training --output-dir ipc --max-depth 5
 
 
 Training labels:
